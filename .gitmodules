@@ -1,0 +1,6 @@
+[submodule "submodules/research-companion"]
+	path = submodules/research-companion
+	url = https://github.com/andrehuang/research-companion.git
+[submodule "submodules/godot-mcp"]
+	path = submodules/godot-mcp
+	url = https://github.com/Coding-Solo/godot-mcp.git
