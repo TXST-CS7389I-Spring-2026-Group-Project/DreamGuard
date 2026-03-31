@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(touch:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(head:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "mcp__godot__launch_editor",
+      "mcp__godot__get_project_info"
+    ]
+  },
+  "mcpServers": {
+    "godot": {
+      "command": "npx",
+      "args": ["@coding-solo/godot-mcp"],
+      "env": {
+        "GODOT_PATH": "f:\\Godot_v4.6-stable_win64.exe",
+        "DEBUG": "true"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "research-companion@andrehuang-research-companion": true
+  }
+}
