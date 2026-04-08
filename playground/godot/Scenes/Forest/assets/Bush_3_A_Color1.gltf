@@ -56,7 +56,7 @@
         {
             "mimeType" : "image/png",
             "name" : "forest_texture",
-            "uri" : "forest_texture.png"
+            "uri" : "Textures/forest_texture.png"
         }
     ],
     "accessors" : [

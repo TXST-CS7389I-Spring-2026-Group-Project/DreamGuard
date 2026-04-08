@@ -181,42 +181,55 @@ else:
 #                   east-wall  →  90°  west-wall  → 270°
 
 PROPS = [
-    # ── Ring – outer-wall torches ────────────────────────────────────────────
-    ("torch_mounted", -6, 1.5, -6.8, 180),
-    ("torch_mounted",  6, 1.5, -6.8, 180),
-    ("torch_mounted", -6, 1.5,  6.8,   0),
-    ("torch_mounted",  6, 1.5,  6.8,   0),
-    ("torch_mounted", -6.8, 1.5, -2, 270),
-    ("torch_mounted", -6.8, 1.5,  2, 270),
-    ("torch_mounted",  6.8, 1.5, -2,  90),
-    ("torch_mounted",  6.8, 1.5,  2,  90),
+    # ── Ring – outer-wall torches ─────────────────────────────────────────────
+    # Wall positions: north wall of tile (cx, cz=-3) sits at z = cz*2-1 = -7
+    #                 west  wall of tile (cx=-3, cz)  sits at x = cx*2-1 = -7, etc.
+    ("torch_mounted", -4, 1.5,  -7, 180),   # N outer wall, tile(-2,-3)
+    ("torch_mounted",  4, 1.5,  -7, 180),   # N outer wall, tile( 2,-3)
+    ("torch_mounted", -4, 1.5,   7,   0),   # S outer wall, tile(-2, 3)
+    ("torch_mounted",  4, 1.5,   7,   0),   # S outer wall, tile( 2, 3)
+    ("torch_mounted", -7, 1.5,  -2, 270),   # W outer wall, tile(-3,-1)
+    ("torch_mounted", -7, 1.5,   2, 270),   # W outer wall, tile(-3, 1)
+    ("torch_mounted",  7, 1.5,  -2,  90),   # E outer wall, tile( 3,-1)
+    ("torch_mounted",  7, 1.5,   2,  90),   # E outer wall, tile( 3, 1)
 
     # ── Hallway torches ───────────────────────────────────────────────────────
+    # North hall: east wall of tile(0,-4) → x=0*2+1=1, z=-4*2=-8
     ("torch_mounted",  1, 1.5,  -8,  90),
-    ("torch_mounted",  1, 1.5,  -9,  90),
+    ("torch_mounted",  1, 1.5, -10,  90),   # tile(0,-5)
+    # South hall: east wall of tile(0,4) → x=1, z=8
     ("torch_mounted",  1, 1.5,   8,  90),
-    ("torch_mounted",  1, 1.5,   9,  90),
-    ("torch_mounted",  8, 1.5,  -1, 180),
+    ("torch_mounted",  1, 1.5,  10,  90),   # tile(0,5)
+    # East hall: north wall of tile(4,-1) → z=-1*2-1=-3, x=4*2=8
+    ("torch_mounted",  8, 1.5,  -3, 180),
+    # East hall: south wall of tile(4, 0) → z=0*2+1=1, x=8
     ("torch_mounted",  8, 1.5,   1,   0),
-    ("torch_mounted", -8, 1.5,  -1, 180),
+    # West hall: north wall of tile(-4,-1) → z=-3, x=-4*2=-8
+    ("torch_mounted", -8, 1.5,  -3, 180),
+    # West hall: south wall of tile(-4, 0) → z=1, x=-8
     ("torch_mounted", -8, 1.5,   1,   0),
 
-    # ── North room (5×5: world x=-4..4, z=-12..-20) ───────────────────────────
-    ("column",        -2,   0, -14,   0),   # 4 columns near inner corners
+    # ── North room (5×5: cx=-2..2, cz=-6..-10) ────────────────────────────────
+    # North wall tiles at cz=-10 → wall z = -10*2-1 = -21
+    # West wall tiles at cx=-2  → wall x = -2*2-1 = -5
+    # East wall tiles at cx= 2  → wall x =  2*2+1 =  5
+    ("column",        -2,   0, -14,   0),
     ("column",         2,   0, -14,   0),
     ("column",        -2,   0, -18,   0),
     ("column",         2,   0, -18,   0),
-    ("chest_gold",     0,   0, -16,   0),   # chest at centre
-    ("torch_mounted", -4, 1.5, -20.8, 180), # north wall
-    ("torch_mounted",  4, 1.5, -20.8, 180),
-    ("torch_mounted", -4.8, 1.5, -16, 270), # west wall
-    ("torch_mounted",  4.8, 1.5, -16,  90), # east wall
+    ("chest_gold",     0,   0, -16,   0),
+    ("torch_mounted", -2, 1.5, -21, 180),   # N wall, tile(-1,-10)
+    ("torch_mounted",  2, 1.5, -21, 180),   # N wall, tile( 1,-10)
+    ("torch_mounted", -5, 1.5, -16, 270),   # W wall, tile(-2,-8)
+    ("torch_mounted",  5, 1.5, -16,  90),   # E wall, tile( 2,-8)
 
-    # ── North dead-end (world x=-6,-8,-10  z=-16,-18) ────────────────────────
+    # ── North dead-end (cx=-3..-5, cz=-8,-9) ────────────────────────────────
     ("rubble_large",  -8,  0, -18,   0),
     ("rubble_large", -10,  0, -16, 180),
 
-    # ── East room (5×5: world x=12..20, z=-4..4) ──────────────────────────────
+    # ── East room (5×5: cx=6..10, cz=-2..2) ──────────────────────────────────
+    # East wall tiles at cx=10 → wall x = 10*2+1 = 21
+    # North wall tiles at cz=-2 → wall z = -2*2-1 = -5
     ("column",        14,   0,  -4,   0),
     ("column",        18,   0,  -4,   0),
     ("column",        14,   0,   4,   0),
@@ -224,14 +237,15 @@ PROPS = [
     ("chest_gold",    16,   0,   0,   0),
     ("barrel_large",  20,   0,  -2,   0),
     ("barrel_large",  20,   0,   2,   0),
-    ("torch_mounted", 20.8, 1.5, -2,  90), # east wall
-    ("torch_mounted", 20.8, 1.5,  2,  90),
-    ("torch_mounted", 16,  1.5, -4.8, 180),# north wall
+    ("torch_mounted", 21, 1.5,  -2,  90),   # E wall, tile(10,-1)
+    ("torch_mounted", 21, 1.5,   2,  90),   # E wall, tile(10, 1)
+    ("torch_mounted", 16, 1.5,  -5, 180),   # N wall, tile( 8,-2)
 
-    # ── East loopback (sparse back passage) ───────────────────────────────────
+    # ── East loopback ─────────────────────────────────────────────────────────
     ("rubble_large",  12,   0,   6,  90),
 
-    # ── South room (5×5: world x=-4..4, z=12..20) ────────────────────────────
+    # ── South room (5×5: cx=-2..2, cz=6..10) ────────────────────────────────
+    # South wall tiles at cz=10 → wall z = 10*2+1 = 21
     ("column",        -2,   0,  14,   0),
     ("column",         2,   0,  14,   0),
     ("column",        -2,   0,  18,   0),
@@ -239,15 +253,17 @@ PROPS = [
     ("barrel_large",  -4,   0,  12,   0),
     ("barrel_large",   4,   0,  12,   0),
     ("rubble_large",   4,   0,  20,   0),
-    ("torch_mounted", -4, 1.5,  20.8,  0), # south wall
-    ("torch_mounted",  4, 1.5,  20.8,  0),
-    ("torch_mounted", -4.8, 1.5, 16, 270), # west wall
-    ("torch_mounted",  4.8, 1.5, 16,  90), # east wall
+    ("torch_mounted", -2, 1.5,  21,   0),   # S wall, tile(-1,10)
+    ("torch_mounted",  2, 1.5,  21,   0),   # S wall, tile( 1,10)
+    ("torch_mounted", -5, 1.5,  16, 270),   # W wall, tile(-2, 8)
+    ("torch_mounted",  5, 1.5,  16,  90),   # E wall, tile( 2, 8)
 
-    # ── South dead-end (world x=-2,0  z=22..26) ──────────────────────────────
+    # ── South dead-end ────────────────────────────────────────────────────────
     ("rubble_large",   0,   0,  26,   0),
 
-    # ── West room (5×5: world x=-12..-20, z=-4..4) ───────────────────────────
+    # ── West room (5×5: cx=-6..-10, cz=-2..2) ────────────────────────────────
+    # West wall tiles at cx=-10 → wall x = -10*2-1 = -21
+    # North wall tiles at cz=-2  → wall z = -5
     ("column",       -14,   0,  -4,   0),
     ("column",       -18,   0,  -4,   0),
     ("column",       -14,   0,   4,   0),
@@ -255,12 +271,10 @@ PROPS = [
     ("barrel_large", -20,   0,  -2,   0),
     ("barrel_large", -20,   0,   2,   0),
     ("rubble_large", -12,   0,   4,  90),
-    ("torch_mounted",-20.8, 1.5, -2, 270), # west wall
-    ("torch_mounted",-20.8, 1.5,  2, 270),
-    ("torch_mounted",-16,  1.5, -4.8, 180),# north wall
+    ("torch_mounted",-21, 1.5,  -2, 270),   # W wall, tile(-10,-1)
+    ("torch_mounted",-21, 1.5,   2, 270),   # W wall, tile(-10, 1)
+    ("torch_mounted",-16, 1.5,  -5, 180),   # N wall, tile(-8,-2)
 ]
-
-TORCH_LIGHTS = [(wx, wz) for (rid, wx, wy, wz, _) in PROPS if "torch" in rid]
 
 # Ambient corridor lights (world x, z — placed at y=2.0)
 AMBIENT_LIGHTS = [
@@ -352,26 +366,30 @@ for i, (wx, wz, rot) in enumerate(corners):
     L.append(f"transform = {tf(rot, wx, 0, wz)}")
     L.append("")
 
-# Props
+# Props  (torch arm extends local +Z, so add 180° to face into room)
 L.append('[node name="Props" type="Node3D" parent="."]')
 L.append("")
 for i, (rid, wx, wy, wz, rot) in enumerate(PROPS):
     safe = rid.replace("_", "")
-    L.append(f'[node name="P{i}_{safe}" parent="Props" instance=ExtResource("{rid}")]')
-    L.append(f"transform = {tf(rot, wx, wy, wz)}")
+    node_name = f"P{i}_{safe}"
+    is_torch = rid == "torch_mounted"
+    actual_rot = (rot + 180) % 360 if is_torch else rot
+    L.append(f'[node name="{node_name}" parent="Props" instance=ExtResource("{rid}")]')
+    L.append(f"transform = {tf(actual_rot, wx, wy, wz)}")
     L.append("")
+    if is_torch:
+        # Embed light as child so it moves with the torch in the editor
+        L.append(f'[node name="Light" type="OmniLight3D" parent="Props/{node_name}"]')
+        L.append(f"transform = {tf(0, 0, 0.3, 0.3)}")
+        L.append("light_color = Color(1.0, 0.6, 0.2, 1)")
+        L.append("light_energy = 2.5")
+        L.append("omni_range = 6.0")
+        L.append("shadow_enabled = true")
+        L.append("")
 
-# Lights
+# Ambient fill lights
 L.append('[node name="Lights" type="Node3D" parent="."]')
 L.append("")
-for i, (tx, tz) in enumerate(TORCH_LIGHTS):
-    L.append(f'[node name="Torch{i}" type="OmniLight3D" parent="Lights"]')
-    L.append(f"transform = {tf(0, tx, 1.8, tz)}")
-    L.append("light_color = Color(1.0, 0.6, 0.2, 1)")
-    L.append("light_energy = 2.5")
-    L.append("omni_range = 6.0")
-    L.append("shadow_enabled = true")
-    L.append("")
 for i, (ax, az) in enumerate(AMBIENT_LIGHTS):
     L.append(f'[node name="Amb{i}" type="OmniLight3D" parent="Lights"]')
     L.append(f"transform = {tf(0, ax, 2.0, az)}")

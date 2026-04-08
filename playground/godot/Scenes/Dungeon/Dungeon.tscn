@@ -1055,52 +1055,164 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21, 0, 5)
 [node name="Props" type="Node3D" parent="."]
 
 [node name="P0_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -6, 1.5, -6.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.5, -7)
+
+[node name="Light" type="OmniLight3D" parent="Props/P0_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P1_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 6, 1.5, -6.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, -7)
+
+[node name="Light" type="OmniLight3D" parent="Props/P1_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P2_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, 6.8)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4, 1.5, 7)
+
+[node name="Light" type="OmniLight3D" parent="Props/P2_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P3_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, 6.8)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 1.5, 7)
+
+[node name="Light" type="OmniLight3D" parent="Props/P3_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P4_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6.8, 1.5, -2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -7, 1.5, -2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P4_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P5_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6.8, 1.5, 2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -7, 1.5, 2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P5_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P6_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.8, 1.5, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7, 1.5, -2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P6_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P7_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.8, 1.5, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7, 1.5, 2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P7_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P8_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1, 1.5, -8)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1, 1.5, -8)
+
+[node name="Light" type="OmniLight3D" parent="Props/P8_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P9_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1, 1.5, -9)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1, 1.5, -10)
+
+[node name="Light" type="OmniLight3D" parent="Props/P9_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P10_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1, 1.5, 8)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1, 1.5, 8)
+
+[node name="Light" type="OmniLight3D" parent="Props/P10_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P11_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1, 1.5, 9)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1, 1.5, 10)
+
+[node name="Light" type="OmniLight3D" parent="Props/P11_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P12_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8, 1.5, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, -3)
+
+[node name="Light" type="OmniLight3D" parent="Props/P12_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P13_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, 1)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8, 1.5, 1)
+
+[node name="Light" type="OmniLight3D" parent="Props/P13_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P14_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8, 1.5, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, -3)
+
+[node name="Light" type="OmniLight3D" parent="Props/P14_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P15_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.5, 1)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8, 1.5, 1)
+
+[node name="Light" type="OmniLight3D" parent="Props/P15_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P16_column" parent="Props" instance=ExtResource("column")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -14)
@@ -1118,16 +1230,44 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -18)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -16)
 
 [node name="P21_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4, 1.5, -20.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.5, -21)
+
+[node name="Light" type="OmniLight3D" parent="Props/P21_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P22_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 1.5, -20.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, -21)
+
+[node name="Light" type="OmniLight3D" parent="Props/P22_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P23_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.8, 1.5, -16)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -5, 1.5, -16)
+
+[node name="Light" type="OmniLight3D" parent="Props/P23_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P24_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4.8, 1.5, -16)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 5, 1.5, -16)
+
+[node name="Light" type="OmniLight3D" parent="Props/P24_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P25_rubblelarge" parent="Props" instance=ExtResource("rubble_large")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -18)
@@ -1157,13 +1297,34 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 2)
 
 [node name="P34_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 20.8, 1.5, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21, 1.5, -2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P34_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P35_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 20.8, 1.5, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21, 1.5, 2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P35_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P36_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16, 1.5, -4.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1.5, -5)
+
+[node name="Light" type="OmniLight3D" parent="Props/P36_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P37_rubblelarge" parent="Props" instance=ExtResource("rubble_large")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0, 6)
@@ -1190,16 +1351,44 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 12)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 20)
 
 [node name="P45_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.5, 20.8)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2, 1.5, 21)
+
+[node name="Light" type="OmniLight3D" parent="Props/P45_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P46_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, 20.8)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 1.5, 21)
+
+[node name="Light" type="OmniLight3D" parent="Props/P46_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P47_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.8, 1.5, 16)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -5, 1.5, 16)
+
+[node name="Light" type="OmniLight3D" parent="Props/P47_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P48_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4.8, 1.5, 16)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 5, 1.5, 16)
+
+[node name="Light" type="OmniLight3D" parent="Props/P48_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P49_rubblelarge" parent="Props" instance=ExtResource("rubble_large")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 26)
@@ -1226,225 +1415,36 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 2)
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -12, 0, 4)
 
 [node name="P57_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -20.8, 1.5, -2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21, 1.5, -2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P57_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P58_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -20.8, 1.5, 2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21, 1.5, 2)
+
+[node name="Light" type="OmniLight3D" parent="Props/P58_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="P59_torchmounted" parent="Props" instance=ExtResource("torch_mounted")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -16, 1.5, -4.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1.5, -5)
+
+[node name="Light" type="OmniLight3D" parent="Props/P59_torchmounted"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+light_color = Color(1.0, 0.6, 0.2, 1)
+light_energy = 2.5
+omni_range = 6.0
+shadow_enabled = true
 
 [node name="Lights" type="Node3D" parent="."]
-
-[node name="Torch0" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.8, -6.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch1" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.8, -6.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch2" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.8, 6.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch3" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.8, 6.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch4" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.8, 1.8, -2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch5" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.8, 1.8, 2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch6" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 1.8, -2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch7" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, 1.8, 2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch8" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.8, -8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch9" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.8, -9)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch10" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.8, 8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch11" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.8, 9)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch12" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.8, -1)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch13" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.8, 1)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch14" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.8, -1)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch15" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.8, 1)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch16" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.8, -20.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch17" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.8, -20.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch18" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.8, -16)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch19" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.8, -16)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch20" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8, 1.8, -2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch21" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.8, 1.8, 2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch22" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1.8, -4.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch23" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1.8, 20.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch24" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.8, 20.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch25" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.8, 16)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch26" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.8, 16)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch27" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.8, 1.8, -2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch28" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.8, 1.8, 2)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
-
-[node name="Torch29" type="OmniLight3D" parent="Lights"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1.8, -4.8)
-light_color = Color(1.0, 0.6, 0.2, 1)
-light_energy = 2.5
-omni_range = 6.0
-shadow_enabled = true
 
 [node name="Amb0" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.0, -6)
