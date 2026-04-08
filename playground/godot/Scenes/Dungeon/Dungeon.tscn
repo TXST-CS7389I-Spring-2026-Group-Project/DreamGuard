@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://c2ikrhoq10ok7" path="res://Scenes/Dungeon/assets/torch_mounted.gltf" id="torch_mounted"]
 [ext_resource type="PackedScene" uid="uid://bwallcol00001" path="res://Scenes/Dungeon/assets/wall_col.tscn" id="wall"]
 [ext_resource type="PackedScene" uid="uid://bwcorner00001" path="res://Scenes/Dungeon/assets/wall_corner_col.tscn" id="wall_corner"]
+[ext_resource type="Script" path="res://addons/dreamguard/dream_guard_transition.gd" id="dg_script"]
+[ext_resource type="Script" path="res://Scenes/Dungeon/Dungeon.gd" id="dungeon_gd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="CaveSkyMat"]
 sky_top_color = Color(0.02, 0.02, 0.04, 1)
@@ -34,6 +36,7 @@ tonemap_mode = 2
 size = Vector3(44, 0.2, 50)
 
 [node name="Dungeon" type="Node3D" unique_id=1011783009]
+script = ExtResource("dungeon_gd")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1790193785]
 environment = SubResource("CaveEnv")
@@ -44,6 +47,10 @@ environment = SubResource("CaveEnv")
 
 [node name="Player" parent="." unique_id=848790029 instance=ExtResource("1_fjjjg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13794613, 15.976427)
+
+[node name="DreamGuardTransition" type="CanvasLayer" parent="." unique_id=100000001]
+script = ExtResource("dg_script")
+style = 0
 
 [node name="Floor" type="Node3D" parent="." unique_id=1676627090]
 
