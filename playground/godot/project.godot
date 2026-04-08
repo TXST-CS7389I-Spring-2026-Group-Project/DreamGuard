@@ -10,19 +10,29 @@ config_version=5
 
 [application]
 
-config/name="godot"
+config/name="DreamGuard"
 run/main_scene="uid://ddv1nn5xpebf2"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
-[physics]
+[autoload]
 
-3d/physics_engine="Jolt Physics"
+Globals="*res://scripts/globals.gd"
+XRToolsUserSettings="*res://addons/godot-xr-tools/user_settings/user_settings.gd"
+XRToolsRumbleManager="*res://addons/godot-xr-tools/rumble/rumble_manager.gd"
+
+[importer_defaults]
+
+animation_library={
+&"fbx/allow_geometry_helper_nodes": true
+}
 
 [rendering]
 
-rendering_device/driver.windows="d3d12"
+textures/vram_compression/import_etc2_astc=true
 
 [xr]
 
+openxr/enabled=true
+openxr/startup_alert=false
 shaders/enabled=true
