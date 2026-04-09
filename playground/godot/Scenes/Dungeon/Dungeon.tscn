@@ -6,13 +6,14 @@
 [ext_resource type="PackedScene" uid="uid://bbarrellg0001" path="res://Scenes/Dungeon/assets/barrel_large_col.tscn" id="barrel_large"]
 [ext_resource type="PackedScene" uid="uid://bchestgold001" path="res://Scenes/Dungeon/assets/chest_gold_col.tscn" id="chest_gold"]
 [ext_resource type="PackedScene" uid="uid://bcolumncol001" path="res://Scenes/Dungeon/assets/column_col.tscn" id="column"]
+[ext_resource type="Script" path="res://addons/dreamguard/passthrough/dream_guard_transition.gd" id="dg_script"]
+[ext_resource type="Script" path="res://addons/dreamguard/dream_guard.gd" id="dg_main"]
+[ext_resource type="Script" uid="uid://da8pemd084evx" path="res://Scenes/Dungeon/Dungeon.gd" id="dungeon_gd"]
 [ext_resource type="PackedScene" uid="uid://cg5cklyy6atlk" path="res://Scenes/Dungeon/assets/floor_tile_large.gltf" id="floor_tile_large"]
 [ext_resource type="PackedScene" uid="uid://brubblerg0001" path="res://Scenes/Dungeon/assets/rubble_large_col.tscn" id="rubble_large"]
 [ext_resource type="PackedScene" uid="uid://c2ikrhoq10ok7" path="res://Scenes/Dungeon/assets/torch_mounted.gltf" id="torch_mounted"]
 [ext_resource type="PackedScene" uid="uid://bwallcol00001" path="res://Scenes/Dungeon/assets/wall_col.tscn" id="wall"]
 [ext_resource type="PackedScene" uid="uid://bwcorner00001" path="res://Scenes/Dungeon/assets/wall_corner_col.tscn" id="wall_corner"]
-[ext_resource type="Script" path="res://addons/dreamguard/dream_guard_transition.gd" id="dg_script"]
-[ext_resource type="Script" path="res://Scenes/Dungeon/Dungeon.gd" id="dungeon_gd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="CaveSkyMat"]
 sky_top_color = Color(0.02, 0.02, 0.04, 1)
@@ -45,12 +46,15 @@ environment = SubResource("CaveEnv")
 
 [node name="StartXR" parent="." unique_id=292984471 instance=ExtResource("2_mtxb8")]
 
-[node name="Player" parent="." unique_id=848790029 instance=ExtResource("1_fjjjg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13794613, 15.976427)
+[node name="DreamGuard" type="Node" parent="." unique_id=100000002]
+script = ExtResource("dg_main")
+transition = NodePath("../DreamGuardTransition")
 
 [node name="DreamGuardTransition" type="CanvasLayer" parent="." unique_id=100000001]
 script = ExtResource("dg_script")
-style = 0
+
+[node name="Player" parent="." unique_id=848790029 instance=ExtResource("1_fjjjg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13794613, 15.976427)
 
 [node name="Floor" type="Node3D" parent="." unique_id=1676627090]
 
