@@ -691,130 +691,62 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -20)
 
 [node name="Room_C" type="Node3D" parent="Rooms" unique_id=1647777938]
 
-[node name="torch_mounted2" parent="Rooms/Room_C" unique_id=550175833 instance=ExtResource("11_x0s14")]
+[node name="Torches" type="Node3D" parent="Rooms/Room_C" unique_id=289272834]
+
+[node name="torch_mounted2" parent="Rooms/Room_C/Torches" unique_id=550175833 instance=ExtResource("11_x0s14")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.75, -7.75)
 
-[node name="torch_mounted30" parent="Rooms/Room_C" unique_id=1931198097 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.75, 1.75, -7.75)
-
-[node name="torch_mounted5" parent="Rooms/Room_C" unique_id=1353416096 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.25, 1.75, -7.75)
-
-[node name="torch_mounted3" parent="Rooms/Room_C" unique_id=598713513 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted3" parent="Rooms/Room_C/Torches" unique_id=598713513 instance=ExtResource("11_x0s14")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.75, -7.75)
 
-[node name="torch_mounted14" parent="Rooms/Room_C" unique_id=1500612466 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.75, -23.75)
-
-[node name="torch_mounted15" parent="Rooms/Room_C" unique_id=1447467063 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.75, -23.75)
-
-[node name="torch_mounted10" parent="Rooms/Room_C" unique_id=1527737590 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.75, 12.25)
-
-[node name="torch_mounted11" parent="Rooms/Room_C" unique_id=1078642583 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.75, 12.25)
-
-[node name="torch_mounted4" parent="Rooms/Room_C" unique_id=114433154 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 1.75, -7.75)
-
-[node name="torch_mounted31" parent="Rooms/Room_C" unique_id=1093249250 instance=ExtResource("11_x0s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.75, 1.75, -7.75)
-
-[node name="torch_mounted6" parent="Rooms/Room_C" unique_id=1938200550 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted6" parent="Rooms/Room_C/Torches" unique_id=1938200550 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 1.75, 7.75)
 
-[node name="torch_mounted18" parent="Rooms/Room_C" unique_id=1370478230 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted18" parent="Rooms/Room_C/Torches" unique_id=1370478230 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, 6)
 
-[node name="torch_mounted35" parent="Rooms/Room_C" unique_id=1361568566 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, 14)
-
-[node name="torch_mounted36" parent="Rooms/Room_C" unique_id=1071295666 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, 22)
-
-[node name="torch_mounted37" parent="Rooms/Room_C" unique_id=1437761821 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted37" parent="Rooms/Room_C/Torches" unique_id=1437761821 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -19.75, 1.75, 12)
 
-[node name="torch_mounted19" parent="Rooms/Room_C" unique_id=129931420 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted19" parent="Rooms/Room_C/Torches" unique_id=129931420 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, -6)
 
-[node name="torch_mounted38" parent="Rooms/Room_C" unique_id=1504545372 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, -14)
-
-[node name="torch_mounted39" parent="Rooms/Room_C" unique_id=1602837386 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, -22)
-
-[node name="torch_mounted28" parent="Rooms/Room_C" unique_id=751608277 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 12.5, 1.75, 6)
-
-[node name="torch_mounted29" parent="Rooms/Room_C" unique_id=707141359 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 12.5, 1.75, -6)
-
-[node name="torch_mounted22" parent="Rooms/Room_C" unique_id=682825152 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted22" parent="Rooms/Room_C/Torches" unique_id=682825152 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, 6)
 
-[node name="torch_mounted33" parent="Rooms/Room_C" unique_id=108434101 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, 22)
-
-[node name="torch_mounted34" parent="Rooms/Room_C" unique_id=94912989 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, 14)
-
-[node name="torch_mounted23" parent="Rooms/Room_C" unique_id=594703080 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted23" parent="Rooms/Room_C/Torches" unique_id=594703080 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, -6)
 
-[node name="torch_mounted40" parent="Rooms/Room_C" unique_id=1813698519 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, -14)
-
-[node name="torch_mounted41" parent="Rooms/Room_C" unique_id=116695440 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, -22)
-
-[node name="torch_mounted26" parent="Rooms/Room_C" unique_id=1427534612 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -12.5, 1.75, 6)
-
-[node name="torch_mounted27" parent="Rooms/Room_C" unique_id=590385126 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -12.5, 1.75, -6)
-
-[node name="torch_mounted24" parent="Rooms/Room_C" unique_id=493115907 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.5, 1.75, 6)
-
-[node name="torch_mounted25" parent="Rooms/Room_C" unique_id=606483495 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.5, 1.75, -6)
-
-[node name="torch_mounted20" parent="Rooms/Room_C" unique_id=1012007540 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -23.75, 1.75, 6)
-
-[node name="torch_mounted21" parent="Rooms/Room_C" unique_id=898217915 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -23.75, 1.75, -6)
-
-[node name="torch_mounted7" parent="Rooms/Room_C" unique_id=413103782 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14.25, 1.75, 7.75)
-
-[node name="torch_mounted42" parent="Rooms/Room_C" unique_id=267813735 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -22, 1.75, 7.75)
-
-[node name="torch_mounted8" parent="Rooms/Room_C" unique_id=1610334663 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted8" parent="Rooms/Room_C/Torches" unique_id=1610334663 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.75, 1.75, 7.75)
 
-[node name="torch_mounted16" parent="Rooms/Room_C" unique_id=162790151 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 1.75, 23.75)
+[node name="Room_N" type="Node3D" parent="Rooms" unique_id=679970479]
 
-[node name="torch_mounted17" parent="Rooms/Room_C" unique_id=218081869 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.75, 1.75, 23.75)
+[node name="Torches" type="Node3D" parent="Rooms/Room_N" unique_id=543256546]
 
-[node name="torch_mounted12" parent="Rooms/Room_C" unique_id=1382817839 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted14" parent="Rooms/Room_N/Torches" unique_id=1500612466 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.75, -23.75)
+
+[node name="torch_mounted15" parent="Rooms/Room_N/Torches" unique_id=1447467063 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.75, -23.75)
+
+[node name="torch_mounted38" parent="Rooms/Room_N/Torches" unique_id=1504545372 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, -14)
+
+[node name="torch_mounted39" parent="Rooms/Room_N/Torches" unique_id=1602837386 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, -22)
+
+[node name="torch_mounted40" parent="Rooms/Room_N/Torches" unique_id=1813698519 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, -14)
+
+[node name="torch_mounted41" parent="Rooms/Room_N/Torches" unique_id=116695440 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, -22)
+
+[node name="torch_mounted12" parent="Rooms/Room_N/Torches" unique_id=1382817839 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 1.75, -12.25)
 
-[node name="torch_mounted13" parent="Rooms/Room_C" unique_id=11049344 instance=ExtResource("11_x0s14")]
+[node name="torch_mounted13" parent="Rooms/Room_N/Torches" unique_id=11049344 instance=ExtResource("11_x0s14")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.75, 1.75, -12.25)
-
-[node name="torch_mounted9" parent="Rooms/Room_C" unique_id=1397815643 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14.25, 1.75, 7.75)
-
-[node name="torch_mounted32" parent="Rooms/Room_C" unique_id=502258153 instance=ExtResource("11_x0s14")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 22, 1.75, 7.75)
-
-[node name="Room_N" type="Node3D" parent="Rooms" unique_id=679970479]
 
 [node name="Column" parent="Rooms/Room_N" unique_id=943597312 instance=ExtResource("column")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -15)
@@ -832,6 +764,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -19)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17)
 
 [node name="Room_E" type="Node3D" parent="Rooms" unique_id=16338872]
+
+[node name="Torches" type="Node3D" parent="Rooms/Room_E" unique_id=1294562459]
+
+[node name="torch_mounted4" parent="Rooms/Room_E/Torches" unique_id=114433154 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.25, 1.75, -7.75)
+
+[node name="torch_mounted31" parent="Rooms/Room_E/Torches" unique_id=1093249250 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.75, 1.75, -7.75)
+
+[node name="torch_mounted28" parent="Rooms/Room_E/Torches" unique_id=751608277 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 12.5, 1.75, 6)
+
+[node name="torch_mounted29" parent="Rooms/Room_E/Torches" unique_id=707141359 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 12.5, 1.75, -6)
+
+[node name="torch_mounted24" parent="Rooms/Room_E/Torches" unique_id=493115907 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.5, 1.75, 6)
+
+[node name="torch_mounted25" parent="Rooms/Room_E/Torches" unique_id=606483495 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.5, 1.75, -6)
+
+[node name="torch_mounted9" parent="Rooms/Room_E/Torches" unique_id=1397815643 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 14.25, 1.75, 7.75)
+
+[node name="torch_mounted32" parent="Rooms/Room_E/Torches" unique_id=502258153 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 22, 1.75, 7.75)
 
 [node name="Column" parent="Rooms/Room_E" unique_id=897251350 instance=ExtResource("column")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -3)
@@ -856,6 +814,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 6)
 
 [node name="Room_W" type="Node3D" parent="Rooms" unique_id=479757663]
 
+[node name="Torches" type="Node3D" parent="Rooms/Room_W" unique_id=1101317460]
+
+[node name="torch_mounted30" parent="Rooms/Room_W/Torches" unique_id=1931198097 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.75, 1.75, -7.75)
+
+[node name="torch_mounted5" parent="Rooms/Room_W/Torches" unique_id=1353416096 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.25, 1.75, -7.75)
+
+[node name="torch_mounted26" parent="Rooms/Room_W/Torches" unique_id=1427534612 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -12.5, 1.75, 6)
+
+[node name="torch_mounted27" parent="Rooms/Room_W/Torches" unique_id=590385126 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -12.5, 1.75, -6)
+
+[node name="torch_mounted20" parent="Rooms/Room_W/Torches" unique_id=1012007540 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -23.75, 1.75, 6)
+
+[node name="torch_mounted21" parent="Rooms/Room_W/Torches" unique_id=898217915 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -23.75, 1.75, -6)
+
+[node name="torch_mounted7" parent="Rooms/Room_W/Torches" unique_id=413103782 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -14.25, 1.75, 7.75)
+
+[node name="torch_mounted42" parent="Rooms/Room_W/Torches" unique_id=267813735 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -22, 1.75, 7.75)
+
 [node name="Column" parent="Rooms/Room_W" unique_id=630788102 instance=ExtResource("column")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -3)
 
@@ -875,6 +859,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -6)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 6)
 
 [node name="Room_S" type="Node3D" parent="Rooms" unique_id=1418822201]
+
+[node name="Torches" type="Node3D" parent="Rooms/Room_S" unique_id=1067087292]
+
+[node name="torch_mounted10" parent="Rooms/Room_S/Torches" unique_id=1527737590 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.75, 12.25)
+
+[node name="torch_mounted11" parent="Rooms/Room_S/Torches" unique_id=1078642583 instance=ExtResource("11_x0s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.75, 12.25)
+
+[node name="torch_mounted35" parent="Rooms/Room_S/Torches" unique_id=1361568566 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, 14)
+
+[node name="torch_mounted36" parent="Rooms/Room_S/Torches" unique_id=1071295666 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -7.75, 1.75, 22)
+
+[node name="torch_mounted33" parent="Rooms/Room_S/Torches" unique_id=108434101 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, 22)
+
+[node name="torch_mounted34" parent="Rooms/Room_S/Torches" unique_id=94912989 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.75, 1.75, 14)
+
+[node name="torch_mounted16" parent="Rooms/Room_S/Torches" unique_id=162790151 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 1.75, 23.75)
+
+[node name="torch_mounted17" parent="Rooms/Room_S/Torches" unique_id=218081869 instance=ExtResource("11_x0s14")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.75, 1.75, 23.75)
 
 [node name="Column" parent="Rooms/Room_S" unique_id=1958116143 instance=ExtResource("column")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 15)
