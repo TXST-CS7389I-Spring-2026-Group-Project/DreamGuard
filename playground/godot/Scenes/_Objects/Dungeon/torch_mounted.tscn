@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://br3cicgqxn06g"]
+
+[ext_resource type="PackedScene" uid="uid://bfomgg2k0r5w5" path="res://Scenes/_Objects/Dungeon/glft/torch_mounted.gltf" id="1_aoxnn"]
+
+[node name="torch_mounted2" unique_id=550175833 instance=ExtResource("1_aoxnn")]
+
+[node name="Amb10" type="OmniLight3D" parent="." index="1" unique_id=868127859]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45445895, 0.31132174)
+light_color = Color(0.55, 0.4, 0.25, 1)
+light_energy = 0.6
+omni_range = 22.25

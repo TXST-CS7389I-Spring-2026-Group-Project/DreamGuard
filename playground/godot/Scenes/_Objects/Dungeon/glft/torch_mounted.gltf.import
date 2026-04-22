@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cg5cklyy6atlk"
-path="res://.godot/imported/floor_tile_large.gltf-653d692b17e3c053ad8848d875928b02.scn"
+uid="uid://bfomgg2k0r5w5"
+path="res://.godot/imported/torch_mounted.gltf-b683aa4f26ffd40722c7fa335a3759a8.scn"
 
 [deps]
 
-source_file="res://Scenes/Dungeon/assets/floor_tile_large.gltf"
-dest_files=["res://.godot/imported/floor_tile_large.gltf-653d692b17e3c053ad8848d875928b02.scn"]
+source_file="res://Scenes/_Objects/Dungeon/glft/torch_mounted.gltf"
+dest_files=["res://.godot/imported/torch_mounted.gltf-b683aa4f26ffd40722c7fa335a3759a8.scn"]
 
 [params]
 

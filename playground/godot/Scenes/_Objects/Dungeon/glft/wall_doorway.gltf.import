@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://ln0wknygdcww"
-path="res://.godot/imported/rubble_large.gltf-b29bd57e23d1b72eab9a83c82628253d.scn"
+uid="uid://bipe7gsjit6lr"
+path="res://.godot/imported/wall_doorway.gltf-20ce15b9a805a09bf7139ddbad652924.scn"
 
 [deps]
 
-source_file="res://Scenes/Dungeon/assets/rubble_large.gltf"
-dest_files=["res://.godot/imported/rubble_large.gltf-b29bd57e23d1b72eab9a83c82628253d.scn"]
+source_file="res://Scenes/_Objects/Dungeon/glft/wall_doorway.gltf"
+dest_files=["res://.godot/imported/wall_doorway.gltf-20ce15b9a805a09bf7139ddbad652924.scn"]
 
 [params]
 

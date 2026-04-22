@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bwallcol00001"]
 
-[ext_resource type="PackedScene" uid="uid://c7ik5qs3uj7k0" path="res://Scenes/Dungeon/assets/wall.gltf" id="1"]
+[ext_resource type="PackedScene" uid="uid://badwi4g154gdj" path="res://Scenes/_Objects/Dungeon/glft/wall.gltf" id="1"]
 
 [sub_resource type="BoxShape3D" id="WallShape"]
 size = Vector3(4, 4, 1)

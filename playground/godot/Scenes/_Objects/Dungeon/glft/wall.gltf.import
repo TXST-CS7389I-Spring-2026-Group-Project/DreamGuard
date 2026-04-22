@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://nma2ipikodf"
-path="res://.godot/imported/barrel_large.gltf-9f4be8d41bf75498d2a474230564281c.scn"
+uid="uid://badwi4g154gdj"
+path="res://.godot/imported/wall.gltf-91a51b762b02f243e5111bc1e36d15c6.scn"
 
 [deps]
 
-source_file="res://Scenes/Dungeon/assets/barrel_large.gltf"
-dest_files=["res://.godot/imported/barrel_large.gltf-9f4be8d41bf75498d2a474230564281c.scn"]
+source_file="res://Scenes/_Objects/Dungeon/glft/wall.gltf"
+dest_files=["res://.godot/imported/wall.gltf-91a51b762b02f243e5111bc1e36d15c6.scn"]
 
 [params]
 

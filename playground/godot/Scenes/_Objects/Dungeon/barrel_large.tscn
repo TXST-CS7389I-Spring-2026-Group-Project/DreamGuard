@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bbarrellg0001"]
 
-[ext_resource type="PackedScene" uid="uid://nma2ipikodf" path="res://Scenes/Dungeon/assets/barrel_large.gltf" id="1"]
+[ext_resource type="PackedScene" uid="uid://cx8o4blcy71fi" path="res://Scenes/_Objects/Dungeon/glft/barrel_large.gltf" id="1"]
 
 [sub_resource type="CylinderShape3D" id="BarrelShape"]
 radius = 0.9

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://w6r5klbgd5ig"
-path="res://.godot/imported/chest_gold.gltf-3ffd67715c06a77810292e9653dc18ba.scn"
+uid="uid://cx8o4blcy71fi"
+path="res://.godot/imported/barrel_large.gltf-67152e8a6f34c92bc6736b1651d6d0cb.scn"
 
 [deps]
 
-source_file="res://Scenes/Dungeon/assets/chest_gold.gltf"
-dest_files=["res://.godot/imported/chest_gold.gltf-3ffd67715c06a77810292e9653dc18ba.scn"]
+source_file="res://Scenes/_Objects/Dungeon/glft/barrel_large.gltf"
+dest_files=["res://.godot/imported/barrel_large.gltf-67152e8a6f34c92bc6736b1651d6d0cb.scn"]
 
 [params]
 
