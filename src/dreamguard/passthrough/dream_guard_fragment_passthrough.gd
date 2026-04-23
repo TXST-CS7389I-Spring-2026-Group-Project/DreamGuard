@@ -14,20 +14,30 @@
 ##   The orchestrator calls set_active() and trigger/clear automatically.
 ##
 ## SETUP (required for true passthrough, not needed for XR Simulator):
-##   Step 1 — Enable passthrough in your XR startup script (before the scene loads):
+##   Step 1 — Enable passthrough in Project Settings:
+##              Project Settings > OpenXR > Extensions > Meta > Passthrough
+##            (Requires "Advanced Settings" to be visible in Project Settings.)
+##
+##   Step 2 — Set environment background to transparent in your scene's Environment:
+##              background_mode = Environment.BG_COLOR
+##              background_color = Color(0, 0, 0, 0)  # alpha must be 0
+##            This allows alpha=0 pixels to show through to the passthrough feed.
+##
+##   Step 3 — Enable passthrough in your XR startup script (before the scene loads):
 ##              var xr := XRServer.primary_interface
-##              if xr:
+##              if xr and xr.get_supported_environment_blend_modes().has(
+##                      XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND):
 ##                  xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND
 ##            This node sets it automatically on activation, but setting it early
 ##            avoids a single-frame flash on first trigger.
 ##
-##   Step 2 — Enable transparent background on the XR SubViewport. Either:
+##   Step 4 — Enable transparent background on the XR SubViewport. Either:
 ##              a) Set transparent_bg = true on the SubViewport node in the editor, or
 ##              b) Call it in your XR startup script:
 ##                    get_viewport().transparent_bg = true
-##            This node attempts to set it in _ready() as a best-effort fallback.
+##            This node attempts to set it on activation as a best-effort fallback.
 ##
-##   Step 3 — In your app's AndroidManifest, declare passthrough intent:
+##   Step 5 — In your app's AndroidManifest, declare passthrough intent:
 ##              <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="true"/>
 ##
 ## DEPTH CONTEXT:
@@ -113,13 +123,15 @@ func _enable_passthrough_mode() -> void:
 	var xr := XRServer.primary_interface
 	if xr:
 		_prev_blend_mode = xr.environment_blend_mode
-		xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND
+		if xr.get_supported_environment_blend_modes().has(XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND):
+			xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND
 	get_viewport().transparent_bg = true
 
 func _disable_passthrough_mode() -> void:
 	var xr := XRServer.primary_interface
 	if xr:
 		xr.environment_blend_mode = _prev_blend_mode
+	get_viewport().transparent_bg = false
 	_canvas_layer.visible = false
 	blend_amount = 0.0
 	_target = 0.0

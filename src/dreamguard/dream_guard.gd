@@ -69,7 +69,8 @@ func _ready() -> void:
 		transition = _find_sibling(DreamGuardTransition)
 	if not fragment_passthrough:
 		fragment_passthrough = _find_sibling(DreamGuardFragmentPassthrough)
-	_apply_style()
+	# Defer so sibling _ready() calls (which initialize internal state) complete first.
+	_apply_style.call_deferred()
 
 func _find_sibling(type: Variant) -> Node:
 	if not get_parent():
