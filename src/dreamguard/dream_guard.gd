@@ -38,6 +38,7 @@ enum Style {
 	BLOOM_BLEND          = 3,  ## Warm bloom overlay — condition B
 	PERIPHERAL_VIGNETTE  = 4,  ## Peripheral-only darkening — condition C (GAP-motivated)
 	FRAGMENT_PASSTHROUGH = 5,  ## Voronoi fragmentation into real-world passthrough — condition D
+	WINDOW_PASSTHROUGH   = 6,  ## Rectangular passthrough window — PoC projected passthrough
 }
 
 ## CanvasLayer-based overlay node. Handles styles NONE through PERIPHERAL_VIGNETTE.
@@ -46,6 +47,10 @@ enum Style {
 ## Fragment passthrough node. Handles FRAGMENT_PASSTHROUGH.
 ## Place as child of XRCamera3D; see its script header for Quest setup steps.
 @export var fragment_passthrough: DreamGuardFragmentPassthrough
+
+## Passthrough window node. Handles WINDOW_PASSTHROUGH.
+## Auto-detected from siblings if not manually assigned.
+@export var window_passthrough: DreamGuardPassthroughWindow
 
 ## Active style. Setting this at runtime switches the active node and condition.
 @export var style: Style = Style.FOG_BLEND:
@@ -59,9 +64,13 @@ enum Style {
 ## Read-only: current blend amount from whichever node is active.
 var blend_amount: float:
 	get:
-		if style == Style.FRAGMENT_PASSTHROUGH:
-			return fragment_passthrough.blend_amount if fragment_passthrough else 0.0
-		return transition.blend_amount if transition else 0.0
+		match style:
+			Style.FRAGMENT_PASSTHROUGH:
+				return fragment_passthrough.blend_amount if fragment_passthrough else 0.0
+			Style.WINDOW_PASSTHROUGH:
+				return window_passthrough.blend_amount if window_passthrough else 0.0
+			_:
+				return transition.blend_amount if transition else 0.0
 
 func _ready() -> void:
 	# Fallback: auto-find sibling nodes by class if exports weren't wired in editor.
@@ -69,6 +78,8 @@ func _ready() -> void:
 		transition = _find_sibling(DreamGuardTransition)
 	if not fragment_passthrough:
 		fragment_passthrough = _find_sibling(DreamGuardFragmentPassthrough)
+	if not window_passthrough:
+		window_passthrough = _find_sibling(DreamGuardPassthroughWindow)
 	# Defer so sibling _ready() calls (which initialize internal state) complete first.
 	_apply_style.call_deferred()
 
@@ -82,26 +93,34 @@ func _find_sibling(type: Variant) -> Node:
 
 ## Advance to the next style in the cycle. Returns the new style.
 func next_style() -> Style:
-	style = ((int(style) + 1) % (Style.FRAGMENT_PASSTHROUGH + 1)) as Style
+	style = ((int(style) + 1) % (Style.WINDOW_PASSTHROUGH + 1)) as Style
 	return style
 
 ## Activate the current style's transition. amount = 0..1 (default 1 = full).
 func trigger(amount: float = 1.0) -> void:
-	if style == Style.FRAGMENT_PASSTHROUGH:
-		if fragment_passthrough:
-			fragment_passthrough.trigger(amount)
-	else:
-		if transition:
-			transition.trigger(amount)
+	match style:
+		Style.FRAGMENT_PASSTHROUGH:
+			if fragment_passthrough:
+				fragment_passthrough.trigger(amount)
+		Style.WINDOW_PASSTHROUGH:
+			if window_passthrough:
+				window_passthrough.trigger(amount)
+		_:
+			if transition:
+				transition.trigger(amount)
 
 ## Begin recovery — blend fades back to full VR on the active node.
 func clear() -> void:
-	if style == Style.FRAGMENT_PASSTHROUGH:
-		if fragment_passthrough:
-			fragment_passthrough.clear()
-	else:
-		if transition:
-			transition.clear()
+	match style:
+		Style.FRAGMENT_PASSTHROUGH:
+			if fragment_passthrough:
+				fragment_passthrough.clear()
+		Style.WINDOW_PASSTHROUGH:
+			if window_passthrough:
+				window_passthrough.clear()
+		_:
+			if transition:
+				transition.clear()
 
 ## Velocity-scaled trigger. Scales trigger intensity with player speed so that
 ## fast locomotion produces a stronger intervention than slow movement.
@@ -116,9 +135,10 @@ func trigger_by_velocity(velocity: Vector3, max_speed: float = 3.0) -> void:
 
 func _apply_style() -> void:
 	var is_fragment := style == Style.FRAGMENT_PASSTHROUGH
+	var is_window   := style == Style.WINDOW_PASSTHROUGH
 
 	if transition:
-		if is_fragment:
+		if is_fragment or is_window:
 			# Let the transition fade out naturally before handing off.
 			transition.clear()
 		else:
@@ -130,3 +150,8 @@ func _apply_style() -> void:
 		fragment_passthrough.set_active(is_fragment)
 		if not is_fragment:
 			fragment_passthrough.clear()
+
+	if window_passthrough:
+		window_passthrough.set_active(is_window)
+		if not is_window:
+			window_passthrough.clear()

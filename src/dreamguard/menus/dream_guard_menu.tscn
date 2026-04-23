@@ -1,6 +1,6 @@
 ; DreamGuard Menu scene.
 ; Place this scene anywhere in your VR scene (e.g. under XROrigin3D).
-; Assign `controller`, `camera`, and `dreamguard` in the Inspector, or leave
+; Assign `controllers`, `camera`, and `dreamguard` in the Inspector, or leave
 ; them blank for auto-detection from the scene tree.
 ;
 ; INTERACTION:
@@ -31,7 +31,7 @@ emission_energy_multiplier = 1.5
 ; --- Menu panel --------------------------------------------------------------
 
 [sub_resource type="BoxMesh" id="BgMesh"]
-size = Vector3(0.22, 0.26, 0.002)
+size = Vector3(0.22, 0.295, 0.002)
 
 [sub_resource type="StandardMaterial3D" id="BgMat"]
 shading_mode = 1
@@ -72,7 +72,7 @@ mesh = SubResource("BeamMesh")
 surface_material_override/0 = SubResource("BeamMat")
 
 ; MenuPanel is repositioned globally in _open_menu().
-; Its local origin is at the panel centre; -Z faces the camera after look_at().
+; Its local origin is at the panel centre; +Z faces the camera (content at +Z offsets).
 [node name="MenuPanel" type="Node3D" parent="."]
 
 [node name="Background" type="MeshInstance3D" parent="MenuPanel"]
@@ -80,7 +80,7 @@ mesh = SubResource("BgMesh")
 surface_material_override/0 = SubResource("BgMat")
 
 [node name="TitleLabel" type="Label3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.108, -0.003)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.126, 0.003)
 pixel_size = 0.0005
 no_depth_test = true
 text = "DreamGuard Mode"
@@ -88,11 +88,11 @@ font_size = 36
 outline_size = 4
 
 ; --- Buttons (Y axis, top = positive) ----------------------------------------
-; Layout: 6 buttons × 0.028 m height + 0.007 m gap = 0.035 m per slot
-; Centre range: ±0.0875 m  →  slots at 0.070, 0.035, 0.000, -0.035, -0.070, -0.105
+; Layout: 7 buttons × 0.028 m height + 0.007 m gap = 0.035 m per slot
+; Centre range: ±0.105 m  →  slots at 0.105, 0.070, 0.035, 0.000, -0.035, -0.070, -0.105
 
 [node name="BtnNone" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.070, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.105, 0)
 collision_layer = 2
 collision_mask = 0
 
@@ -100,12 +100,12 @@ collision_mask = 0
 shape = SubResource("BtnShape")
 
 [node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnNone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
 [node name="Label" type="Label3D" parent="MenuPanel/BtnNone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
 text = "None (Control)"
@@ -115,7 +115,7 @@ outline_size = 3
 ; ----
 
 [node name="BtnGrid" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.070, 0)
 collision_layer = 2
 collision_mask = 0
 
@@ -123,12 +123,12 @@ collision_mask = 0
 shape = SubResource("BtnShape")
 
 [node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnGrid"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
 [node name="Label" type="Label3D" parent="MenuPanel/BtnGrid"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
 text = "Grid"
@@ -138,7 +138,7 @@ outline_size = 3
 ; ----
 
 [node name="BtnFogBlend" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.000, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
 collision_layer = 2
 collision_mask = 0
 
@@ -146,12 +146,12 @@ collision_mask = 0
 shape = SubResource("BtnShape")
 
 [node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnFogBlend"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
 [node name="Label" type="Label3D" parent="MenuPanel/BtnFogBlend"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
 text = "Fog Blend"
@@ -161,7 +161,7 @@ outline_size = 3
 ; ----
 
 [node name="BtnBloomBlend" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.035, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.000, 0)
 collision_layer = 2
 collision_mask = 0
 
@@ -169,12 +169,12 @@ collision_mask = 0
 shape = SubResource("BtnShape")
 
 [node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnBloomBlend"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
 [node name="Label" type="Label3D" parent="MenuPanel/BtnBloomBlend"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
 text = "Bloom Blend"
@@ -184,7 +184,7 @@ outline_size = 3
 ; ----
 
 [node name="BtnPeripheralVignette" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.070, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.035, 0)
 collision_layer = 2
 collision_mask = 0
 
@@ -192,12 +192,12 @@ collision_mask = 0
 shape = SubResource("BtnShape")
 
 [node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnPeripheralVignette"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
 [node name="Label" type="Label3D" parent="MenuPanel/BtnPeripheralVignette"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
 text = "Peripheral Vignette"
@@ -207,7 +207,7 @@ outline_size = 3
 ; ----
 
 [node name="BtnFragmentPassthrough" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.105, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.070, 0)
 collision_layer = 2
 collision_mask = 0
 
@@ -215,14 +215,37 @@ collision_mask = 0
 shape = SubResource("BtnShape")
 
 [node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnFragmentPassthrough"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.002)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
 [node name="Label" type="Label3D" parent="MenuPanel/BtnFragmentPassthrough"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.006)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
 text = "Fragment Passthrough"
+font_size = 20
+outline_size = 3
+
+; ----
+
+[node name="BtnWindowPassthrough" type="Area3D" parent="MenuPanel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.105, 0)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnWindowPassthrough"]
+shape = SubResource("BtnShape")
+
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnWindowPassthrough"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
+mesh = SubResource("BtnMesh")
+surface_material_override/0 = SubResource("BtnMatDefault")
+
+[node name="Label" type="Label3D" parent="MenuPanel/BtnWindowPassthrough"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
+pixel_size = 0.0005
+no_depth_test = true
+text = "Passthrough Window"
 font_size = 20
 outline_size = 3

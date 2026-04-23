@@ -40,6 +40,7 @@ script = ExtResource("dungeon_gd")
 environment = SubResource("CaveEnv")
 
 [node name="StartXR" parent="." unique_id=292984471 instance=ExtResource("2_mtxb8")]
+enable_passthrough = true
 
 [node name="Player" parent="." unique_id=848790029 instance=ExtResource("1_fjjjg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13794613, -0.023572922)

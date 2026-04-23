@@ -4,10 +4,12 @@
 ## HOW TO USE:
 ##   1. Instance DreamGuardMenu.tscn anywhere in your scene (e.g. under XROrigin3D).
 ##   2. In the Inspector assign:
-##        controller  — the XRController3D that opens the menu and aims the laser.
+##        controllers — the XRController3D nodes that open the menu and aim the laser.
+##                      Leave empty for auto-detection (all XRController3D in the tree).
 ##        camera      — your XRCamera3D (head). Auto-detected if left blank.
 ##        dreamguard  — your DreamGuard node. Auto-detected if left blank.
-##   3. Press [menu_button] (default: "by_button" = B/Y) to toggle the menu.
+##   3. Press [menu_button] (default: "by_button" = B/Y, or KEY_1 with Q/E in simulator)
+##      on either controller to toggle the menu.
 ##      The panel appears at [menu_distance] metres in front of the camera.
 ##   4. Aim the controller laser at a button, then press [select_button]
 ##      (default: "trigger_click") to activate that style. The menu closes on select.
@@ -27,8 +29,10 @@ const BUTTON_LAYER := 2  # physics layer used exclusively for menu buttons
 ## DreamGuard orchestrator. Auto-detected from the scene tree if not assigned.
 @export var dreamguard: DreamGuard
 
-## Controller that opens the menu and emits the laser.
-@export var controller: XRController3D
+## Controllers that open the menu and emit the laser. All listed controllers
+## are monitored for [menu_button] presses. Leave empty for auto-detection
+## (all XRController3D nodes in the scene tree will be used).
+@export var controllers: Array[XRController3D]
 
 ## Head / camera node. Menu panel is placed [menu_distance] m in front of it.
 ## Auto-detected from the scene tree if not assigned.
@@ -58,6 +62,7 @@ const _HOVER_COLOR    := Color(0.28, 0.40, 0.65)
 
 var _open: bool = false
 var _hovered_idx: int = -1
+var _aiming_controller: XRController3D = null  # controller currently aiming the laser
 
 @onready var _laser_pivot: Node3D = $LaserPivot
 @onready var _ray: RayCast3D = $LaserPivot/RayCast3D
@@ -70,6 +75,7 @@ var _hovered_idx: int = -1
 	$MenuPanel/BtnBloomBlend,
 	$MenuPanel/BtnPeripheralVignette,
 	$MenuPanel/BtnFragmentPassthrough,
+	$MenuPanel/BtnWindowPassthrough,
 ]
 
 # ---------------------------------------------------------------------------
@@ -79,8 +85,10 @@ func _ready() -> void:
 		dreamguard = _find_node_of_type(get_tree().root, DreamGuard) as DreamGuard
 	if not camera:
 		camera = _find_node_of_type(get_tree().root, XRCamera3D) as XRCamera3D
-	if not controller:
-		controller = _find_node_of_type(get_tree().root, XRController3D) as XRController3D
+
+	# Auto-detect all XRController3D nodes if none were assigned in the Inspector.
+	if controllers.is_empty():
+		_collect_all_controllers(get_tree().root)
 
 	_panel.visible = false
 	_laser_pivot.visible = false
@@ -88,25 +96,26 @@ func _ready() -> void:
 	_apply_laser_color()
 	_refresh_highlights()
 
-	if controller:
-		controller.button_pressed.connect(_on_button_pressed)
+	for c in controllers:
+		c.button_pressed.connect(_on_button_pressed.bind(c))
 
 func _process(_delta: float) -> void:
 	if not _open:
 		return
-	if controller:
-		_laser_pivot.global_transform = controller.global_transform
+	if _aiming_controller:
+		_laser_pivot.global_transform = _aiming_controller.global_transform
 	_ray.force_raycast_update()
 	_update_hover()
 	_update_beam()
 
 # ---------------------------------------------------------------------------
 
-func _on_button_pressed(button: StringName) -> void:
+func _on_button_pressed(button: StringName, from_controller: XRController3D) -> void:
 	if button == menu_button:
 		if _open:
 			_close()
 		else:
+			_aiming_controller = from_controller
 			_open_menu()
 	elif button == select_button and _open and _hovered_idx >= 0:
 		_select_style(_hovered_idx)
@@ -116,11 +125,24 @@ func _open_menu() -> void:
 	if camera:
 		var fwd := -camera.global_transform.basis.z
 		_panel.global_position = camera.global_position + fwd * menu_distance
-		# look_at makes local -Z face the camera, but also mirrors the X axis
-		# (180° Y rotation), causing text to appear backwards. Negate X to fix.
-		_panel.look_at(camera.global_position, Vector3.UP)
-		var b := _panel.global_transform.basis
-		_panel.global_transform.basis = Basis(-b.x, b.y, b.z)
+		# Build an orthonormal basis with +Z facing the camera so that Label3D
+		# text (rendered on the +Z face) reads correctly and the panel is upright.
+		#
+		# RIGHT-HANDED DERIVATION:
+		#   to_cam = normalize(camera - panel)  → panel's local +Z
+		#   right  = UP × to_cam               → panel's local +X (world right)
+		#   up     = to_cam × right             → panel's local +Y (world up)
+		#
+		# NOTE: content in the scene (labels, buttons) must sit at +Z offsets,
+		# not −Z, so that they face the camera through the +Z face.
+		var to_cam := (camera.global_position - _panel.global_position).normalized()
+		var right := Vector3.UP.cross(to_cam).normalized()
+		if right.length_squared() < 0.0001:
+			# Degenerate: camera directly above or below — fall back to camera right.
+			right = camera.global_transform.basis.x
+		var up := to_cam.cross(right).normalized()
+		_panel.global_transform.basis = Basis(right, up, to_cam)
+
 	_open = true
 	_panel.visible = true
 	_laser_pivot.visible = true
@@ -132,6 +154,7 @@ func _close() -> void:
 	_panel.visible = false
 	_laser_pivot.visible = false
 	_hovered_idx = -1
+	_aiming_controller = null
 
 # ---------------------------------------------------------------------------
 
@@ -158,7 +181,11 @@ func _update_beam() -> void:
 
 func _select_style(index: int) -> void:
 	if dreamguard:
-		dreamguard.style = index as DreamGuard.Style
+		# Clicking an already-active style toggles it off (back to NONE).
+		if int(dreamguard.style) == index:
+			dreamguard.style = DreamGuard.Style.NONE
+		else:
+			dreamguard.style = index as DreamGuard.Style
 	_refresh_highlights()
 
 func _refresh_highlights() -> void:
@@ -197,6 +224,13 @@ func _find_node_of_type(root: Node, type: Variant) -> Node:
 		if found:
 			return found
 	return null
+
+## Collect all XRController3D nodes in [root]'s subtree into [controllers].
+func _collect_all_controllers(root: Node) -> void:
+	if root is XRController3D:
+		controllers.append(root as XRController3D)
+	for child in root.get_children():
+		_collect_all_controllers(child)
 
 # ---------------------------------------------------------------------------
 

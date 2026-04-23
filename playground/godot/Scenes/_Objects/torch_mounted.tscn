@@ -1,9 +1,0 @@
-[gd_scene format=3 uid="uid://1ipno603gle0"]
-
-[node name="torch_mounted2" unique_id=550175833]
-
-[node name="Amb10" type="OmniLight3D" parent="." index="1" unique_id=868127859]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45445895, 0.31132174)
-light_color = Color(0.55, 0.4, 0.25, 1)
-light_energy = 0.6
-omni_range = 5.4526033

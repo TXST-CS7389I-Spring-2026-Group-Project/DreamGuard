@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="DreamGuard"
-run/main_scene="uid://ddv1nn5xpebf2"
-config/features=PackedStringArray("4.6", "Forward Plus")
+run/main_scene="uid://c4ju1i01sc23h"
+config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -30,6 +30,7 @@ animation_library={
 
 [rendering]
 
+renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true
 
 [xr]
@@ -37,3 +38,4 @@ textures/vram_compression/import_etc2_astc=true
 openxr/enabled=true
 openxr/startup_alert=false
 shaders/enabled=true
+openxr/extensions/meta/passthrough=true

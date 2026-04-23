@@ -5,10 +5,13 @@
 [ext_resource type="PackedScene" uid="uid://bl2nuu3qhlb5k" path="res://addons/godot-xr-tools/functions/movement_direct.tscn" id="3_52ee3"]
 [ext_resource type="PackedScene" uid="uid://b6bk2pj8vbj28" path="res://addons/godot-xr-tools/functions/movement_turn.tscn" id="4_bhhdu"]
 [ext_resource type="PackedScene" uid="uid://b4kad2kuba1yn" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/left_hand_low.tscn" id="5_nn08x"]
-[ext_resource type="Script" uid="uid://bufc2i31s864b" path="res://addons/dreamguard/dream_guard.gd" id="dg_main"]
-[ext_resource type="Script" uid="uid://b30we7te36qms" path="res://addons/dreamguard/passthrough/dream_guard_transition.gd" id="dg_transition"]
+[ext_resource type="Script" uid="uid://bt487x7ro4sun" path="res://addons/dreamguard/simulator/dream_guard_passthrough_simulator.gd" id="7_yoq75"]
+[ext_resource type="PackedScene" uid="uid://cq30k58orro21" path="res://Scenes/Forest/Forest.tscn" id="8_ksbbd"]
 [ext_resource type="Script" uid="uid://c3dstn3bhv3r7" path="res://addons/dreamguard/passthrough/dream_guard_fragment_passthrough.gd" id="dg_fragment"]
-[ext_resource type="PackedScene" uid="uid://dg_menu_v1" path="res://addons/dreamguard/menus/dream_guard_menu.tscn" id="dg_menu"]
+[ext_resource type="Script" uid="uid://bufc2i31s864b" path="res://addons/dreamguard/dream_guard.gd" id="dg_main"]
+[ext_resource type="PackedScene" path="res://addons/dreamguard/menus/dream_guard_menu.tscn" id="dg_menu"]
+[ext_resource type="Script" uid="uid://b30we7te36qms" path="res://addons/dreamguard/passthrough/dream_guard_transition.gd" id="dg_transition"]
+[ext_resource type="Script" uid="uid://bcf8jw1eogp3" path="res://addons/dreamguard/passthrough/dream_guard_passthrough_window.gd" id="dg_window"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yoq75"]
 radius = 0.4985962
@@ -52,10 +55,17 @@ turn_mode = 2
 [node name="DreamGuard" type="Node" parent="." unique_id=200000001]
 script = ExtResource("dg_main")
 
+[node name="DreamGuardSimulator" type="Node" parent="." unique_id=1811665888]
+script = ExtResource("7_yoq75")
+room_scene = ExtResource("8_ksbbd")
+
 [node name="DreamGuardTransition" type="CanvasLayer" parent="." unique_id=200000002]
 script = ExtResource("dg_transition")
 
 [node name="DreamGuardFragmentPassthrough" type="Node" parent="." unique_id=200000003]
 script = ExtResource("dg_fragment")
+
+[node name="DreamGuardPassthroughWindow" type="Node" parent="." unique_id=200000005]
+script = ExtResource("dg_window")
 
 [node name="DreamGuardMenu" parent="." unique_id=200000004 instance=ExtResource("dg_menu")]
