@@ -134,6 +134,8 @@ func trigger_by_velocity(velocity: Vector3, max_speed: float = 3.0) -> void:
 # ---------------------------------------------------------------------------
 
 func _apply_style() -> void:
+	print("[DreamGuard] _apply_style style=%s" % style)
+	print_stack()
 	var is_fragment := style == Style.FRAGMENT_PASSTHROUGH
 	var is_window   := style == Style.WINDOW_PASSTHROUGH
 
