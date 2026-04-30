@@ -6,12 +6,12 @@
 [ext_resource type="PackedScene" uid="uid://b6bk2pj8vbj28" path="res://addons/godot-xr-tools/functions/movement_turn.tscn" id="4_bhhdu"]
 [ext_resource type="PackedScene" uid="uid://b4kad2kuba1yn" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/left_hand_low.tscn" id="5_nn08x"]
 [ext_resource type="Script" uid="uid://c3dstn3bhv3r7" path="res://addons/dreamguard/passthrough/dream_guard_fragment_passthrough.gd" id="dg_fragment"]
+[ext_resource type="Script" uid="uid://d1u7n6sn4pfub" path="res://addons/dreamguard/dream_guard_logger.gd" id="dg_logger"]
 [ext_resource type="Script" uid="uid://bufc2i31s864b" path="res://addons/dreamguard/dream_guard.gd" id="dg_main"]
-[ext_resource type="PackedScene" path="res://addons/dreamguard/menus/dream_guard_menu.tscn" id="dg_menu"]
+[ext_resource type="PackedScene" uid="uid://7ihv4fgp4yx4" path="res://addons/dreamguard/menus/dream_guard_menu.tscn" id="dg_menu"]
+[ext_resource type="Script" uid="uid://bdeyqqrbk0v2v" path="res://addons/dreamguard/dream_guard_proximity.gd" id="dg_proximity"]
 [ext_resource type="Script" uid="uid://b30we7te36qms" path="res://addons/dreamguard/passthrough/dream_guard_transition.gd" id="dg_transition"]
 [ext_resource type="Script" uid="uid://bcf8jw1eogp3" path="res://addons/dreamguard/passthrough/dream_guard_passthrough_window.gd" id="dg_window"]
-[ext_resource type="Script" uid="uid://bdeyqqrbk0v2v" path="res://addons/dreamguard/dream_guard_proximity.gd" id="dg_proximity"]
-[ext_resource type="Script" uid="uid://d1u7n6sn4pfub" path="res://addons/dreamguard/dream_guard_logger.gd" id="dg_logger"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yoq75"]
 radius = 0.4985962
@@ -52,8 +52,11 @@ metadata/_edit_group_ = true
 [node name="MovementTurn" parent="LeftHand" unique_id=1088555345 instance=ExtResource("4_bhhdu")]
 turn_mode = 2
 
-[node name="DreamGuard" type="Node" parent="." unique_id=200000001]
+[node name="DreamGuard" type="Node" parent="." unique_id=200000001 node_paths=PackedStringArray("transition", "fragment_passthrough", "window_passthrough")]
 script = ExtResource("dg_main")
+transition = NodePath("../DreamGuardTransition")
+fragment_passthrough = NodePath("../DreamGuardFragmentPassthrough")
+window_passthrough = NodePath("../DreamGuardPassthroughWindow")
 
 [node name="DreamGuardTransition" type="Node" parent="." unique_id=200000002]
 script = ExtResource("dg_transition")
@@ -64,10 +67,17 @@ script = ExtResource("dg_fragment")
 [node name="DreamGuardPassthroughWindow" type="Node" parent="." unique_id=200000005]
 script = ExtResource("dg_window")
 
-[node name="DreamGuardMenu" parent="." unique_id=200000004 instance=ExtResource("dg_menu")]
+[node name="DreamGuardMenu" parent="." unique_id=200000004 node_paths=PackedStringArray("dreamguard", "controllers", "camera") instance=ExtResource("dg_menu")]
+dreamguard = NodePath("../DreamGuard")
+controllers = [NodePath("../RightHand")]
+camera = NodePath("../XRCamera3D")
 
-[node name="DreamGuardProximity" type="Node" parent="." unique_id=200000006]
+[node name="DreamGuardProximity" type="Node" parent="." unique_id=200000006 node_paths=PackedStringArray("dreamguard")]
 script = ExtResource("dg_proximity")
+dreamguard = NodePath("../DreamGuard")
 
-[node name="DreamGuardLogger" type="Node" parent="." unique_id=200000007]
+[node name="DreamGuardLogger" type="Node" parent="." unique_id=200000007 node_paths=PackedStringArray("dreamguard")]
 script = ExtResource("dg_logger")
+dreamguard = NodePath("../DreamGuard")
+
+[node name="OpenXRFbPassthroughGeometry" type="OpenXRFbPassthroughGeometry" parent="." unique_id=9504714]
