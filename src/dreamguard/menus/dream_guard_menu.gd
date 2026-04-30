@@ -186,6 +186,11 @@ func _select_style(index: int) -> void:
 			dreamguard.style = DreamGuard.Style.NONE
 		else:
 			dreamguard.style = index as DreamGuard.Style
+			# Immediately show the effect at full intensity so the researcher
+			# can preview the condition. Window passthrough already does this
+			# via set_active(); trigger() here keeps all styles consistent.
+			if index != DreamGuard.Style.NONE:
+				dreamguard.trigger(1.0)
 	_refresh_highlights()
 
 func _refresh_highlights() -> void:

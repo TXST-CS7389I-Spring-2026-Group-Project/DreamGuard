@@ -42,15 +42,16 @@ class_name DreamGuardPassthroughWindow
 extends Node
 
 ## Width of the passthrough window as a fraction of screen width (UV 0..1).
-@export_range(0.1, 0.9, 0.01)    var window_width:  float = 0.45
+@export_range(0.1, 0.9, 0.01) var window_width:    float = 0.45
 ## Height of the passthrough window as a fraction of screen height (UV 0..1).
-@export_range(0.1, 0.9, 0.01)    var window_height: float = 0.35
-## Border ring thickness in UV space.
-@export_range(0.002, 0.05, 0.001) var border_width:  float = 0.012
-## Colour of the window frame (multiplied onto VR RGB).
-@export                           var border_color:  Color = Color(0.3, 0.5, 1.0)
+@export_range(0.1, 0.9, 0.01) var window_height:   float = 0.35
+## Horizontal centre of the window in SCREEN_UV space (0 = left, 1 = right).
+## Adjust if the window appears off-centre on the target device.
+@export_range(0.0, 1.0, 0.01) var window_center_x: float = 0.5
+## Vertical centre of the window in SCREEN_UV space (0 = top, 1 = bottom).
+@export_range(0.0, 1.0, 0.01) var window_center_y: float = 0.5
 ## Speed (units/sec) at which the window fades in and out.
-@export_range(0.5, 10.0, 0.1)    var fade_speed:    float = 3.0
+@export_range(0.5, 10.0, 0.1) var fade_speed:      float = 3.0
 
 ## Current blend value (0 = hidden, 1 = fully visible). Read-only at runtime.
 var blend_amount: float = 0.0
@@ -98,12 +99,11 @@ func _ready() -> void:
 	_window_mat = ShaderMaterial.new()
 	_window_mat.shader = preload(
 			"res://addons/dreamguard/passthrough/shaders/passthrough_window_spatial.gdshader")
-	_window_mat.set_shader_parameter("blend_amount",  0.0)
-	_window_mat.set_shader_parameter("window_width",  window_width)
-	_window_mat.set_shader_parameter("window_height", window_height)
-	_window_mat.set_shader_parameter("border_width",  border_width)
-	_window_mat.set_shader_parameter("border_color",
-			Vector3(border_color.r, border_color.g, border_color.b))
+	_window_mat.set_shader_parameter("blend_amount",    0.0)
+	_window_mat.set_shader_parameter("window_width",   window_width)
+	_window_mat.set_shader_parameter("window_height",  window_height)
+	_window_mat.set_shader_parameter("window_center_x", window_center_x)
+	_window_mat.set_shader_parameter("window_center_y", window_center_y)
 	_window_mat.render_priority = 1   # Renders after ceiling fix.
 
 	_window_mesh = MeshInstance3D.new()

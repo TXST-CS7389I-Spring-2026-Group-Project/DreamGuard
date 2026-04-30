@@ -1,30 +1,43 @@
-// DreamGuard — Bloom Blend overlay.
-// Warm overexposure that builds from the periphery inward — condition B (Style 3).
-// Peaks with a lens-flare-like centre bloom, then settles to a warm neutral
-// simulating passthrough.
+// DreamGuard — Bloom Blend.
+// Peripheral warm-bloom passthrough: the VR content warms and brightens at the
+// passthrough boundary before the real world fades in, simulating a lens-flare /
+// overexposure transition rather than an opaque coloured overlay.
+//
+// blend_mul — bloom zone zeros alpha (passthrough) while the transition band
+//             tints VR with warm colour to simulate a glowing bloom edge.
+//
+// Render pass 2 of 2: runs after the transition ceiling fix (render_priority=3).
 
-shader_type canvas_item;
-render_mode blend_mix, unshaded;
+shader_type spatial;
+render_mode blend_mul, unshaded, cull_disabled, depth_test_disabled, depth_draw_never;
 
 uniform float blend_amount : hint_range(0.0, 1.0) = 0.0;
 
+varying vec2 clip_uv;
+
+void vertex() {
+	POSITION = vec4(VERTEX.xy * 2.0, 0.0, 1.0);
+	clip_uv  = VERTEX.xy + vec2(0.5);
+}
+
 void fragment() {
 	float b = blend_amount;
-
-	vec2 c = UV - 0.5;
+	vec2 c  = clip_uv - 0.5;
 	float r = length(c);
 
-	// Peripheral haze builds first (b 0→0.5)
-	float rim = smoothstep(0.30, 0.50, r) * smoothstep(0.0, 0.5, b);
-	// Centre flare arrives later (b 0.4→1.0)
-	float core = (1.0 - smoothstep(0.0, 0.38, r)) * smoothstep(0.35, 1.0, b);
-	float bloom = clamp(rim + core + b * 0.30, 0.0, 1.0);
+	// Peripheral bloom builds from edges inward.
+	float rim   = smoothstep(0.18, 0.50, r);
+	float bloom = clamp(rim * b, 0.0, 1.0);
 
-	// Warm white → warm neutral passthrough sim
-	vec3 bloom_rgb = mix(
-		vec3(1.00, 0.96, 0.86),   // Overexposed warm white
-		vec3(0.74, 0.70, 0.65),   // Passthrough sim (warm neutral)
-		smoothstep(0.55, 1.0, b)
-	);
-	COLOR = vec4(bloom_rgb, clamp(bloom * 0.93, 0.0, 1.0));
+	// Warm glow in the transition band: ALBEDO shifts toward warm-white just
+	// before the pixel fully transitions to passthrough (blend_mul tints VR).
+	// Peaks at bloom ≈ 0.45, gone by bloom = 1.0 (fully passthrough by then).
+	float glow = smoothstep(0.0, 0.50, bloom) * (1.0 - smoothstep(0.60, 1.0, bloom));
+	vec3  warm = mix(vec3(1.0), vec3(1.0, 0.88, 0.70), glow);
+
+	// Passthrough in the fully bloomed zone.
+	float passthrough = smoothstep(0.55, 1.0, bloom) * 0.92;
+
+	ALBEDO = warm;
+	ALPHA  = 1.0 - passthrough;
 }

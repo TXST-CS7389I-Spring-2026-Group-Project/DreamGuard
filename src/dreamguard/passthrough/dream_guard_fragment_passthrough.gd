@@ -5,40 +5,30 @@
 ##
 ## HOW TO USE (standalone):
 ##   1. Add this node anywhere in your scene. Conventionally, place it as a
-##      child of your XRCamera3D so it lives logically with the camera — the
-##      overlay is implemented as a CanvasLayer so its position doesn't matter.
+##      child of your XRCamera3D so it lives logically with the camera.
 ##   2. Follow the SETUP steps below, then call trigger() / clear() as needed.
 ##
 ## HOW TO USE (with orchestrator):
 ##   Assign this node to the [fragment_passthrough] export on a DreamGuard node.
 ##   The orchestrator calls set_active() and trigger/clear automatically.
 ##
-## SETUP (required for true passthrough, not needed for XR Simulator):
-##   Step 1 — Enable passthrough in Project Settings:
-##              Project Settings > OpenXR > Extensions > Meta > Passthrough
-##            (Requires "Advanced Settings" to be visible in Project Settings.)
+## TECHNIQUE — two spatial fullscreen quads with clip-space vertex trick:
+##   Same two-pass approach as DreamGuardPassthroughWindow.
+##   Canvas layers do NOT write to the XR eye swapchain alpha in Godot 4
+##   Forward Mobile + OpenXR, so spatial shaders are used instead.
 ##
-##   Step 2 — Set environment background to transparent in your scene's Environment:
-##              background_mode = Environment.BG_COLOR
-##              background_color = Color(0, 0, 0, 0)  # alpha must be 0
-##            This allows alpha=0 pixels to show through to the passthrough feed.
+##   Pass 1 — passthrough_ceiling_fix.gdshader (blend_add, priority 0)
+##     Raises sky/ceiling pixels from alpha=0 to 1 without touching RGB.
+##   Pass 2 — fragment_passthrough.gdshader (blend_mul, priority 1)
+##     In cracks: ALPHA=0 → XR compositor shows passthrough.
+##     In cells:  ALPHA=1, ALBEDO=(1,1,1) → VR preserved.
 ##
-##   Step 3 — Enable passthrough in your XR startup script (before the scene loads):
-##              var xr := XRServer.primary_interface
-##              if xr and xr.get_supported_environment_blend_modes().has(
-##                      XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND):
-##                  xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND
-##            This node sets it automatically on activation, but setting it early
-##            avoids a single-frame flash on first trigger.
-##
-##   Step 4 — Enable transparent background on the XR SubViewport. Either:
-##              a) Set transparent_bg = true on the SubViewport node in the editor, or
-##              b) Call it in your XR startup script:
-##                    get_viewport().transparent_bg = true
-##            This node attempts to set it on activation as a best-effort fallback.
-##
-##   Step 5 — In your app's AndroidManifest, declare passthrough intent:
-##              <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="true"/>
+## SETUP (required for true passthrough on Quest):
+##   Step 1 — Project Settings > OpenXR > Extensions > Meta > Passthrough = ON
+##   Step 2 — StartXR node: enable_passthrough = true  (already set in Dungeon.tscn)
+##   Step 3 — AndroidManifest:
+##              <uses-feature android:name="com.oculus.feature.PASSTHROUGH"
+##                            android:required="true"/>
 ##
 ## DEPTH CONTEXT:
 ##   True depth-buffer sampling is unavailable on Quest (Compatibility renderer).
@@ -65,32 +55,55 @@ extends Node
 ## Current blend value, 0 = full VR, 1 = full fragmentation. Read-only.
 var blend_amount: float = 0.0
 
-var _target:        float = 0.0
-var _canvas_layer:  CanvasLayer
-var _overlay:       ColorRect
-var _mat:           ShaderMaterial
+var _target: float = 0.0
 var _prev_blend_mode: int = XRInterface.XR_ENV_BLEND_MODE_OPAQUE
+
+var _ceiling_mat: ShaderMaterial   # blend_add — raises sky alpha to 1
+var _fragment_mat: ShaderMaterial  # blend_mul — zeros alpha inside cracks
+
+var _ceiling_mesh: MeshInstance3D
+var _fragment_mesh: MeshInstance3D
 
 # ---------------------------------------------------------------------------
 
 func _ready() -> void:
-	_canvas_layer = CanvasLayer.new()
-	_canvas_layer.layer = 6  # Above DreamGuardTransition (layer 5)
+	# Shared fullscreen QuadMesh. The vertex shader sets POSITION in clip space,
+	# so world-space size/position of the quad doesn't matter.
+	var quad := QuadMesh.new()
+	quad.size = Vector2(1.0, 1.0)
 
-	_overlay = ColorRect.new()
-	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_overlay.color = Color.WHITE  # shader drives actual output
+	# ── Pass 1: ceiling fix (blend_add) ──────────────────────────────────────
+	_ceiling_mat = ShaderMaterial.new()
+	_ceiling_mat.shader = preload(
+			"res://addons/dreamguard/passthrough/shaders/passthrough_ceiling_fix.gdshader")
+	_ceiling_mat.set_shader_parameter("blend_amount", 0.0)
+	_ceiling_mat.render_priority = 0
 
-	_mat = ShaderMaterial.new()
-	_mat.shader = preload("res://addons/dreamguard/passthrough/shaders/fragment_passthrough.gdshader")
-	_mat.set_shader_parameter("blend_amount", 0.0)
-	_mat.set_shader_parameter("cell_scale", cell_scale)
-	_overlay.material = _mat
+	_ceiling_mesh = MeshInstance3D.new()
+	_ceiling_mesh.mesh = quad
+	_ceiling_mesh.material_override = _ceiling_mat
+	_ceiling_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_ceiling_mesh.visible = false
+	add_child(_ceiling_mesh)
+	_ceiling_mesh.set_custom_aabb(AABB(Vector3(-1e6, -1e6, -1e6), Vector3(2e6, 2e6, 2e6)))
 
-	_canvas_layer.add_child(_overlay)
-	add_child(_canvas_layer)
-	_canvas_layer.visible = false
+	# ── Pass 2: fragment passthrough (blend_mul) ──────────────────────────────
+	_fragment_mat = ShaderMaterial.new()
+	_fragment_mat.shader = preload(
+			"res://addons/dreamguard/passthrough/shaders/fragment_passthrough.gdshader")
+	_fragment_mat.set_shader_parameter("blend_amount", 0.0)
+	_fragment_mat.set_shader_parameter("cell_scale",   cell_scale)
+	_fragment_mat.render_priority = 1   # Renders after ceiling fix.
+
+	_fragment_mesh = MeshInstance3D.new()
+	_fragment_mesh.mesh = quad
+	_fragment_mesh.material_override = _fragment_mat
+	_fragment_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fragment_mesh.visible = false
+	add_child(_fragment_mesh)
+	_fragment_mesh.set_custom_aabb(AABB(Vector3(-1e6, -1e6, -1e6), Vector3(2e6, 2e6, 2e6)))
+
+# ---------------------------------------------------------------------------
 
 ## Called by DreamGuard orchestrator when this style becomes active or inactive.
 ## Can also be called manually in standalone use.
@@ -109,29 +122,34 @@ func clear() -> void:
 	_target = 0.0
 
 func _process(delta: float) -> void:
-	if not _mat:
-		return
 	var speed := trigger_speed if _target > blend_amount else recovery_speed
 	blend_amount = move_toward(blend_amount, _target, delta * speed)
-	_mat.set_shader_parameter("blend_amount", blend_amount)
-	_mat.set_shader_parameter("cell_scale", cell_scale)
-	_canvas_layer.visible = blend_amount > 0.001
+	var visible := blend_amount > 0.001
+	_ceiling_mesh.visible = visible
+	_fragment_mesh.visible = visible
+	if visible:
+		_ceiling_mat.set_shader_parameter("blend_amount", blend_amount)
+		_fragment_mat.set_shader_parameter("blend_amount", blend_amount)
+		_fragment_mat.set_shader_parameter("cell_scale",   cell_scale)
 
 # ---------------------------------------------------------------------------
 
 func _enable_passthrough_mode() -> void:
+	# Restore transparent_bg so the XR compositor reads eye-texture alpha.
+	get_viewport().transparent_bg = true
+
 	var xr := XRServer.primary_interface
 	if xr:
 		_prev_blend_mode = xr.environment_blend_mode
 		if xr.get_supported_environment_blend_modes().has(XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND):
 			xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND
-	get_viewport().transparent_bg = true
 
 func _disable_passthrough_mode() -> void:
 	var xr := XRServer.primary_interface
 	if xr:
 		xr.environment_blend_mode = _prev_blend_mode
-	get_viewport().transparent_bg = false
-	_canvas_layer.visible = false
+	# transparent_bg is managed centrally by DreamGuard._update_passthrough_mode().
+	# Do not set it here — the orchestrator calls _update_passthrough_mode() after
+	# all set_active() calls, so it will set transparent_bg correctly for the new style.
 	blend_amount = 0.0
-	_target = 0.0
+	_target      = 0.0

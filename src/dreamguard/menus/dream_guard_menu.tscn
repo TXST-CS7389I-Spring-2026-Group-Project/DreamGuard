@@ -1,85 +1,54 @@
-; DreamGuard Menu scene.
-; Place this scene anywhere in your VR scene (e.g. under XROrigin3D).
-; Assign `controllers`, `camera`, and `dreamguard` in the Inspector, or leave
-; them blank for auto-detection from the scene tree.
-;
-; INTERACTION:
-;   Press menu_button (default B/Y) to toggle the panel open/closed.
-;   Aim the laser at a button, then press select_button (default trigger) to select.
-;
-; COLLISION LAYERS:
-;   Buttons use layer 2, RayCast3D mask=2 so the laser ignores gameplay physics.
-;   Change BUTTON_LAYER in the script + the layer/mask values below if layer 2
-;   conflicts with your project.
-
-[gd_scene format=3 uid="uid://dg_menu_v1"]
+[gd_scene format=3 uid="uid://7ihv4fgp4yx4"]
 
 [ext_resource type="Script" path="res://addons/dreamguard/menus/dream_guard_menu.gd" id="Script"]
 
-; --- Laser beam (thin box, Z-scaled at runtime) ------------------------------
-
 [sub_resource type="BoxMesh" id="BeamMesh"]
-size = Vector3(0.003, 0.003, 1.0)
+size = Vector3(0.003, 0.003, 1)
 
 [sub_resource type="StandardMaterial3D" id="BeamMat"]
-shading_mode = 1
-albedo_color = Color(0.4, 0.7, 1.0, 1)
+albedo_color = Color(0.4, 0.7, 1, 1)
 emission_enabled = true
-emission = Color(0.4, 0.7, 1.0, 1)
+emission = Color(0.4, 0.7, 1, 1)
 emission_energy_multiplier = 1.5
-
-; --- Menu panel --------------------------------------------------------------
 
 [sub_resource type="BoxMesh" id="BgMesh"]
 size = Vector3(0.22, 0.295, 0.002)
 
 [sub_resource type="StandardMaterial3D" id="BgMat"]
-shading_mode = 1
-albedo_color = Color(0.05, 0.05, 0.10, 1)
+albedo_color = Color(0.05, 0.05, 0.1, 1)
+
+[sub_resource type="BoxShape3D" id="BtnShape"]
+size = Vector3(0.18, 0.028, 0.015)
 
 [sub_resource type="BoxMesh" id="BtnMesh"]
 size = Vector3(0.18, 0.028, 0.003)
 
-; BoxShape is slightly deeper than the mesh so the ray hits cleanly.
-[sub_resource type="BoxShape3D" id="BtnShape"]
-size = Vector3(0.18, 0.028, 0.015)
-
 [sub_resource type="StandardMaterial3D" id="BtnMatDefault"]
-shading_mode = 1
-albedo_color = Color(0.12, 0.12, 0.20, 1)
+albedo_color = Color(0.12, 0.12, 0.2, 1)
 
-; --- Root --------------------------------------------------------------------
-
-[node name="DreamGuardMenu" type="Node3D"]
+[node name="DreamGuardMenu" type="Node3D" unique_id=1588360794]
 script = ExtResource("Script")
 
-; LaserPivot global transform is overwritten every frame to match the controller.
-; RayCast3D shoots along local -Z (controller aim direction).
-; collision_mask=2 targets only the menu buttons (layer 2), ignoring gameplay.
-[node name="LaserPivot" type="Node3D" parent="."]
+[node name="LaserPivot" type="Node3D" parent="." unique_id=1010627474]
 
-[node name="RayCast3D" type="RayCast3D" parent="LaserPivot"]
+[node name="RayCast3D" type="RayCast3D" parent="LaserPivot" unique_id=65274909]
 target_position = Vector3(0, 0, -5)
 collision_mask = 2
 collide_with_areas = true
 collide_with_bodies = false
 
-; BeamMesh sits centered between origin and target. Scale z and position z
-; are updated each frame in the script to match the actual hit distance.
-[node name="BeamMesh" type="MeshInstance3D" parent="LaserPivot/RayCast3D"]
+[node name="BeamMesh" type="MeshInstance3D" parent="LaserPivot/RayCast3D" unique_id=992096493]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
 mesh = SubResource("BeamMesh")
 surface_material_override/0 = SubResource("BeamMat")
 
-; MenuPanel is repositioned globally in _open_menu().
-; Its local origin is at the panel centre; +Z faces the camera (content at +Z offsets).
-[node name="MenuPanel" type="Node3D" parent="."]
+[node name="MenuPanel" type="Node3D" parent="." unique_id=1538747438]
 
-[node name="Background" type="MeshInstance3D" parent="MenuPanel"]
+[node name="Background" type="MeshInstance3D" parent="MenuPanel" unique_id=86364526]
 mesh = SubResource("BgMesh")
 surface_material_override/0 = SubResource("BgMat")
 
-[node name="TitleLabel" type="Label3D" parent="MenuPanel"]
+[node name="TitleLabel" type="Label3D" parent="MenuPanel" unique_id=1054223664]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.126, 0.003)
 pixel_size = 0.0005
 no_depth_test = true
@@ -87,24 +56,21 @@ text = "DreamGuard Mode"
 font_size = 36
 outline_size = 4
 
-; --- Buttons (Y axis, top = positive) ----------------------------------------
-; Layout: 7 buttons × 0.028 m height + 0.007 m gap = 0.035 m per slot
-; Centre range: ±0.105 m  →  slots at 0.105, 0.070, 0.035, 0.000, -0.035, -0.070, -0.105
-
-[node name="BtnNone" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.105, 0)
+[node name="BtnNone" type="Area3D" parent="MenuPanel" unique_id=2005960089]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09285986, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnNone"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnNone" unique_id=2119928625]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnNone"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnNone" unique_id=1163025123]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnNone"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnNone" unique_id=5168502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
@@ -112,22 +78,21 @@ text = "None (Control)"
 font_size = 26
 outline_size = 3
 
-; ----
-
-[node name="BtnGrid" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.070, 0)
+[node name="BtnGrid" type="Area3D" parent="MenuPanel" unique_id=395607443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05785986, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnGrid"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnGrid" unique_id=982961500]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnGrid"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnGrid" unique_id=1819161399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnGrid"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnGrid" unique_id=1981921143]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
@@ -135,22 +100,21 @@ text = "Grid"
 font_size = 26
 outline_size = 3
 
-; ----
-
-[node name="BtnFogBlend" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
+[node name="BtnFogBlend" type="Area3D" parent="MenuPanel" unique_id=355559284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02285986, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnFogBlend"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnFogBlend" unique_id=1361679689]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnFogBlend"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnFogBlend" unique_id=65817960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnFogBlend"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnFogBlend" unique_id=2042596395]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
@@ -158,22 +122,21 @@ text = "Fog Blend"
 font_size = 26
 outline_size = 3
 
-; ----
-
-[node name="BtnBloomBlend" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.000, 0)
+[node name="BtnBloomBlend" type="Area3D" parent="MenuPanel" unique_id=934256488]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01214014, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnBloomBlend"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnBloomBlend" unique_id=507102586]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnBloomBlend"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnBloomBlend" unique_id=195865352]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnBloomBlend"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnBloomBlend" unique_id=1126144198]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
@@ -181,22 +144,21 @@ text = "Bloom Blend"
 font_size = 26
 outline_size = 3
 
-; ----
-
-[node name="BtnPeripheralVignette" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.035, 0)
+[node name="BtnPeripheralVignette" type="Area3D" parent="MenuPanel" unique_id=1148088801]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04714014, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnPeripheralVignette"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnPeripheralVignette" unique_id=54434612]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnPeripheralVignette"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnPeripheralVignette" unique_id=1184045694]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnPeripheralVignette"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnPeripheralVignette" unique_id=1179745855]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
@@ -204,22 +166,21 @@ text = "Peripheral Vignette"
 font_size = 22
 outline_size = 3
 
-; ----
-
-[node name="BtnFragmentPassthrough" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.070, 0)
+[node name="BtnFragmentPassthrough" type="Area3D" parent="MenuPanel" unique_id=1534094284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08214014, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnFragmentPassthrough"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnFragmentPassthrough" unique_id=1780960102]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnFragmentPassthrough"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnFragmentPassthrough" unique_id=840172672]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnFragmentPassthrough"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnFragmentPassthrough" unique_id=1273407445]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true
@@ -227,22 +188,21 @@ text = "Fragment Passthrough"
 font_size = 20
 outline_size = 3
 
-; ----
-
-[node name="BtnWindowPassthrough" type="Area3D" parent="MenuPanel"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.105, 0)
+[node name="BtnWindowPassthrough" type="Area3D" parent="MenuPanel" unique_id=452840016]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.11714014, 0)
 collision_layer = 2
 collision_mask = 0
+metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnWindowPassthrough"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MenuPanel/BtnWindowPassthrough" unique_id=1693225583]
 shape = SubResource("BtnShape")
 
-[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnWindowPassthrough"]
+[node name="ButtonMesh" type="MeshInstance3D" parent="MenuPanel/BtnWindowPassthrough" unique_id=1528990346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.002)
 mesh = SubResource("BtnMesh")
 surface_material_override/0 = SubResource("BtnMatDefault")
 
-[node name="Label" type="Label3D" parent="MenuPanel/BtnWindowPassthrough"]
+[node name="Label" type="Label3D" parent="MenuPanel/BtnWindowPassthrough" unique_id=1820851951]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.006)
 pixel_size = 0.0005
 no_depth_test = true

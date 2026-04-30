@@ -26,10 +26,19 @@
 ##
 ## STYLE CYCLE ORDER:
 ##   NONE → GRID → FOG_BLEND → BLOOM_BLEND → PERIPHERAL_VIGNETTE → FRAGMENT_PASSTHROUGH → (wrap)
-##   └──────────────── DreamGuardTransition (CanvasLayer) ────────────────┘  └─ DreamGuardFragmentPassthrough ─┘
+##   └────────── DreamGuardTransition (spatial MeshInstance3D) ──────────┘  └─ DreamGuardFragmentPassthrough ─┘
 
 class_name DreamGuard
 extends Node
+
+## Emitted whenever trigger() is called. amount is the requested blend (0..1).
+signal triggered(amount: float)
+
+## Emitted whenever clear() is called to begin recovery.
+signal cleared()
+
+## Emitted when the active style changes.
+signal style_changed(new_style: Style)
 
 enum Style {
 	NONE                 = 0,  ## No warning — control condition
@@ -41,7 +50,7 @@ enum Style {
 	WINDOW_PASSTHROUGH   = 6,  ## Rectangular passthrough window — PoC projected passthrough
 }
 
-## CanvasLayer-based overlay node. Handles styles NONE through PERIPHERAL_VIGNETTE.
+## Spatial overlay node. Handles styles NONE through PERIPHERAL_VIGNETTE.
 @export var transition: DreamGuardTransition
 
 ## Fragment passthrough node. Handles FRAGMENT_PASSTHROUGH.
@@ -57,6 +66,7 @@ enum Style {
 	set(v):
 		style = v
 		if is_node_ready():
+			style_changed.emit(v)
 			_apply_style()
 
 # ---------------------------------------------------------------------------
@@ -98,6 +108,7 @@ func next_style() -> Style:
 
 ## Activate the current style's transition. amount = 0..1 (default 1 = full).
 func trigger(amount: float = 1.0) -> void:
+	triggered.emit(amount)
 	match style:
 		Style.FRAGMENT_PASSTHROUGH:
 			if fragment_passthrough:
@@ -111,6 +122,7 @@ func trigger(amount: float = 1.0) -> void:
 
 ## Begin recovery — blend fades back to full VR on the active node.
 func clear() -> void:
+	cleared.emit()
 	match style:
 		Style.FRAGMENT_PASSTHROUGH:
 			if fragment_passthrough:
@@ -157,3 +169,21 @@ func _apply_style() -> void:
 		window_passthrough.set_active(is_window)
 		if not is_window:
 			window_passthrough.clear()
+
+	# All non-NONE styles now use blend_mul passthrough (overlay styles included).
+	# Manage transparent_bg and XR blend mode centrally so individual node
+	# enable/disable calls cannot leave the viewport in the wrong state.
+	_update_passthrough_mode()
+
+func _update_passthrough_mode() -> void:
+	if not is_node_ready():
+		return
+	var needs_passthrough := (style != Style.NONE)
+	get_viewport().transparent_bg = needs_passthrough
+	var xr := XRServer.primary_interface
+	if xr:
+		if needs_passthrough and xr.get_supported_environment_blend_modes().has(
+				XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND):
+			xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_ALPHA_BLEND
+		elif not needs_passthrough:
+			xr.environment_blend_mode = XRInterface.XR_ENV_BLEND_MODE_OPAQUE

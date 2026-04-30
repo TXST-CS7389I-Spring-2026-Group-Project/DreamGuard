@@ -10,6 +10,8 @@
 [ext_resource type="PackedScene" path="res://addons/dreamguard/menus/dream_guard_menu.tscn" id="dg_menu"]
 [ext_resource type="Script" uid="uid://b30we7te36qms" path="res://addons/dreamguard/passthrough/dream_guard_transition.gd" id="dg_transition"]
 [ext_resource type="Script" uid="uid://bcf8jw1eogp3" path="res://addons/dreamguard/passthrough/dream_guard_passthrough_window.gd" id="dg_window"]
+[ext_resource type="Script" uid="uid://bdeyqqrbk0v2v" path="res://addons/dreamguard/dream_guard_proximity.gd" id="dg_proximity"]
+[ext_resource type="Script" uid="uid://d1u7n6sn4pfub" path="res://addons/dreamguard/dream_guard_logger.gd" id="dg_logger"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yoq75"]
 radius = 0.4985962
@@ -53,7 +55,7 @@ turn_mode = 2
 [node name="DreamGuard" type="Node" parent="." unique_id=200000001]
 script = ExtResource("dg_main")
 
-[node name="DreamGuardTransition" type="CanvasLayer" parent="." unique_id=200000002]
+[node name="DreamGuardTransition" type="Node" parent="." unique_id=200000002]
 script = ExtResource("dg_transition")
 
 [node name="DreamGuardFragmentPassthrough" type="Node" parent="." unique_id=200000003]
@@ -63,3 +65,9 @@ script = ExtResource("dg_fragment")
 script = ExtResource("dg_window")
 
 [node name="DreamGuardMenu" parent="." unique_id=200000004 instance=ExtResource("dg_menu")]
+
+[node name="DreamGuardProximity" type="Node" parent="." unique_id=200000006]
+script = ExtResource("dg_proximity")
+
+[node name="DreamGuardLogger" type="Node" parent="." unique_id=200000007]
+script = ExtResource("dg_logger")

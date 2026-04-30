@@ -8,8 +8,7 @@
 //
 // blend_mul:  out_rgba = src_rgba * dst_rgba
 //   Inside window:  ALPHA=0 → alpha *= 0 → 0  → passthrough
-//   Border ring:    ALPHA=1, ALBEDO=border_color → RGB tinted, alpha *= 1 → VR
-//   Outside window: ALPHA=1, ALBEDO=(1,1,1)      → no change → VR
+//   Outside window: ALPHA=1, ALBEDO=(1,1,1)   → no change → VR
 
 shader_type spatial;
 render_mode blend_mul, unshaded, cull_disabled, depth_test_disabled, depth_draw_never;
@@ -18,35 +17,30 @@ render_mode blend_mul, unshaded, cull_disabled, depth_test_disabled, depth_draw_
 uniform float window_width  : hint_range(0.1, 0.9) = 0.45;
 /// Height of the passthrough window as a fraction of screen height (0..1).
 uniform float window_height : hint_range(0.1, 0.9) = 0.35;
-/// Border ring thickness in screen UV space.
-uniform float border_width  : hint_range(0.002, 0.05) = 0.012;
-/// Colour multiplied onto the VR border ring.
-uniform vec3  border_color  : source_color = vec3(0.3, 0.5, 1.0);
+/// Horizontal centre of the window in SCREEN_UV space (0..1). Default 0.5 = screen centre.
+uniform float window_center_x : hint_range(0.0, 1.0) = 0.5;
+/// Vertical centre of the window in SCREEN_UV space (0..1). Default 0.5 = screen centre.
+uniform float window_center_y : hint_range(0.0, 1.0) = 0.5;
 /// 0 = hidden, 1 = fully visible. Animated by DreamGuardPassthroughWindow.
 uniform float blend_amount  : hint_range(0.0, 1.0) = 0.0;
 
 void vertex() {
 	// Fullscreen clip-space quad — zero stereo disparity.
-	// SCREEN_UV in the fragment stage will be per-eye (0..1 per eye in multiview).
+	// SCREEN_UV in the fragment stage is per-eye (0..1 per eye) in multiview XR.
 	POSITION = vec4(VERTEX.xy * 2.0, 0.0, 1.0);
 }
 
 void fragment() {
-	vec2 uv = SCREEN_UV;   // Per-eye in multiview XR: (0.5,0.5) = each eye's centre.
+	vec2 uv     = SCREEN_UV;
+	vec2 center = vec2(window_center_x, window_center_y);
 
 	vec2 half_win = vec2(window_width, window_height) * 0.5;
 	float soft = 0.005;
 
-	// Outer window boundary SDF
-	vec2  d_out  = abs(uv - vec2(0.5)) - half_win;
-	float in_win = 1.0 - smoothstep(-soft, soft, max(d_out.x, d_out.y));
+	// Signed-distance field for the window rectangle around the adjustable centre.
+	vec2  d = abs(uv - center) - half_win;
+	float in_win = 1.0 - smoothstep(-soft, soft, max(d.x, d.y));
 
-	// Inner passthrough area SDF (inset by border_width)
-	vec2  d_in   = abs(uv - vec2(0.5)) - (half_win - vec2(border_width));
-	float in_inn = 1.0 - smoothstep(-soft, soft, max(d_in.x, d_in.y));
-
-	float in_border = in_win * (1.0 - in_inn);
-
-	ALPHA  = 1.0 - in_inn * blend_amount;
-	ALBEDO = mix(vec3(1.0), border_color, in_border * blend_amount);
+	ALPHA  = 1.0 - in_win * blend_amount;
+	ALBEDO = vec3(1.0);
 }
