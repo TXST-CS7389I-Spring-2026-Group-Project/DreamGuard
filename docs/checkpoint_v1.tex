@@ -1,0 +1,86 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{graphicx}
+
+\titlespacing*{\section}{0pt}{0.75em}{0.25em}
+
+\title{\textbf{DreamGuard: Immersion-Preserving Passthrough Safety Transitions in VR}\\[0.4em]
+\large Progress Report --- Checkpoint 1}
+\author{[Your Name] \\ CS 7389I}
+\date{[Date]}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\vspace{-1em}
+
+\section*{Research Question}
+
+Does replacing the standard guardian grid with an aesthetically-integrated
+passthrough blend reduce cybersickness and presence disruption without degrading
+safety outcomes? Concretely: participants who receive a DreamGuard-style
+proximity cue will report lower SSQ scores and higher IPQ presence ratings than
+those who receive the default Meta Quest guardian grid, with no significant
+difference in logged near-miss or contact events.
+
+\section*{Current Progress}
+
+The DreamGuard prototype is running on a Meta Quest 3 in a Godot 4 VR dungeon
+environment. At this stage, two core components are functional: a basic dungeon scene
+and a basic windowed passthrough overlay. The dungeon scene provides a representative
+VR environment for testing safety transitions (Figure~\ref{fig:dungeon}). The passthrough
+component uses spatial shader-based compositing to cut a rectangular window into the
+scene, revealing the physical environment through the headset's cameras. A menu system
+allows toggling between passthrough configurations during a session (Figure~\ref{fig:menu}).
+All other planned features---multiple blending styles, automated trigger logic, study
+instrumentation---remain unimplemented and are the focus of future work.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/checkpoint_v1/dungeon_topdown.png}
+  \caption{Top-down view of the dungeon scene used as the VR test environment.}
+  \label{fig:dungeon}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.4\linewidth]{images/checkpoint_v1/menu.png}
+  \caption{In-headset menu for toggling between passthrough configurations.}
+  \label{fig:menu}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/checkpoint_v1/passthrough.png}
+  \caption{Windowed passthrough as seen in-headset.}
+  \label{fig:passthrough}
+\end{figure}
+
+\section*{Key Challenges}
+
+Three non-trivial technical obstacles were encountered while reaching the current
+prototype state: (1)~GPU frustum culling silently discarded the fullscreen passthrough
+quads when the owning node sat at floor level, requiring a custom infinite bounding-box
+override; (2)~the passthrough node unconditionally reset \texttt{transparent\_bg} to
+\texttt{false} on deactivation, breaking the alpha compositing pipeline; and
+(3)~Godot~4 Forward Mobile's multiview \texttt{SCREEN\_UV} maps to the combined stereo
+render target rather than each eye independently, causing the passthrough window to
+appear offset per eye and producing double vision. The third issue has not yet been
+fully resolved and is under active investigation.
+
+\section*{Plan for Next Checkpoint}
+
+With a basic windowed passthrough and dungeon scene in place, the next checkpoint will
+focus on: (1)~resolving the per-eye double-vision rendering issue and validating the fix
+on device; (2)~implementing additional passthrough blending styles beyond the basic
+window (e.g., vignette, animated fade) so that conditions can be meaningfully compared;
+(3)~adding trigger logic and session instrumentation (logging of trigger events, blend
+intensity over time, and active style condition); and (4)~finalizing the study design,
+including resolving the within-session SSQ carryover concern and reframing the
+no-warning control as a minimal-cue baseline to reduce IRB risk.
+
+\end{document}
