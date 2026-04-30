@@ -1,5 +1,5 @@
 [gd_scene format=3 uid="uid://b3ehy6ifbmvjh"]
 
-[ext_resource type="PackedScene" uid="uid://7i48oo4pfh64" path="res://Scenes/_Objects/Dungeon/glft/floor.gltf" id="1_nmqt1"]
+[ext_resource type="PackedScene" uid="uid://bc3bcqbat8bug" path="res://Scenes/_Objects/Dungeon/glft/floor.gltf" id="1_nmqt1"]
 
 [node name="floor" unique_id=1412456421 instance=ExtResource("1_nmqt1")]
