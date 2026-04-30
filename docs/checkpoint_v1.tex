@@ -1,50 +1,106 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
-\usepackage{parskip}
-\usepackage{microtype}
-\usepackage{hyperref}
-\usepackage{titlesec}
+% $Id: template.tex 11 2007-04-03 22:25:53Z jpeltier $
+
+\documentclass{styling/vgtc}                          % final (conference style)
+%\documentclass[review]{styling/vgtc}                 % review
+%\documentclass[widereview]{styling/vgtc}             % wide-spaced review
+%\documentclass[preprint]{styling/vgtc}               % preprint
+%\documentclass[electronic]{styling/vgtc}             % electronic version
+
+%% Uncomment one of the lines above depending on where your paper is
+%% in the conference process. ``review'' and ``widereview'' are for review
+%% submission, ``preprint'' is for pre-publication, and the final version
+%% doesn't use a specific qualifier. Further, ``electronic'' includes
+%% hyperreferences for more convenient online viewing.
+
+%% Please use one of the ``review'' options in combination with the
+%% assigned online id (see below) ONLY if your paper uses a double blind
+%% review process. Some conferences, like IEEE Vis and InfoVis, have NOT
+%% in the past.
+
+%% Figures should be in CMYK or Grey scale format, otherwise, colour 
+%% shifting may occur during the printing process.
+
+%% These three lines bring in essential packages: ``mathptmx'' for Type 1 
+%% typefaces, ``graphicx'' for inclusion of EPS figures. and ``times''
+%% for proper handling of the times font family.
+
+\usepackage{mathptmx}
 \usepackage{graphicx}
+\usepackage{times}
+\usepackage[hidelinks]{hyperref}
 
-\titlespacing*{\section}{0pt}{0.75em}{0.25em}
+%% We encourage the use of mathptmx for consistent usage of times font
+%% throughout the proceedings. However, if you encounter conflicts
+%% with other math-related packages, you may want to disable it.
 
-\title{\textbf{DreamGuard: Immersion-Preserving Passthrough Safety Transitions in VR}\\[0.4em]
-\large Progress Report --- Checkpoint 1}
-\author{[Your Name] \\ CS 7389I}
-\date{[Date]}
+%% If you are submitting a paper to a conference for review with a double
+%% blind reviewing process, please replace the value ``0'' below with your
+%% OnlineID. Otherwise, you may safely leave it at ``0''.
+\onlineid{0}
 
+%% declare the category of your paper, only shown in review mode
+\vgtccategory{Research}
+
+%% allow for this line if you want the electronic option to work properly
+\vgtcinsertpkg
+
+%% In preprint mode you may define your own headline.
+%\preprinttext{To appear in an IEEE VGTC sponsored conference.}
+
+%% This is how authors are specified in the conference style
+
+%% Author and Affiliation (single author).
+%%\author{Roy G. Biv\thanks{e-mail: roy.g.biv@aol.com}}
+%%\affiliation{\scriptsize Allied Widgets Research}
+
+%% Author and Affiliation (multiple authors with single affiliations).
+%%\author{Roy G. Biv\thanks{e-mail: roy.g.biv@aol.com} %
+%%\and Ed Grimley\thanks{e-mail:ed.grimley@aol.com} %
+%%\and Martha Stewart\thanks{e-mail:martha.stewart@marthastewart.com}}
+%%\affiliation{\scriptsize Martha Stewart Enterprises \\ Microsoft Research}
+
+%% Author and Affiliation (multiple authors with multiple affiliations)
+\title{DreamGuard - Checkpoint 1}
+
+\author{Andrew Scouten\\ %
+        \scriptsize{yzb2@txstate.edu}\\ %
+        \scriptsize Texas State University
+\and Avery R Vanausdal\\ %
+        \scriptsize{arv107@txstate.edu}\\ %
+        \scriptsize Texas State University}
+
+%% A teaser figure can be included as follows, but is not recommended since
+%% the space is now taken up by a full width abstract.
+%\teaser{
+%  \includegraphics[width=1.5in]{styling/sample.eps}
+%  \caption{Lookit! Lookit!}
+%}
 \begin{document}
+
 \maketitle
-\thispagestyle{empty}
-\vspace{-1em}
 
 \section*{Research Question}
 
 Does replacing the standard guardian grid with an aesthetically-integrated
-passthrough blend reduce cybersickness and presence disruption without degrading
-safety outcomes? Concretely: participants who receive a DreamGuard-style
-proximity cue will report lower SSQ scores and higher IPQ presence ratings than
-those who receive the default Meta Quest guardian grid, with no significant
-difference in logged near-miss or contact events.
+passthrough blend reduce cybersickness and presence disruption without degrading safety outcomes? 
+
 
 \section*{Current Progress}
 
 The DreamGuard prototype is running on a Meta Quest 3 in a Godot 4 VR dungeon
-environment. At this stage, two core components are functional: a basic dungeon scene
-and a basic windowed passthrough overlay. The dungeon scene provides a representative
-VR environment for testing safety transitions (Figure~\ref{fig:dungeon}). The passthrough
-component uses spatial shader-based compositing to cut a rectangular window into the
-scene, revealing the physical environment through the headset's cameras. A menu system
-allows toggling between passthrough configurations during a session (Figure~\ref{fig:menu}).
-All other planned features---multiple blending styles, automated trigger logic, study
-instrumentation---remain unimplemented and are the focus of future work.
+environment. At this stage, two core components are functional: a basic dungeon scene and a basic windowed passthrough overlay. The dungeon scene provides a representative VR environment for testing safety transitions (Figure~\ref{fig:dungeon}). The passthrough component uses spatial shader-based compositing to cut a rectangular window into the
+scene, revealing the physical environment through the headset's cameras. A menu system allows toggling between passthrough configurations during a session (Figure~\ref{fig:menu}). All other planned features---multiple blending styles, automated trigger logic, study instrumentation---remain unimplemented and are the focus of the next checkpoints.
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.7\linewidth]{images/checkpoint_v1/dungeon_topdown.png}
-  \caption{Top-down view of the dungeon scene used as the VR test environment.}
-  \label{fig:dungeon}
-\end{figure}
+
+\section*{Key Challenges}
+
+Three technical obstacles were encountered while reaching the current prototype state: (1)~GPU culling silently discarded the fullscreen passthrough quads; (2)~the passthrough node unconditionally reset \texttt{transparent\_bg} to \texttt{false} on deactivation, breaking the compositing pipeline; and
+(3)~Godot~4 Forward Mobile's multiview \texttt{SCREEN\_UV} maps to the combined stereo render target rather than each eye independently, causing the passthrough window to appear offset per eye and producing double vision. The third issue has not yet been fully resolved and is under active investigation.
+
+
+\section*{Plan for Next Checkpoints}
+
+With a basic windowed passthrough and dungeon scene in place, the next checkpoint will focus on: (1)~resolving the per-eye double-vision rendering issue and validating the fix on device; (2)~implementing additional passthrough blending styles beyond the basic window (e.g., vignette, animated fade) so that conditions can be meaningfully compared; (3)~adding trigger logic and session instrumentation (logging of trigger events, blend intensity over time, and active style condition); and (4)~finalizing the study design..
 
 \begin{figure}[h]
   \centering
@@ -55,32 +111,16 @@ instrumentation---remain unimplemented and are the focus of future work.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.7\linewidth]{images/checkpoint_v1/passthrough.png}
+  \includegraphics[width=\linewidth]{images/checkpoint_v1/dungeon_topdown.png}
+  \caption{Top-down view of the dungeon scene used as the VR test environment.}
+  \label{fig:dungeon}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{images/checkpoint_v1/passthrough.png}
   \caption{Windowed passthrough as seen in-headset.}
   \label{fig:passthrough}
 \end{figure}
-
-\section*{Key Challenges}
-
-Three non-trivial technical obstacles were encountered while reaching the current
-prototype state: (1)~GPU frustum culling silently discarded the fullscreen passthrough
-quads when the owning node sat at floor level, requiring a custom infinite bounding-box
-override; (2)~the passthrough node unconditionally reset \texttt{transparent\_bg} to
-\texttt{false} on deactivation, breaking the alpha compositing pipeline; and
-(3)~Godot~4 Forward Mobile's multiview \texttt{SCREEN\_UV} maps to the combined stereo
-render target rather than each eye independently, causing the passthrough window to
-appear offset per eye and producing double vision. The third issue has not yet been
-fully resolved and is under active investigation.
-
-\section*{Plan for Next Checkpoint}
-
-With a basic windowed passthrough and dungeon scene in place, the next checkpoint will
-focus on: (1)~resolving the per-eye double-vision rendering issue and validating the fix
-on device; (2)~implementing additional passthrough blending styles beyond the basic
-window (e.g., vignette, animated fade) so that conditions can be meaningfully compared;
-(3)~adding trigger logic and session instrumentation (logging of trigger events, blend
-intensity over time, and active style condition); and (4)~finalizing the study design,
-including resolving the within-session SSQ carryover concern and reframing the
-no-warning control as a minimal-cue baseline to reduce IRB risk.
 
 \end{document}

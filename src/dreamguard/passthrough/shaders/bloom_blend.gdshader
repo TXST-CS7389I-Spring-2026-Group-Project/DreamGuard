@@ -35,8 +35,10 @@ void fragment() {
 	float glow = smoothstep(0.0, 0.50, bloom) * (1.0 - smoothstep(0.60, 1.0, bloom));
 	vec3  warm = mix(vec3(1.0), vec3(1.0, 0.88, 0.70), glow);
 
-	// Passthrough in the fully bloomed zone.
-	float passthrough = smoothstep(0.55, 1.0, bloom) * 0.92;
+	// Passthrough in the bloomed zone — gradient from 0 at the inner bloom edge
+	// to 1 at the screen rim so the real world fades in smoothly rather than
+	// snapping to a flat opacity.
+	float passthrough = smoothstep(0.55, 1.0, bloom);
 
 	ALBEDO = warm;
 	ALPHA  = 1.0 - passthrough;

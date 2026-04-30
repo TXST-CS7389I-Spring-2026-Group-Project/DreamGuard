@@ -62,7 +62,7 @@ enum Style {
 @export var window_passthrough: DreamGuardPassthroughWindow
 
 ## Active style. Setting this at runtime switches the active node and condition.
-@export var style: Style = Style.FOG_BLEND:
+@export var style: Style = Style.NONE:
 	set(v):
 		style = v
 		if is_node_ready():

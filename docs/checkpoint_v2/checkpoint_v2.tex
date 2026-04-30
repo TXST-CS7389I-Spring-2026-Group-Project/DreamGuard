@@ -1,0 +1,166 @@
+% $Id: template.tex 11 2007-04-03 22:25:53Z jpeltier $
+
+\documentclass{styling/vgtc}                          % final (conference style)
+%\documentclass[review]{styling/vgtc}                 % review
+%\documentclass[widereview]{styling/vgtc}             % wide-spaced review
+%\documentclass[preprint]{styling/vgtc}               % preprint
+%\documentclass[electronic]{styling/vgtc}             % electronic version
+
+%% Uncomment one of the lines above depending on where your paper is
+%% in the conference process. ``review'' and ``widereview'' are for review
+%% submission, ``preprint'' is for pre-publication, and the final version
+%% doesn't use a specific qualifier. Further, ``electronic'' includes
+%% hyperreferences for more convenient online viewing.
+
+%% Please use one of the ``review'' options in combination with the
+%% assigned online id (see below) ONLY if your paper uses a double blind
+%% review process. Some conferences, like IEEE Vis and InfoVis, have NOT
+%% in the past.
+
+%% Figures should be in CMYK or Grey scale format, otherwise, colour 
+%% shifting may occur during the printing process.
+
+%% These three lines bring in essential packages: ``mathptmx'' for Type 1 
+%% typefaces, ``graphicx'' for inclusion of EPS figures. and ``times''
+%% for proper handling of the times font family.
+
+\usepackage{mathptmx}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage[hidelinks]{hyperref}
+
+%% We encourage the use of mathptmx for consistent usage of times font
+%% throughout the proceedings. However, if you encounter conflicts
+%% with other math-related packages, you may want to disable it.
+
+%% If you are submitting a paper to a conference for review with a double
+%% blind reviewing process, please replace the value ``0'' below with your
+%% OnlineID. Otherwise, you may safely leave it at ``0''.
+\onlineid{0}
+
+%% declare the category of your paper, only shown in review mode
+\vgtccategory{Research}
+
+%% allow for this line if you want the electronic option to work properly
+\vgtcinsertpkg
+
+%% In preprint mode you may define your own headline.
+%\preprinttext{To appear in an IEEE VGTC sponsored conference.}
+
+%% This is how authors are specified in the conference style
+
+%% Author and Affiliation (single author).
+%%\author{Roy G. Biv\thanks{e-mail: roy.g.biv@aol.com}}
+%%\affiliation{\scriptsize Allied Widgets Research}
+
+%% Author and Affiliation (multiple authors with single affiliations).
+%%\author{Roy G. Biv\thanks{e-mail: roy.g.biv@aol.com} %
+%%\and Ed Grimley\thanks{e-mail:ed.grimley@aol.com} %
+%%\and Martha Stewart\thanks{e-mail:martha.stewart@marthastewart.com}}
+%%\affiliation{\scriptsize Martha Stewart Enterprises \\ Microsoft Research}
+
+%% Author and Affiliation (multiple authors with multiple affiliations)
+\title{DreamGuard - Checkpoint 2}
+
+\author{Andrew Scouten\\ %
+        \scriptsize{yzb2@txstate.edu}\\ %
+        \scriptsize Texas State University
+\and Avery R Vanausdal\\ %
+        \scriptsize{arv107@txstate.edu}\\ %
+        \scriptsize Texas State University}
+
+%% A teaser figure can be included as follows, but is not recommended since
+%% the space is now taken up by a full width abstract.
+%\teaser{
+%  \includegraphics[width=1.5in]{styling/sample.eps}
+%  \caption{Lookit! Lookit!}
+%}
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\vspace{-1em}
+
+\section*{Current Status}
+
+DreamGuard has advanced from a single-condition proof-of-concept to a
+fully-instrumented multi-condition platform ready for a within-subject
+evaluation. The two unresolved items from Checkpoint~1---the per-eye
+double-vision artifact and the absence of additional blending styles---are
+both resolved. All study conditions are implemented, proximity detection is
+automated, and session logging is in place.
+
+\section*{What Has Been Implemented}
+
+\textbf{Multi-condition transition system.}
+A new \texttt{DreamGuardTransition} node provides four spatially-rendered
+fullscreen overlay styles via a two-pass shader architecture
+(a \texttt{blend\_add} ceiling-fix pass followed by a \texttt{blend\_mul}
+pattern pass). The five study conditions now available are:
+\textit{NONE} (control, no warning),
+\textit{GRID} (3-D perspective guardian grid --- Meta baseline),
+\textit{FOG\_BLEND} (peripheral fog that reveals passthrough, condition~A),
+\textit{BLOOM\_BLEND} (warm bloom from edges with glowing border, condition~B), and
+\textit{PERIPHERAL\_VIGNETTE} (passthrough rim with clear VR centre, condition~C).
+The fragment-dissolve and rectangular-window modes from Checkpoint~1 are
+retained as additional conditions.
+
+\textbf{World-space guardian grid shader.}
+The per-eye stereo rendering artifact identified at Checkpoint~1 is
+eliminated. The grid shader reconstructs world-space geometry via ray--plane
+intersection (floor and ceiling planes parameterised by \texttt{floor\_y} and
+\texttt{room\_height}), avoiding the \texttt{SCREEN\_UV} stereo-target
+ambiguity entirely. Grid lines are blue-tinted; gaps are transparent (ALPHA=0),
+exposing passthrough. A distance fade dissolves the grid beyond 8--22~m so
+the horizon remains uncluttered.
+
+\textbf{Orchestrator and API.}
+A \texttt{DreamGuard} orchestrator node centralises style switching, XR blend
+mode management (\texttt{transparent\_bg}, \texttt{XR\_ENV\_BLEND\_MODE\_ALPHA\_BLEND}),
+and the trigger/clear/velocity-scaled-trigger API. Styles can be cycled
+programmatically (\texttt{next\_style()}) or set directly, allowing
+counterbalanced condition ordering during the study.
+
+\textbf{Automated proximity detection.}
+\texttt{DreamGuardProximity} casts $N$ evenly-spaced horizontal rays from
+approximately waist height each physics frame. Trigger intensity scales
+proportionally with proximity ($0$ at the warning threshold, $1$ at contact),
+so the overlay strengthens as the player approaches the boundary.
+A velocity-scaled variant (motivated by Google's GAP findings on locomotion
+speed and cybersickness) is also available.
+
+\textbf{Session instrumentation.}
+\texttt{DreamGuardLogger} connects to the orchestrator's signals and writes a
+timestamped CSV to on-device storage with six event types:
+\textsc{session\_start}, \textsc{session\_end}, \textsc{style\_change},
+\textsc{trigger}, \textsc{clear}, and \textsc{blend\_sample} (configurable
+interval, default 0.5~s). Logs are retrievable via \texttt{adb pull} after
+each session.
+
+\section*{What Remains}
+
+\begin{enumerate}
+  \item \textbf{IRB and study protocol.} The within-session SSQ carryover
+    concern noted at Checkpoint~1 must be addressed (e.g.\ washout periods or
+    a between-subjects design for the SSQ measure). The no-warning control
+    condition should be reframed as a minimal-cue baseline to reduce IRB risk.
+    Target IRB submission and approval before data collection begins.
+
+  \item \textbf{Data collection.} Recruit participants for the within-subject
+    evaluation. Each session will counterbalance condition order and collect
+    SSQ (pre/post per condition), IPQ presence ratings, and the objective
+    logged near-miss counts. Pilot testing with $\ge 3$ participants before
+    the full run to validate the protocol and logging pipeline.
+
+  \item \textbf{Analysis.} Repeated-measures ANOVA or Friedman test (depending
+    on SSQ distribution) across conditions for each dependent variable.
+    Pairwise comparisons of DreamGuard conditions against the GRID baseline
+    and NONE control. Logged blend-sample time series will be summarised per
+    condition to characterise intervention duration and intensity.
+
+  \item \textbf{Final write-up.} Consolidate results, limitations (ecological
+    validity of the dungeon environment, sample size), and directions for
+    future work (dynamic style selection, adaptive threshold calibration).
+\end{enumerate}
+
+\end{document}
