@@ -93,6 +93,15 @@ namespace DreamGuard.Editor
             if (manager == null) manager = root.AddComponent<OVRManager>();
             manager.isInsightPassthroughEnabled = true;
 
+            // ── CharacterController (collision with dungeon geometry) ─────────────
+            var cc = root.GetComponent<CharacterController>();
+            if (cc == null) cc = root.AddComponent<CharacterController>();
+            cc.height     = 1.8f;
+            cc.radius     = 0.3f;
+            cc.center     = new Vector3(0f, 0.9f, 0f);
+            cc.slopeLimit = 45f;
+            cc.stepOffset = 0.3f;
+
             // ── Locomotion ────────────────────────────────────────────────────────
             if (root.GetComponent<DreamGuardLocomotion>() == null)
                 root.AddComponent<DreamGuardLocomotion>();

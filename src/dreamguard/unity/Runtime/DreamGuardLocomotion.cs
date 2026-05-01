@@ -19,6 +19,8 @@ namespace DreamGuard
         [SerializeField] private float snapDeadzone = 0.5f;
 
         private Transform _headTransform;
+        private CharacterController _controller;
+        private float _verticalVelocity;
         private bool _snapReady = true;
 
         private void Start()
@@ -26,6 +28,7 @@ namespace DreamGuard
             // OVRCameraRig exposes CenterEyeAnchor; fall back to Camera.main
             var rig = GetComponent<OVRCameraRig>();
             _headTransform = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
+            _controller = GetComponent<CharacterController>();
         }
 
         private void Update()
@@ -37,7 +40,6 @@ namespace DreamGuard
         private void Move()
         {
             Vector2 axis = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-            if (axis.sqrMagnitude < 0.01f) return;
 
             Vector3 fwd = _headTransform ? _headTransform.forward : transform.forward;
             Vector3 rgt = _headTransform ? _headTransform.right : transform.right;
@@ -46,7 +48,21 @@ namespace DreamGuard
             fwd.Normalize();
             rgt.Normalize();
 
-            transform.position += (fwd * axis.y + rgt * axis.x) * (moveSpeed * Time.deltaTime);
+            if (_controller != null)
+            {
+                if (_controller.isGrounded)
+                    _verticalVelocity = 0f;
+                else
+                    _verticalVelocity += Physics.gravity.y * Time.deltaTime;
+
+                Vector3 move = (fwd * axis.y + rgt * axis.x) * moveSpeed;
+                move.y = _verticalVelocity;
+                _controller.Move(move * Time.deltaTime);
+            }
+            else if (axis.sqrMagnitude >= 0.01f)
+            {
+                transform.position += (fwd * axis.y + rgt * axis.x) * (moveSpeed * Time.deltaTime);
+            }
         }
 
         private void SnapTurn()
