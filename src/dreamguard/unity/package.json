@@ -1,0 +1,8 @@
+{
+  "name": "com.dreamguard.core",
+  "version": "0.1.0",
+  "displayName": "DreamGuard Core",
+  "description": "DreamGuard VR core runtime and editor tools",
+  "unity": "6000.0",
+  "dependencies": {}
+}
