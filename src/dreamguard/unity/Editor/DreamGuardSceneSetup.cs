@@ -14,6 +14,7 @@ namespace DreamGuard.Editor
     ///   • OVRCameraRig with OVRManager (passthrough enabled)
     ///   • DreamGuardLocomotion  on the rig root
     ///   • DreamGuardPassthrough on a child GameObject
+    ///   • DreamGuardMenu on a child GameObject (B-button menu, laser pointer)
     ///   • Ground plane (10 × 10 m)
     ///   • Directional light (if none exists)
     /// </summary>
@@ -35,13 +36,47 @@ namespace DreamGuard.Editor
             var rig = CreateOrGetCameraRig();
             AttachLocomotion(rig);
             AttachPassthrough(rig);
+            AttachMenu(rig);
             CreateGround();
 
             Undo.CollapseUndoOperations(group);
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
 
             Debug.Log("[DreamGuard] Scene setup complete. " +
-                      "Press A on the right controller to toggle the passthrough window.");
+                      "Press B on the right controller to open the passthrough menu.");
+        }
+
+        /// <summary>
+        /// Adds the fog-based passthrough boundary to the VR scene.
+        /// Replaces (or skips) the simple window passthrough if already present.
+        ///
+        /// This sets up DreamGuardPassthroughFog which renders a fog ring around
+        /// the player — full VR inside, gradual passthrough reveal outside.
+        /// </summary>
+        [MenuItem("DreamGuard/Setup Fog Passthrough Boundary")]
+        private static void SetupFogPassthrough()
+        {
+            if (!EditorUtility.DisplayDialog(
+                    "Fog Passthrough Setup",
+                    "This will add the fog passthrough boundary to the camera rig. Continue?",
+                    "Yes", "Cancel"))
+                return;
+
+            Undo.SetCurrentGroupName("DreamGuard Fog Passthrough Setup");
+            int group = Undo.GetCurrentGroup();
+
+            CreateOrGetLight();
+            var rig = CreateOrGetCameraRig();
+            AttachLocomotion(rig);
+            AttachPassthroughFog(rig);
+            AttachMenu(rig);
+            CreateGround();
+
+            Undo.CollapseUndoOperations(group);
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+
+            Debug.Log("[DreamGuard] Fog passthrough boundary set up. " +
+                      "Adjust Inner Radius and Fog Band Width on DreamGuardPassthroughFog.");
         }
 
         // ── light ──────────────────────────────────────────────────────────────────
@@ -155,6 +190,106 @@ namespace DreamGuard.Editor
             layer.projectionSurfaceType = OVRPassthroughLayer.ProjectionSurfaceType.UserDefined;
 
             Undo.AddComponent<DreamGuardPassthrough>(ptGO);
+        }
+
+        // ── menu ─────────────────────────────────────────────────────────────────
+
+        private static void AttachMenu(GameObject rig)
+        {
+            if (rig.GetComponentInChildren<DreamGuardMenu>() != null) return;
+
+            // Prefer the saved prefab so button onSelect events survive re-builds.
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(DreamGuardMenuBuilder.PREFAB_PATH);
+            GameObject menuGO;
+            if (prefab != null)
+            {
+                menuGO = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                Undo.RegisterCreatedObjectUndo(menuGO, "Create DreamGuardMenu");
+            }
+            else
+            {
+                Debug.LogWarning("[DreamGuard] Menu prefab not found at " +
+                    DreamGuardMenuBuilder.PREFAB_PATH +
+                    " — run DreamGuard → Build Menu Prefab first. " +
+                    "Building inline fallback.");
+                menuGO = DreamGuardMenuBuilder.Build();
+                Undo.RegisterCreatedObjectUndo(menuGO, "Create DreamGuardMenu");
+            }
+            menuGO.transform.SetParent(rig.transform, worldPositionStays: false);
+        }
+
+        /// <summary>
+        /// Adds the floor/ceiling grid passthrough boundary to the VR scene.
+        ///
+        /// DreamGuardGridPassthrough renders a world-aligned grid on the dungeon
+        /// floor and ceiling.  Near the player the grid is solid VR; further away
+        /// the fill between grid lines dissolves to passthrough, with the lines
+        /// themselves fading last.
+        /// </summary>
+        [MenuItem("DreamGuard/Setup Grid Passthrough")]
+        private static void SetupGridPassthrough()
+        {
+            if (!EditorUtility.DisplayDialog(
+                    "Grid Passthrough Setup",
+                    "This will add the grid passthrough boundary to the camera rig. Continue?",
+                    "Yes", "Cancel"))
+                return;
+
+            Undo.SetCurrentGroupName("DreamGuard Grid Passthrough Setup");
+            int group = Undo.GetCurrentGroup();
+
+            CreateOrGetLight();
+            var rig = CreateOrGetCameraRig();
+            AttachLocomotion(rig);
+            AttachGridPassthrough(rig);
+            AttachMenu(rig);
+            CreateGround();
+
+            Undo.CollapseUndoOperations(group);
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+
+            Debug.Log("[DreamGuard] Grid passthrough set up. " +
+                      "Adjust Floor Y, Ceiling Y, Inner Radius, and Gradient Width " +
+                      "on DreamGuardGridPassthrough.");
+        }
+
+        // ── fog passthrough ───────────────────────────────────────────────────────
+
+        private static void AttachPassthroughFog(GameObject rig)
+        {
+            if (rig.GetComponentInChildren<DreamGuardPassthroughFog>() != null) return;
+
+            var fogGO = new GameObject("PassthroughFogBoundary");
+            Undo.RegisterCreatedObjectUndo(fogGO, "Create PassthroughFogBoundary");
+            fogGO.transform.SetParent(rig.transform, worldPositionStays: false);
+
+            // OVRPassthroughLayer in Underlay mode fills the background with
+            // passthrough; DreamGuardPassthroughFog's shader cuts the VR alpha
+            // layer to reveal it at the outer boundary.
+            var layer = Undo.AddComponent<OVRPassthroughLayer>(fogGO);
+            layer.overlayType = OVROverlay.OverlayType.Underlay;
+            // Projection type left at default (Reconstruction) – the fog dome
+            // is a regular Unity mesh, not an OVR projection surface.
+
+            Undo.AddComponent<DreamGuardPassthroughFog>(fogGO);
+        }
+
+        // ── grid passthrough ──────────────────────────────────────────────────────
+
+        private static void AttachGridPassthrough(GameObject rig)
+        {
+            if (rig.GetComponentInChildren<DreamGuardGridPassthrough>() != null) return;
+
+            var gridGO = new GameObject("GridPassthroughManager");
+            Undo.RegisterCreatedObjectUndo(gridGO, "Create GridPassthroughManager");
+            gridGO.transform.SetParent(rig.transform, worldPositionStays: false);
+
+            // OVRPassthroughLayer in Underlay mode fills the compositor background
+            // with passthrough wherever the VR framebuffer alpha == 0.
+            var layer = Undo.AddComponent<OVRPassthroughLayer>(gridGO);
+            layer.overlayType = OVROverlay.OverlayType.Underlay;
+
+            Undo.AddComponent<DreamGuardGridPassthrough>(gridGO);
         }
 
         // ── ground ────────────────────────────────────────────────────────────────

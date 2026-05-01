@@ -17,8 +17,12 @@ namespace DreamGuard.Editor
     ///   • DreamGuardLocomotion – thumbstick move + snap turn
     ///   • PassthroughManager child
     ///       └─ OVRPassthroughLayer + DreamGuardPassthrough (A-button toggle)
+    ///   • DreamGuardMenu child (B-button menu, laser pointer, technique buttons)
     ///
     /// If the Meta XR SDK prefab is not found, a minimal camera fallback is used.
+    ///
+    /// Run DreamGuard → Build Menu Prefab first to create the menu prefab,
+    /// then Build Player Prefab to embed it on the player.
     /// </summary>
     public static class PlayerPrefabBuilder
     {
@@ -107,7 +111,33 @@ namespace DreamGuard.Editor
                 ptGO.AddComponent<DreamGuardPassthrough>();
             }
 
+            // ── Menu ──────────────────────────────────────────────────────────────
+            if (root.GetComponentInChildren<DreamGuardMenu>() == null)
+                AttachMenu(root);
+
             return root;
+        }
+
+        // ── menu ─────────────────────────────────────────────────────────────────
+
+        static void AttachMenu(GameObject root)
+        {
+            // Prefer the saved prefab so button onSelect events survive re-builds.
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(DreamGuardMenuBuilder.PREFAB_PATH);
+            GameObject menuGO;
+            if (prefab != null)
+            {
+                menuGO = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            }
+            else
+            {
+                Debug.LogWarning("[DreamGuard] Menu prefab not found at " +
+                    DreamGuardMenuBuilder.PREFAB_PATH +
+                    " — run DreamGuard → Build Menu Prefab first. " +
+                    "Building inline fallback.");
+                menuGO = DreamGuardMenuBuilder.Build();
+            }
+            menuGO.transform.SetParent(root.transform, worldPositionStays: false);
         }
 
         // ── helpers ───────────────────────────────────────────────────────────────
