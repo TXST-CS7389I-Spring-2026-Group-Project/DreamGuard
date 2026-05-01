@@ -85,7 +85,7 @@ namespace DreamGuard
         private void Start()
         {
             // Find the head/camera transform.
-            var rig = FindFirstObjectByType<OVRCameraRig>();
+            var rig = FindAnyObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
             // Camera background must be fully transparent so empty pixels

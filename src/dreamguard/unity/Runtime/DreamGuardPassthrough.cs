@@ -34,18 +34,22 @@ namespace DreamGuard
         private void Awake()
         {
             _layer = GetComponent<OVRPassthroughLayer>();
+#pragma warning disable CS0618
             _layer.projectionSurfaceType = OVRPassthroughLayer.ProjectionSurfaceType.UserDefined;
+#pragma warning restore CS0618
         }
 
         private void Start()
         {
-            var rig = FindFirstObjectByType<OVRCameraRig>();
+            var rig = FindAnyObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
             if (windowSurface == null)
                 windowSurface = CreateWindowQuad();
 
+#pragma warning disable CS0618
             _layer.AddSurfaceGeometry(windowSurface, updateTransform: true);
+#pragma warning restore CS0618
 
             // Start hidden
             SetActive(false);
