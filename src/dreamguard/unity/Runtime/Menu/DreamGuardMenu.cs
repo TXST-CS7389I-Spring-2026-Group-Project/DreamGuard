@@ -22,7 +22,6 @@ namespace DreamGuard
         [Header("References")]
         [Tooltip("Root Transform of the floating panel and its button children.")]
         [SerializeField] private Transform menuPanel;
-        [SerializeField] private LineRenderer laserLine;
 
         [Header("Input")]
         [Tooltip("Button that toggles the menu open/closed (default: B on right controller).")]
@@ -31,7 +30,12 @@ namespace DreamGuard
 
         [Header("Laser")]
         [SerializeField] private float laserMaxLength = 5f;
-        [SerializeField] private Color laserColor = new Color(0.4f, 0.7f, 1f);
+        [SerializeField] private Color laserColor = new Color(0f, 0.5f, 1f);
+
+        // Mesh-based laser: a thin stretched cube avoids LineRenderer's stereo
+        // billboard issues in single-pass instancing on Meta Quest.
+        // Wire this to the LaserBeam GameObject in the prefab (set by DreamGuardMenuBuilder).
+        [SerializeField] private Transform laserBeam;
 
         private readonly List<DreamGuardMenuButton> _buttons = new();
         private DreamGuardMenuButton _hovered;
@@ -50,15 +54,30 @@ namespace DreamGuard
             }
 
             if (menuPanel != null)
+            {
                 _buttons.AddRange(menuPanel.GetComponentsInChildren<DreamGuardMenuButton>());
 
-            if (laserLine != null)
+                // Auto-wire Window Passthrough button if not wired in the prefab.
+                var pt = FindFirstObjectByType<DreamGuardWindowedPassthrough>();
+                if (pt != null)
+                {
+                    foreach (var btn in _buttons)
+                        if (btn.ButtonLabel == "Window Passthrough" &&
+                            btn.onSelect.GetPersistentEventCount() == 0)
+                            btn.onSelect.AddListener(pt.Toggle);
+                }
+            }
+
+            if (laserBeam != null)
             {
-                laserLine.startColor = laserColor;
-                laserLine.endColor   = new Color(laserColor.r, laserColor.g, laserColor.b, 0f);
-                laserLine.startWidth = 0.003f;
-                laserLine.endWidth   = 0.001f;
-                laserLine.useWorldSpace = true;
+                var rend = laserBeam.GetComponent<Renderer>();
+                if (rend != null)
+                {
+                    // Instance the material so our tint doesn't affect the prefab asset.
+                    var mat = rend.material;
+                    mat.SetColor("_BaseColor", laserColor); // URP
+                    mat.SetColor("_Color",     laserColor); // built-in fallback
+                }
             }
 
             SetOpen(false);
@@ -91,8 +110,8 @@ namespace DreamGuard
 
             if (menuPanel != null)
                 menuPanel.gameObject.SetActive(value);
-            if (laserLine != null)
-                laserLine.enabled = value;
+            if (laserBeam != null)
+                laserBeam.gameObject.SetActive(value);
 
             if (value)
                 PositionMenu();
@@ -108,32 +127,55 @@ namespace DreamGuard
         {
             if (_head == null || menuPanel == null) return;
             menuPanel.position = _head.position + _head.forward * menuDistance;
-            // LookAt makes the panel's +Z face toward the head so button faces are visible.
-            menuPanel.LookAt(_head.position);
+            // Face AWAY from the player: gives a positive-determinant matrix,
+            // required for single-pass stereo instancing on Meta Quest.
+            // Button children sit at local -Z (toward player); the background
+            // quad's back face is visible from the player side (material Cull Off).
+            menuPanel.rotation = Quaternion.LookRotation(
+                menuPanel.position - _head.position, Vector3.up);
+            menuPanel.localScale = Vector3.one;
         }
 
         // ── laser + hover ─────────────────────────────────────────────────────────
 
         private void UpdateLaser()
         {
-            if (_controllerAnchor == null || laserLine == null) return;
+            if (_controllerAnchor == null || laserBeam == null) return;
 
             var origin    = _controllerAnchor.position;
             var direction = _controllerAnchor.forward;
+            var ray       = new Ray(origin, direction);
 
+            // ── Button hit: renderer world-space bounds are reliable for mesh buttons
             DreamGuardMenuButton candidate = null;
             float length = laserMaxLength;
 
-            if (Physics.Raycast(origin, direction, out var hit, laserMaxLength,
-                    Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
+            foreach (var btn in _buttons)
             {
-                candidate = hit.collider.GetComponentInParent<DreamGuardMenuButton>();
-                if (candidate != null)
-                    length = hit.distance;
+                if (!btn.gameObject.activeInHierarchy) continue;
+                var rend = btn.GetComponentInChildren<Renderer>();
+                if (rend == null) continue;
+                if (rend.bounds.IntersectRay(ray, out float dist) && dist > 0f && dist < length)
+                {
+                    length    = dist;
+                    candidate = btn;
+                }
             }
 
-            laserLine.SetPosition(0, origin);
-            laserLine.SetPosition(1, origin + direction * length);
+            // ── Solid geometry: stop laser at walls/floors when no button is hit
+            if (candidate == null &&
+                Physics.Raycast(origin, direction, out var hit, laserMaxLength,
+                    Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            {
+                length = hit.distance;
+            }
+
+            // Stretch the cube along its local Z (LookRotation aligns +Z with direction).
+            // The cube starts at the controller origin and ends at the hit point; pivot at midpoint.
+            laserBeam.position = origin + direction * (length * 0.5f);
+            laserBeam.rotation = Quaternion.LookRotation(direction);
+            var ls = laserBeam.localScale;
+            laserBeam.localScale = new Vector3(ls.x, ls.y, length);
 
             if (candidate != _hovered)
             {

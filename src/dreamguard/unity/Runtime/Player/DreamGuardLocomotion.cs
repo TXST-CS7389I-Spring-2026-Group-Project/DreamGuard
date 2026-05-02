@@ -15,7 +15,7 @@ namespace DreamGuard
         [SerializeField] private float moveSpeed = 2f;
 
         [Header("Snap Turn")]
-        [SerializeField] private float snapAngle = 45f;
+        [SerializeField] private float snapAngle = 5f;
         [SerializeField] private float snapDeadzone = 0.5f;
 
         private Transform _headTransform;
@@ -39,7 +39,13 @@ namespace DreamGuard
 
         private void Move()
         {
-            Vector2 axis = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+            // Left stick  → full 2D movement (forward/back + strafe)
+            // Right stick Y → also drives forward/backward (whichever is larger wins)
+            Vector2 left  = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+            float   rightY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y;
+
+            float forward = Mathf.Abs(rightY) > Mathf.Abs(left.y) ? rightY : left.y;
+            Vector2 axis  = new Vector2(left.x, forward);
 
             Vector3 fwd = _headTransform ? _headTransform.forward : transform.forward;
             Vector3 rgt = _headTransform ? _headTransform.right : transform.right;
@@ -67,7 +73,8 @@ namespace DreamGuard
 
         private void SnapTurn()
         {
-            float x = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x;
+            // Right stick X → snap turn
+            float x = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x;
 
             if (Mathf.Abs(x) < snapDeadzone)
             {
@@ -78,7 +85,10 @@ namespace DreamGuard
             if (!_snapReady) return;
             _snapReady = false;
 
-            transform.Rotate(Vector3.up, x > 0f ? snapAngle : -snapAngle, Space.World);
+            // Rotate around the head so the player doesn't slide sideways on snap
+            float angle = x > 0f ? snapAngle : -snapAngle;
+            Vector3 pivot = _headTransform != null ? _headTransform.position : transform.position;
+            transform.RotateAround(pivot, Vector3.up, angle);
         }
     }
 }

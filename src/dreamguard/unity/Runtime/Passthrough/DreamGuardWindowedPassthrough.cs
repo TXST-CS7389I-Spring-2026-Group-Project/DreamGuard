@@ -14,7 +14,7 @@ namespace DreamGuard
     ///   • A button (right controller) toggles the window on/off.
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
-    public class DreamGuardPassthrough : MonoBehaviour
+    public class DreamGuardWindowedPassthrough : MonoBehaviour
     {
         [Header("References")]
         [Tooltip("Leave null to auto-create at runtime.")]
@@ -37,6 +37,9 @@ namespace DreamGuard
 #pragma warning disable CS0618
             _layer.projectionSurfaceType = OVRPassthroughLayer.ProjectionSurfaceType.UserDefined;
 #pragma warning restore CS0618
+            // Render passthrough on top of virtual geometry so the window works
+            // regardless of what dungeon geometry is behind it.
+            _layer.overlayType = OVROverlay.OverlayType.Overlay;
         }
 
         private void Start()

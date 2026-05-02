@@ -10,12 +10,8 @@ namespace DreamGuard
     /// MenuPanel; <see cref="DreamGuardMenu"/> discovers it automatically.
     ///
     /// Wire <see cref="onSelect"/> in the Inspector to call any passthrough
-    /// method (e.g. DreamGuardPassthrough.Toggle). Clicking the active button
-    /// a second time calls onSelect again — wire accordingly for toggle behaviour.
-    ///
-    /// To add a new passthrough technique: duplicate an existing button child
-    /// of MenuPanel in the prefab, rename it, update buttonLabel, and wire
-    /// onSelect to the new technique. No script changes required.
+    /// method (e.g. DreamGuardWindowedPassthrough.Toggle). Clicking the active
+    /// button a second time calls onSelect again — wire accordingly for toggle.
     /// </summary>
     public class DreamGuardMenuButton : MonoBehaviour
     {
@@ -26,12 +22,12 @@ namespace DreamGuard
         public UnityEvent onSelect;
 
         [Header("Colors")]
-        [SerializeField] private Color normalColor = new Color(0.12f, 0.12f, 0.20f);
-        [SerializeField] private Color hoverColor  = new Color(0.28f, 0.40f, 0.65f);
-        [SerializeField] private Color activeColor = new Color(0.18f, 0.52f, 1.00f);
+        [SerializeField] private Color normalColor = new Color(0.35f, 0.35f, 0.35f);
+        [SerializeField] private Color hoverColor  = new Color(0.20f, 0.45f, 0.90f);
+        [SerializeField] private Color activeColor = new Color(0.00f, 0.25f, 0.60f);
 
         private Renderer _renderer;
-        private MaterialPropertyBlock _mpb;
+        private Material _matInstance;
         private bool _isActive;
 
         public string ButtonLabel => buttonLabel;
@@ -39,21 +35,20 @@ namespace DreamGuard
         private void Awake()
         {
             _renderer = GetComponentInChildren<Renderer>();
-            _mpb = new MaterialPropertyBlock();
+            if (_renderer != null)
+                _matInstance = _renderer.material; // per-instance copy, avoids shared-material mutation
             ApplyLabel();
+            ApplyColor(normalColor);
         }
 
         private void ApplyLabel()
         {
             var mesh = GetComponentInChildren<TextMesh>();
-            if (mesh != null)
-                mesh.text = buttonLabel;
+            if (mesh != null) mesh.text = buttonLabel;
         }
 
-        public void SetHovered(bool hovered)
-        {
+        public void SetHovered(bool hovered) =>
             ApplyColor(hovered ? hoverColor : (_isActive ? activeColor : normalColor));
-        }
 
         public void SetActiveState(bool active)
         {
@@ -65,10 +60,9 @@ namespace DreamGuard
 
         private void ApplyColor(Color color)
         {
-            if (_renderer == null) return;
-            _renderer.GetPropertyBlock(_mpb);
-            _mpb.SetColor("_BaseColor", color);  // URP lit/unlit property
-            _renderer.SetPropertyBlock(_mpb);
+            if (_matInstance == null) return;
+            // _BaseColor is the URP Unlit main color; set it directly.
+            _matInstance.SetColor("_BaseColor", color);
         }
     }
 }
