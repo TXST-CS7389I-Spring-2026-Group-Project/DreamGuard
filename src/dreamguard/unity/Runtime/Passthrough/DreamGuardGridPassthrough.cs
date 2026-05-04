@@ -81,6 +81,11 @@ namespace DreamGuard
         private GameObject          _ceilingPlane;
         private Material            _gridMaterial;
 
+        // Saved camera state so SetEnabled(false) can restore them.
+        private Camera           _camera;
+        private CameraClearFlags _origClearFlags;
+        private Color            _origBgColor;
+
         // Cached shader property IDs.
         private static readonly int PropPlayerPos     = Shader.PropertyToID("_PlayerPos");
         private static readonly int PropInnerRadius   = Shader.PropertyToID("_InnerRadius");
@@ -95,6 +100,13 @@ namespace DreamGuard
         private void Awake()
         {
             _layer = GetComponent<OVRPassthroughLayer>();
+            _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
+        }
+
+        private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
+        {
+            if (_floorPlane   != null && showFloor)   _floorPlane.SetActive(true);
+            if (_ceilingPlane != null && showCeiling) _ceilingPlane.SetActive(true);
         }
 
         private void Start()
@@ -104,13 +116,15 @@ namespace DreamGuard
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
             // Camera background must be fully transparent so empty pixels show
-            // passthrough instead of a solid colour.
-            if (Camera.main != null)
+            // passthrough instead of a solid colour. Save the original settings so
+            // SetEnabled(false) can restore them when switching to another mode.
+            _camera = Camera.main;
+            if (_camera != null)
             {
-                Camera.main.clearFlags = CameraClearFlags.SolidColor;
-                var bg = Camera.main.backgroundColor;
-                bg.a = 0f;
-                Camera.main.backgroundColor = bg;
+                _origClearFlags = _camera.clearFlags;
+                _origBgColor    = _camera.backgroundColor;
+                _camera.clearFlags      = CameraClearFlags.SolidColor;
+                _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
             }
 
             _gridMaterial = CreateGridMaterial();
@@ -136,10 +150,29 @@ namespace DreamGuard
         /// <summary>Show or hide the grid overlay and underlying passthrough layer.</summary>
         public void SetEnabled(bool enabled)
         {
-            if (_floorPlane   != null) _floorPlane.SetActive(enabled);
-            if (_ceilingPlane != null) _ceilingPlane.SetActive(enabled);
+            // Always hide planes immediately; on enable they reappear via
+            // OnPassthroughLayerResumed to avoid a black-frame flicker.
+            if (_floorPlane   != null) _floorPlane.SetActive(false);
+            if (_ceilingPlane != null) _ceilingPlane.SetActive(false);
             _layer.enabled = enabled;
+
+            if (_camera != null)
+            {
+                if (enabled)
+                {
+                    _camera.clearFlags      = CameraClearFlags.SolidColor;
+                    _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+                }
+                else
+                {
+                    _camera.clearFlags      = _origClearFlags;
+                    _camera.backgroundColor = _origBgColor;
+                }
+            }
         }
+
+        /// <summary>Toggle the grid overlay on/off.</summary>
+        public void Toggle() => SetEnabled(!_layer.enabled);
 
         /// <summary>Change the inner clear-zone radius at runtime.</summary>
         public void SetInnerRadius(float metres)
@@ -222,6 +255,7 @@ namespace DreamGuard
 
         private void OnDestroy()
         {
+            if (_layer         != null) _layer.passthroughLayerResumed.RemoveListener(OnPassthroughLayerResumed);
             if (_gridMaterial  != null) Destroy(_gridMaterial);
             if (_floorPlane    != null) Destroy(_floorPlane);
             if (_ceilingPlane  != null) Destroy(_ceilingPlane);

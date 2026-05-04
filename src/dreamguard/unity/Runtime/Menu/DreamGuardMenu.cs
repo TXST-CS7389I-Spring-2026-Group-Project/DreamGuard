@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,11 +39,21 @@ namespace DreamGuard
         [SerializeField] private Transform laserBeam;
 
         private readonly List<DreamGuardMenuButton> _buttons = new();
+        private readonly Dictionary<DreamGuardMenuButton, Action<bool>> _buttonPassthrough = new();
         private DreamGuardMenuButton _hovered;
         private DreamGuardMenuButton _active;
         private Transform _head;
         private Transform _controllerAnchor;
         private bool _open;
+
+        // Overlay-type passthrough layers composite above the eye buffer, so they
+        // cover 3D menu geometry.  We hide them while the menu is open.
+        private readonly List<DreamGuardWindowedPassthrough> _overlayPassthroughs = new();
+
+        // Other passthrough technique references for auto-wiring.
+        private DreamGuardGridPassthrough    _gridPassthrough;
+        private DreamGuardVerticalFold       _verticalFold;
+        private DreamGuardPassthroughFog     _passthroughFog;
 
         private void Start()
         {
@@ -53,18 +64,40 @@ namespace DreamGuard
                 _controllerAnchor = rig.rightControllerAnchor;
             }
 
+            _overlayPassthroughs.AddRange(
+                FindObjectsByType<DreamGuardWindowedPassthrough>(FindObjectsSortMode.None));
+
+            _gridPassthrough = FindFirstObjectByType<DreamGuardGridPassthrough>();
+            _verticalFold    = FindFirstObjectByType<DreamGuardVerticalFold>();
+            _passthroughFog  = FindFirstObjectByType<DreamGuardPassthroughFog>();
+
             if (menuPanel != null)
             {
                 _buttons.AddRange(menuPanel.GetComponentsInChildren<DreamGuardMenuButton>());
 
-                // Auto-wire Window Passthrough button if not wired in the prefab.
-                var pt = FindFirstObjectByType<DreamGuardWindowedPassthrough>();
-                if (pt != null)
+                // Map each button to its passthrough enable/disable action.
+                var windowPt = FindFirstObjectByType<DreamGuardWindowedPassthrough>();
+                foreach (var btn in _buttons)
                 {
-                    foreach (var btn in _buttons)
-                        if (btn.ButtonLabel == "Window Passthrough" &&
-                            btn.onSelect.GetPersistentEventCount() == 0)
-                            btn.onSelect.AddListener(pt.Toggle);
+                    switch (btn.ButtonLabel)
+                    {
+                        case "Window Passthrough":
+                            if (windowPt != null)
+                                _buttonPassthrough[btn] = v => windowPt.SetActive(v);
+                            break;
+                        case "Grid Passthrough":
+                            if (_gridPassthrough != null)
+                                _buttonPassthrough[btn] = v => _gridPassthrough.SetEnabled(v);
+                            break;
+                        case "Vertical Fold":
+                            if (_verticalFold != null)
+                                _buttonPassthrough[btn] = v => _verticalFold.SetEnabled(v);
+                            break;
+                        case "Passthrough Fog":
+                            if (_passthroughFog != null)
+                                _buttonPassthrough[btn] = v => _passthroughFog.SetFogEnabled(v);
+                            break;
+                    }
                 }
             }
 
@@ -112,6 +145,11 @@ namespace DreamGuard
                 menuPanel.gameObject.SetActive(value);
             if (laserBeam != null)
                 laserBeam.gameObject.SetActive(value);
+
+            // Overlay-type passthrough layers sit above the eye buffer and cover
+            // 3D geometry.  Hide them while the menu is open so it stays visible.
+            foreach (var pt in _overlayPassthroughs)
+                if (pt != null) pt.HideForMenu(value);
 
             if (value)
                 PositionMenu();
@@ -187,6 +225,12 @@ namespace DreamGuard
 
         // ── selection ─────────────────────────────────────────────────────────────
 
+        private void DisableAllPassthroughs()
+        {
+            foreach (var setter in _buttonPassthrough.Values)
+                setter(false);
+        }
+
         private void ActivateButton(DreamGuardMenuButton btn)
         {
             if (_active != null && _active != btn)
@@ -196,7 +240,11 @@ namespace DreamGuard
             _active = toggling ? null : btn;
             _active?.SetActiveState(true);
 
-            btn.Select(); // always fires onSelect; wire toggle logic there if needed
+            // Disable every passthrough, then enable only the newly selected one.
+            // Buttons with no passthrough entry (e.g. "Off") act as a plain disable-all.
+            DisableAllPassthroughs();
+            if (_active != null && _buttonPassthrough.TryGetValue(_active, out var enable))
+                enable(true);
         }
 
         // ── public API ────────────────────────────────────────────────────────────

@@ -41,8 +41,10 @@ namespace DreamGuard
         {
             // Left stick  → full 2D movement (forward/back + strafe)
             // Right stick Y → also drives forward/backward (whichever is larger wins)
-            Vector2 left  = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
-            float   rightY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y;
+            // Explicit controller mask required: SecondaryThumbstick returns None for
+            // individual LTouch/RTouch and only works with the combined Touch mask.
+            Vector2 left  = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch);
+            float   rightY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch).y;
 
             float forward = Mathf.Abs(rightY) > Mathf.Abs(left.y) ? rightY : left.y;
             Vector2 axis  = new Vector2(left.x, forward);
@@ -74,7 +76,7 @@ namespace DreamGuard
         private void SnapTurn()
         {
             // Right stick X → snap turn
-            float x = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x;
+            float x = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch).x;
 
             if (Mathf.Abs(x) < snapDeadzone)
             {

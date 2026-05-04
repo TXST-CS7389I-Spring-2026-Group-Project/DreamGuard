@@ -2,7 +2,8 @@
     "name": "DreamGuard.Runtime",
     "rootNamespace": "DreamGuard",
     "references": [
-        "Oculus.VR"
+        "Oculus.VR",
+        "Meta.XR.EnvironmentDepth"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

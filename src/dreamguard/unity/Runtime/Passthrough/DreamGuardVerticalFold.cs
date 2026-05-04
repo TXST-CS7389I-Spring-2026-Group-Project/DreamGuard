@@ -153,6 +153,9 @@ namespace DreamGuard
             _layer.enabled = enabled;
         }
 
+        /// <summary>Toggle the fold effect on/off.</summary>
+        public void Toggle() => SetEnabled(!_layer.enabled);
+
         // ── Private helpers ────────────────────────────────────────────────────────
 
         private Material CreateMaterial()

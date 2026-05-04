@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8469245128743093821
+--- !u!114 &-8505557091069151993
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -38,7 +38,7 @@ MonoBehaviour:
   m_Subtarget: 0
   m_PlatformId: 80657fe557de4d17822398b3a01b8c9e
   m_PlatformBuildProfile:
-    rid: 5236593480115683426
+    rid: 5236593532757082397
   m_OverrideGlobalSceneList: 0
   m_Scenes: []
   m_HasScriptingDefines: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
     - line: '|   allowedAutorotateToLandscapeLeft: 1'
     - line: '|   useOSAutorotation: 1'
     - line: '|   use32BitDisplayBuffer: 1'
-    - line: '|   preserveFramebufferAlpha: 0'
+    - line: '|   preserveFramebufferAlpha: 1'
     - line: '|   disableDepthAndStencilBuffers: 0'
     - line: '|   androidStartInFullscreen: 1'
     - line: '|   androidRenderOutsideSafeArea: 1'
@@ -190,16 +190,8 @@ MonoBehaviour:
     - line: '|   tvOSBundleVersion: 1.0'
     - line: '|   bundleVersion: 1.0'
     - line: '|   preloadedAssets:'
-    - line: '|   - {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100,
-        type: 3}'
     - line: '|   - {fileID: 11400000, guid: 01eff369583904e7b916b0eca3b88954, type:
         2}'
-    - line: '|   - {fileID: 11400000, guid: dbd35f0cd351c4ad8bbc98769b0709c4, type:
-        2}'
-    - line: '|   - {fileID: -1354747125715337759, guid: dbc60f34586d7440ba6b653dc4f35ff6,
-        type: 2}'
-    - line: '|   - {fileID: -8814087142008578059, guid: 10a373c1921f64e4a930edc8cb85d404,
-        type: 2}'
     - line: '|   metroInputSource: 0'
     - line: '|   wsaTransparentSwapchain: 0'
     - line: '|   xboxOneDisableKinectGpuReservation: 1'
@@ -232,7 +224,7 @@ MonoBehaviour:
     - line: '|   AndroidPreferredInstallLocation: 0'
     - line: '|   AndroidPreferredDataLocation: 1'
     - line: '|   aotOptions: '
-    - line: '|   stripEngineCode: 1'
+    - line: '|   stripEngineCode: 0'
     - line: '|   iPhoneStrippingLevel: 0'
     - line: '|   iPhoneScriptCallOptimization: 0'
     - line: '|   ForceInternetPermission: 0'
@@ -310,13 +302,13 @@ MonoBehaviour:
     - line: '|   clonedFromGUID: c19f32bac17ee4170b3bf8a6a0333fb9'
     - line: '|   templatePackageId: com.unity.template.universal-2d@6.1.3'
     - line: '|   templateDefaultScene: Assets/Scenes/SampleScene.unity'
-    - line: '|   useCustomMainManifest: 0'
+    - line: '|   useCustomMainManifest: 1'
     - line: '|   useCustomLauncherManifest: 0'
-    - line: '|   useCustomMainGradleTemplate: 0'
+    - line: '|   useCustomMainGradleTemplate: 1'
     - line: '|   useCustomLauncherGradleManifest: 0'
     - line: '|   useCustomBaseGradleTemplate: 0'
-    - line: '|   useCustomGradlePropertiesTemplate: 0'
-    - line: '|   useCustomGradleSettingsTemplate: 0'
+    - line: '|   useCustomGradlePropertiesTemplate: 1'
+    - line: '|   useCustomGradleSettingsTemplate: 1'
     - line: '|   useCustomProguardFile: 0'
     - line: '|   AndroidTargetArchitectures: 2'
     - line: '|   AndroidAllowedArchitectures: -13'
@@ -460,6 +452,9 @@ MonoBehaviour:
     - line: '|   - m_BuildTarget: AndroidPlayer'
     - line: '|     m_APIs: 15000000'
     - line: '|     m_Automatic: 0'
+    - line: '|   - m_BuildTarget: WindowsStandaloneSupport'
+    - line: '|     m_APIs: 02000000'
+    - line: '|     m_Automatic: 0'
     - line: '|   m_BuildTargetVRSettings: []'
     - line: '|   m_DefaultShaderChunkSizeInMB: 16'
     - line: '|   m_DefaultShaderChunkCount: 0'
@@ -476,7 +471,10 @@ MonoBehaviour:
     - line: '|   m_BuildTargetGroupLightmapSettings: []'
     - line: '|   m_BuildTargetGroupLoadStoreDebugModeSettings: []'
     - line: '|   m_BuildTargetNormalMapEncoding: []'
-    - line: '|   m_BuildTargetDefaultTextureCompressionFormat: []'
+    - line: '|   m_BuildTargetDefaultTextureCompressionFormat:'
+    - line: '|   - serializedVersion: 3'
+    - line: '|     m_BuildTarget: Android'
+    - line: '|     m_Formats: 01000000'
     - line: '|   playModeTestRunnerEnabled: 0'
     - line: '|   runPlayModeTestAsEditModeTest: 0'
     - line: '|   actionOnDotNetUnhandledException: 1'
@@ -867,10 +865,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 5236593480115683426
+    - rid: 5236593532757082397
       type: {class: AndroidPlatformBuildSettings, ns: UnityEditor.Android, asm: UnityEditor.Android.Extensions}
       data:
-        m_Development: 1
+        m_Development: 0
         m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 0
@@ -890,8 +888,8 @@ MonoBehaviour:
         m_DebugSymbolLevel: 1
         m_DebugSymbolFormat: 5
         m_CurrentDeploymentTargetId: __builtin__target_default
-        m_BuildType: 1
-        m_LinkTimeOptimization: 0
+        m_BuildType: 2
+        m_LinkTimeOptimization: 1
         m_BuildAppBundle: 0
         m_IPAddressToConnect: 
         m_SymlinkSources: 0
