@@ -11,12 +11,10 @@
 
 - **Engine**: Unity (in-editor play mode via Meta Quest Link)
 - **ADB**: Device connected via USB — ADB debugging is available
-  - Use `adb logcat` to read device logs
-  - Use `adb shell` for device inspection
 
 ## Debugging Rule
 
-**ALWAYS invoke the `/adb-debug` skill before responding to any debugging request** — anything not working, broken, unexpected, or crashing. ADB logs are always required; there is no exception.
+**ALWAYS invoke the `/adb-debug` skill before responding to any debugging request** — anything not working, broken, unexpected, or crashing. ADB logs are always required; the only exception is Unity build errors.
 
 ## Logging Rule
 
