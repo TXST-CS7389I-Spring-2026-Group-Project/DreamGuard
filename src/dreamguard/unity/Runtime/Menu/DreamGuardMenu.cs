@@ -54,6 +54,7 @@ namespace DreamGuard
         private DreamGuardGridPassthrough    _gridPassthrough;
         private DreamGuardVerticalFold       _verticalFold;
         private DreamGuardPassthroughFog     _passthroughFog;
+        private PassthroughPlaneScript       _passthroughPlane;
 
         private void Start()
         {
@@ -71,9 +72,10 @@ namespace DreamGuard
                 FindObjectsByType<DreamGuardWindowedPassthrough>(
                     FindObjectsInactive.Include, FindObjectsSortMode.None));
 
-            _gridPassthrough = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
-            _verticalFold    = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
-            _passthroughFog  = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
+            _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
+            _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
+            _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
+            _passthroughPlane = FindFirstObjectByType<PassthroughPlaneScript>(FindObjectsInactive.Include);
 
             if (menuPanel != null)
             {
@@ -115,6 +117,13 @@ namespace DreamGuard
                                 _buttonPassthrough[btn] = v => {
                                     if (v) { _passthroughFog.gameObject.SetActive(true); _passthroughFog.SetFogEnabled(true); }
                                     else if (_passthroughFog.gameObject.activeSelf) { _passthroughFog.SetFogEnabled(false); _passthroughFog.gameObject.SetActive(false); }
+                                };
+                            break;
+                        case "Passthrough Plane":
+                            if (_passthroughPlane != null)
+                                _buttonPassthrough[btn] = v => {
+                                    if (v) { _passthroughPlane.gameObject.SetActive(true); _passthroughPlane.SetEnabled(true); }
+                                    else if (_passthroughPlane.gameObject.activeSelf) { _passthroughPlane.SetEnabled(false); _passthroughPlane.gameObject.SetActive(false); }
                                 };
                             break;
                     }
@@ -172,12 +181,44 @@ namespace DreamGuard
                 if (pt != null) pt.HideForMenu(value);
 
             if (value)
-                PositionMenu();
-
-            if (!value)
             {
+                // Disable all underlay passthrough techniques while the menu is open
+                // so they do not render over the menu geometry or obscure the buttons.
+                DisableUnderlayPassthroughs();
+                PositionMenu();
+            }
+            else
+            {
+                // Restore the active underlay technique when the menu closes.
+                if (_active != null && _buttonPassthrough.TryGetValue(_active, out var restore))
+                    restore(true);
+
                 _hovered?.SetHovered(false);
                 _hovered = null;
+            }
+        }
+
+        private void DisableUnderlayPassthroughs()
+        {
+            if (_gridPassthrough != null && _gridPassthrough.gameObject.activeSelf)
+            {
+                _gridPassthrough.SetEnabled(false);
+                _gridPassthrough.gameObject.SetActive(false);
+            }
+            if (_verticalFold != null && _verticalFold.gameObject.activeSelf)
+            {
+                _verticalFold.SetEnabled(false);
+                _verticalFold.gameObject.SetActive(false);
+            }
+            if (_passthroughFog != null && _passthroughFog.gameObject.activeSelf)
+            {
+                _passthroughFog.SetFogEnabled(false);
+                _passthroughFog.gameObject.SetActive(false);
+            }
+            if (_passthroughPlane != null && _passthroughPlane.gameObject.activeSelf)
+            {
+                _passthroughPlane.SetEnabled(false);
+                _passthroughPlane.gameObject.SetActive(false);
             }
         }
 

@@ -71,7 +71,12 @@ Shader "Custom/PassthroughDepthPlane"
 
                 const float4 depthSpace =
                     mul(_EnvironmentDepthReprojectionMatrices[unity_StereoEyeIndex], float4(i.posWorld, 1.0));
-                const float2 uvCoords = (depthSpace.xy / depthSpace.w + 1.0f) * 0.5f;
+                float2 uvCoords = (depthSpace.xy / depthSpace.w + 1.0f) * 0.5f;
+
+                // soften
+                const float2 halfPixelOffset = 0.5f * float2(_PreprocessedEnvironmentDepthTexture_TexelSize.xy);
+                uvCoords -= halfPixelOffset;
+
                 float depth = SampleEnvironmentDepthLinear(uvCoords);
 
                 // Cull fragments of the passthrough that are farther than the threshold 

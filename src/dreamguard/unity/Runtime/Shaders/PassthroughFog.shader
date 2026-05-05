@@ -87,10 +87,6 @@ Shader "DreamGuard/PassthroughFog"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                // ComputeScreenPos handles stereo eye layout and Vulkan y-flip correctly.
-                // positionCS.xy / _ScreenParams.xy does not — it breaks depth UV in
-                // single-pass stereo instancing and reversed-Z on Quest/Vulkan.
-                float4 screenPos  : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -100,7 +96,6 @@ Shader "DreamGuard/PassthroughFog"
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
                 OUT.positionCS = GetVertexPositionInputs(IN.positionOS.xyz).positionCS;
-                OUT.screenPos  = ComputeScreenPos(OUT.positionCS);
                 return OUT;
             }
 
@@ -108,7 +103,7 @@ Shader "DreamGuard/PassthroughFog"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
-                float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
+                float2 screenUV = IN.positionCS.xy / _ScreenParams.xy;
                 float  rawDepth = SampleSceneDepth(screenUV);
 
                 // Convert raw device depth to linear [0=near, 1=far] using _ZBufferParams.
@@ -171,7 +166,6 @@ Shader "DreamGuard/PassthroughFog"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float4 screenPos  : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -181,7 +175,6 @@ Shader "DreamGuard/PassthroughFog"
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
                 OUT.positionCS = GetVertexPositionInputs(IN.positionOS.xyz).positionCS;
-                OUT.screenPos  = ComputeScreenPos(OUT.positionCS);
                 return OUT;
             }
 
@@ -189,7 +182,7 @@ Shader "DreamGuard/PassthroughFog"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
-                float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
+                float2 screenUV = IN.positionCS.xy / _ScreenParams.xy;
                 float  rawDepth = SampleSceneDepth(screenUV);
 
                 // Convert raw device depth to linear [0=near, 1=far] using _ZBufferParams.
