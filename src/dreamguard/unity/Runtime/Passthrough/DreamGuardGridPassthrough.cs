@@ -100,6 +100,9 @@ namespace DreamGuard
         private void Awake()
         {
             _layer = GetComponent<OVRPassthroughLayer>();
+            // Disable immediately so the compositor never sees an active Underlay
+            // passthrough layer at startup before this technique has been selected.
+            _layer.enabled = false;
             _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
         }
 
@@ -115,16 +118,15 @@ namespace DreamGuard
             var rig = FindFirstObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
-            // Camera background must be fully transparent so empty pixels show
-            // passthrough instead of a solid colour. Save the original settings so
-            // SetEnabled(false) can restore them when switching to another mode.
+            // Save the original camera settings so SetEnabled(false) can restore them.
+            // Do NOT modify the camera here — it is only made transparent in SetEnabled(true).
+            // Modifying camera alpha=0 at startup (without an active passthrough layer) causes
+            // the Meta compositor to show undefined content for empty pixels.
             _camera = Camera.main;
             if (_camera != null)
             {
                 _origClearFlags = _camera.clearFlags;
                 _origBgColor    = _camera.backgroundColor;
-                _camera.clearFlags      = CameraClearFlags.SolidColor;
-                _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
             }
 
             _gridMaterial = CreateGridMaterial();

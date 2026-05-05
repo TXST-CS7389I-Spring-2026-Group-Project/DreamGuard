@@ -107,14 +107,21 @@ namespace DreamGuard
             _layer.overlayType = OVROverlay.OverlayType.Underlay;
             // Reconstructed: full-scene passthrough, not projected onto a mesh surface.
             _layer.projectionSurfaceType = OVRPassthroughLayer.ProjectionSurfaceType.Reconstructed;
+            // Disable until the technique is explicitly enabled from the menu.
+            // Without this, the layer is briefly active between Awake and the
+            // SetFogEnabled(false) call at the end of Start.
+            _layer.enabled = false;
 
             _depthManager = GetComponent<EnvironmentDepthManager>();
             if (_depthManager != null)
             {
                 bool supported = EnvironmentDepthManager.IsSupported;
                 DreamGuardLog.Log($"[DreamGuardFog] EnvironmentDepthManager found. IsSupported={supported}");
-                if (supported)
-                    _depthManager.OcclusionShadersMode = OcclusionShadersMode.SoftOcclusion;
+                // OcclusionShadersMode is set in SetFogEnabled — NOT here.
+                // Setting it in Awake enables the META_DEPTH_SOFT_OCCLUSION_ENABLED global
+                // keyword immediately, which causes dungeon materials that use Meta depth
+                // occlusion to sample an invalid depth texture and render with garbage colours
+                // (red/green on Vulkan) until the fog is actually active.
             }
             else
             {
@@ -132,10 +139,11 @@ namespace DreamGuard
                 DreamGuardLog.Log($"[DreamGuardFog] Head transform: {_head.name}");
 
             // Save current camera clear settings so SetFogEnabled(false) can restore them.
+            // Only track Camera.main (CenterEyeAnchor) — the actual URP rendering camera.
+            // LeftEyeAnchor and RightEyeAnchor are disabled in URP single-pass stereo instancing
+            // and modifying them causes unexpected compositor behaviour.
             var allCams = new List<Camera>();
-            if (rig != null)
-                allCams.AddRange(rig.GetComponentsInChildren<Camera>());
-            if (Camera.main != null && !allCams.Contains(Camera.main))
+            if (Camera.main != null)
                 allCams.Add(Camera.main);
 
             foreach (var cam in allCams)
@@ -240,7 +248,19 @@ namespace DreamGuard
             if (_dome != null) _dome.SetActive(enabled);
             _layer.enabled = enabled;
             if (_depthManager != null && EnvironmentDepthManager.IsSupported)
+            {
+                // Set OcclusionShadersMode before changing enabled state so the global
+                // keyword matches the depth manager's active/inactive state.  Setting
+                // SoftOcclusion while the manager is disabled leaves the keyword active
+                // with no valid depth texture — causing materials to sample garbage and
+                // render with incorrect colours on Vulkan (the dungeon red/green issue).
+                _depthManager.OcclusionShadersMode = enabled
+                    ? OcclusionShadersMode.SoftOcclusion
+                    : OcclusionShadersMode.None;
                 _depthManager.enabled = enabled;
+                DreamGuardLog.Log($"[DreamGuardFog] DepthManager: enabled={enabled}  " +
+                          $"OcclusionShadersMode={_depthManager.OcclusionShadersMode}");
+            }
 
             DreamGuardLog.Log($"[DreamGuardFog] After enable: dome={_dome?.activeSelf}  " +
                       $"layer={_layer.enabled}  passthrough={_layer.isActiveAndEnabled}");

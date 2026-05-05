@@ -101,24 +101,28 @@ namespace DreamGuard
 
         // ── Unity messages ─────────────────────────────────────────────────────────
 
-        private void Awake() => _layer = GetComponent<OVRPassthroughLayer>();
+        private void Awake()
+        {
+            _layer = GetComponent<OVRPassthroughLayer>();
+            // Disable immediately so the compositor never sees an active Underlay
+            // passthrough layer at startup before this technique has been selected.
+            _layer.enabled = false;
+        }
 
         private void Start()
         {
             var rig = FindFirstObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
-            // Transparent camera background required for the passthrough compositor.
-            // Save the original settings so SetEnabled(false) can restore them.
+            // Save the original camera settings so SetEnabled(false) can restore them.
+            // Do NOT modify the camera here — it is only made transparent in SetEnabled(true).
+            // Modifying camera alpha=0 at startup (without an active passthrough layer) causes
+            // the Meta compositor to show undefined content for empty pixels.
             _camera = Camera.main;
             if (_camera != null)
             {
-                _origClearFlags         = _camera.clearFlags;
-                _origBgColor            = _camera.backgroundColor;
-                _camera.clearFlags      = CameraClearFlags.SolidColor;
-                Color bg                = _camera.backgroundColor;
-                bg.a                    = 0f;
-                _camera.backgroundColor = bg;
+                _origClearFlags = _camera.clearFlags;
+                _origBgColor    = _camera.backgroundColor;
             }
 
             _material = CreateMaterial();

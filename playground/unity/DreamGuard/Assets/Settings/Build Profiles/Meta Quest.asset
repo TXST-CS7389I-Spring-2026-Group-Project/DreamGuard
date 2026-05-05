@@ -196,6 +196,10 @@ MonoBehaviour:
         type: 3}'
     - line: '|   - {fileID: 11400000, guid: dbd35f0cd351c4ad8bbc98769b0709c4, type:
         2}'
+    - line: '|   - {fileID: -1354747125715337759, guid: dbc60f34586d7440ba6b653dc4f35ff6,
+        type: 2}'
+    - line: '|   - {fileID: -8814087142008578059, guid: 10a373c1921f64e4a930edc8cb85d404,
+        type: 2}'
     - line: '|   metroInputSource: 0'
     - line: '|   wsaTransparentSwapchain: 0'
     - line: '|   xboxOneDisableKinectGpuReservation: 1'
@@ -892,7 +896,7 @@ MonoBehaviour:
         m_DebugSymbolLevel: 1
         m_DebugSymbolFormat: 5
         m_CurrentDeploymentTargetId: __builtin__target_default
-        m_BuildType: 2
+        m_BuildType: 1
         m_LinkTimeOptimization: 1
         m_BuildAppBundle: 0
         m_IPAddressToConnect: 
