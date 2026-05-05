@@ -2,9 +2,10 @@
 name: meta-depth-api
 description: >
   Meta Quest Depth API documentation for Unity.
-  TRIGGER when: user mentions "Depth API", EnvironmentDepthManager, depth map, depth texture,
+  TRIGGER when: user mentions "depth", EnvironmentDepthManager, depth map, depth texture,
   depth occlusion, _EnvironmentDepthBias, META_DEPTH_*, RemoveHands, hand removal from depth,
   hard occlusion, soft occlusion, z-fighting depth, or depth raycasting.
+  TRIGGER when: you need any of the above information.
   DO NOT TRIGGER for general passthrough questions that don't involve depth sensing.
 ---
 

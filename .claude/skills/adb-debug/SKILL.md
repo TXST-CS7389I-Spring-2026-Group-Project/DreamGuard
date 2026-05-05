@@ -18,7 +18,7 @@ Device must be connected via USB with ADB debugging enabled.
 adb logcat -s Unity
 
 # Last 50 Unity messages (avoids context bloat)
-adb logcat -s Unity -d | tail -50
+adb logcat -s Unity -d | tail -100
 ```
 
 ## DreamGuardLog File
@@ -30,10 +30,10 @@ adb logcat -s Unity -d | tail -50
 adb pull /sdcard/Android/data/com.DefaultCompany.DreamGuard/files/dreamguard.log
 
 # Read inline via shell (external storage — run-as will NOT work)
-adb shell cat /sdcard/Android/data/com.DefaultCompany.DreamGuard/files/dreamguard.log
+adb shell "cat /sdcard/Android/data/com.DefaultCompany.DreamGuard/files/dreamguard.log"
 
 # Last 50 lines inline
-adb shell cat /sdcard/Android/data/com.DefaultCompany.DreamGuard/files/dreamguard.log | tail -50
+adb shell "cat /sdcard/Android/data/com.DefaultCompany.DreamGuard/files/dreamguard.log" | tail -50
 ```
 
 Log format: `HH:mm:ss.fff [I|W|E]  <message>`

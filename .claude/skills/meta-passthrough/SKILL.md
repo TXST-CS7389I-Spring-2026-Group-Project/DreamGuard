@@ -5,6 +5,7 @@ description: >
   TRIGGER when: user mentions "passthrough", OVRPassthroughLayer, passthrough AR, passthrough window,
   passthrough styling, color mapping, LUT, compositing, masking, surface-projected passthrough,
   passthrough occlusion, or mixed reality camera feed.
+  TRIGGER when: you need any of the above information.
   DO NOT TRIGGER for Depth API questions unless passthrough is also mentioned.
 ---
 
