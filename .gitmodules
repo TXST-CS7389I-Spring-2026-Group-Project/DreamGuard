@@ -1,6 +1,9 @@
 [submodule "submodules/research-companion"]
 	path = submodules/research-companion
 	url = https://github.com/andrehuang/research-companion.git
-[submodule "submodules/godot-mcp"]
-	path = submodules/godot-mcp
+[submodule "submodules/ai_integration/mcp/godot-mcp"]
+	path = submodules/ai_integration/mcp/godot-mcp
 	url = https://github.com/Coding-Solo/godot-mcp.git
+[submodule "submodules/ai_integration/mcp/unity-mcp"]
+	path = submodules/ai_integration/mcp/unity-mcp
+	url = https://github.com/CoplayDev/unity-mcp.git
