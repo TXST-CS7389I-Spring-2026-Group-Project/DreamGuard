@@ -101,6 +101,8 @@ namespace DreamGuard
         /// </summary>
         public void HideForMenu(bool menuOpen)
         {
+            // Guard: Awake hasn't run yet if this GO is still inactive (never selected).
+            if (_layer == null) return;
             _layer.enabled = menuOpen ? false : _active;
             if (windowSurface != null)
                 windowSurface.SetActive(menuOpen ? false : _active);

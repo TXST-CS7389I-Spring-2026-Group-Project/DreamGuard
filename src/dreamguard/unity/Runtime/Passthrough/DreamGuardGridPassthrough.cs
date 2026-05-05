@@ -130,8 +130,10 @@ namespace DreamGuard
             _gridMaterial = CreateGridMaterial();
 
             // Grid planes are world-space static geometry — NOT parented to the rig.
-            if (showFloor)   _floorPlane   = CreateGridPlane("GridFloor",   floorY);
-            if (showCeiling) _ceilingPlane = CreateGridPlane("GridCeiling", ceilingY);
+            // Start them inactive; OnPassthroughLayerResumed shows them once the layer
+            // is ready, avoiding a flash of unlit geometry before passthrough initialises.
+            if (showFloor)   { _floorPlane   = CreateGridPlane("GridFloor",   floorY);   _floorPlane.SetActive(false); }
+            if (showCeiling) { _ceilingPlane = CreateGridPlane("GridCeiling", ceilingY); _ceilingPlane.SetActive(false); }
 
             SyncMaterialProps();
         }

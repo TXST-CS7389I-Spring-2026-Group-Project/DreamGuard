@@ -21,14 +21,6 @@ namespace DreamGuard
     {
         public static DreamGuardPlayer Instance { get; private set; }
 
-        [Tooltip("If true, the default MR mode is enabled on startup when the system " +
-                 "recommends passthrough based on the user's home environment preference.")]
-        [SerializeField] private bool _respectSystemRecommendation = true;
-
-        [Tooltip("The passthrough mode to auto-enable when the system recommends MR. " +
-                 "Leave null to skip auto-enable.")]
-        [SerializeField] private DreamGuardPassthroughFog _defaultMrMode;
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -43,9 +35,6 @@ namespace DreamGuard
         private void Start()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
-
-            if (_respectSystemRecommendation && _defaultMrMode != null)
-                _defaultMrMode.SetFogEnabled(OVRManager.IsPassthroughRecommended());
         }
 
         private void OnDestroy()
@@ -53,6 +42,15 @@ namespace DreamGuard
             SceneManager.sceneLoaded -= OnSceneLoaded;
             if (Instance == this)
                 Instance = null;
+        }
+
+        // Yield the XR frame loop when the app loses OS focus (headset removed,
+        // system overlay, build-and-run replacement).  Without this the main thread
+        // blocks in xrWaitFrame and Android fires a 5-second ANR.
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (OVRManager.instance != null)
+                OVRManager.instance.enabled = hasFocus;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

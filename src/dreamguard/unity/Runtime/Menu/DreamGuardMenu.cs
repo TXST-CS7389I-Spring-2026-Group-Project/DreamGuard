@@ -64,38 +64,58 @@ namespace DreamGuard
                 _controllerAnchor = rig.rightControllerAnchor;
             }
 
+            // Include inactive so techniques whose GameObjects start disabled are still found.
+            // Techniques are activated lazily at the GameObject level (one at a time) to
+            // prevent multiple OVRPassthroughLayer.Awake() calls, which crash the VR runtime.
             _overlayPassthroughs.AddRange(
-                FindObjectsByType<DreamGuardWindowedPassthrough>(FindObjectsSortMode.None));
+                FindObjectsByType<DreamGuardWindowedPassthrough>(
+                    FindObjectsInactive.Include, FindObjectsSortMode.None));
 
-            _gridPassthrough = FindFirstObjectByType<DreamGuardGridPassthrough>();
-            _verticalFold    = FindFirstObjectByType<DreamGuardVerticalFold>();
-            _passthroughFog  = FindFirstObjectByType<DreamGuardPassthroughFog>();
+            _gridPassthrough = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
+            _verticalFold    = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
+            _passthroughFog  = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
 
             if (menuPanel != null)
             {
                 _buttons.AddRange(menuPanel.GetComponentsInChildren<DreamGuardMenuButton>());
 
-                // Map each button to its passthrough enable/disable action.
-                var windowPt = FindFirstObjectByType<DreamGuardWindowedPassthrough>();
+                // Each action activates/deactivates the technique's GameObject as well as
+                // calling the technique's own enable/disable method. Activating the GO first
+                // lets Awake+Start run before the enable call; deactivating last lets the
+                // disable call clean up cameras and layers before the GO goes dormant.
+                // The disable path guards activeSelf so it's safe to call on dormant techniques.
+                var windowPt = FindFirstObjectByType<DreamGuardWindowedPassthrough>(FindObjectsInactive.Include);
                 foreach (var btn in _buttons)
                 {
                     switch (btn.ButtonLabel)
                     {
                         case "Window Passthrough":
                             if (windowPt != null)
-                                _buttonPassthrough[btn] = v => windowPt.SetActive(v);
+                                _buttonPassthrough[btn] = v => {
+                                    if (v) { windowPt.gameObject.SetActive(true); windowPt.SetActive(true); }
+                                    else if (windowPt.gameObject.activeSelf) { windowPt.SetActive(false); windowPt.gameObject.SetActive(false); }
+                                };
                             break;
                         case "Grid Passthrough":
                             if (_gridPassthrough != null)
-                                _buttonPassthrough[btn] = v => _gridPassthrough.SetEnabled(v);
+                                _buttonPassthrough[btn] = v => {
+                                    if (v) { _gridPassthrough.gameObject.SetActive(true); _gridPassthrough.SetEnabled(true); }
+                                    else if (_gridPassthrough.gameObject.activeSelf) { _gridPassthrough.SetEnabled(false); _gridPassthrough.gameObject.SetActive(false); }
+                                };
                             break;
                         case "Vertical Fold":
                             if (_verticalFold != null)
-                                _buttonPassthrough[btn] = v => _verticalFold.SetEnabled(v);
+                                _buttonPassthrough[btn] = v => {
+                                    if (v) { _verticalFold.gameObject.SetActive(true); _verticalFold.SetEnabled(true); }
+                                    else if (_verticalFold.gameObject.activeSelf) { _verticalFold.SetEnabled(false); _verticalFold.gameObject.SetActive(false); }
+                                };
                             break;
                         case "Passthrough Fog":
                             if (_passthroughFog != null)
-                                _buttonPassthrough[btn] = v => _passthroughFog.SetFogEnabled(v);
+                                _buttonPassthrough[btn] = v => {
+                                    if (v) { _passthroughFog.gameObject.SetActive(true); _passthroughFog.SetFogEnabled(true); }
+                                    else if (_passthroughFog.gameObject.activeSelf) { _passthroughFog.SetFogEnabled(false); _passthroughFog.gameObject.SetActive(false); }
+                                };
                             break;
                     }
                 }

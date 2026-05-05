@@ -1,13 +1,16 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Meta.XR.EnvironmentDepth;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace DreamGuard
 {
     /// <summary>
     /// Fog-based passthrough boundary for Meta Quest.
     ///
-    /// A clear circle around the player shows the full VR dungeon.  Beyond that
+    /// A clear circle around the player shows the full VR environment.  Beyond that
     /// circle the Meta Quest compositor blends the real world via passthrough.
     ///
     /// How it works
@@ -20,10 +23,14 @@ namespace DreamGuard
     ///   shader (two passes):
     ///     Pass 0 – FogColor:       paints semi-transparent haze in the transition band.
     ///     Pass 1 – PassthroughCut: writes vrAmount directly into the alpha channel
-    ///              (ColorMask A).  Inner zone → alpha=1 (VR), outer zone → alpha=0
-    ///              (passthrough), transition → smooth gradient.
-    ///              ZTest Always so it runs for every pixel regardless of depth, and
-    ///              overrides the opaque geometry alpha written by the URP Lit shader.
+    ///              (ColorMask A, ZTest Always).  For each screen pixel the shader
+    ///              samples the URP depth buffer, reconstructs the XZ distance of the
+    ///              VR geometry from the player, and sets alpha accordingly.
+    ///              Inner zone → alpha=1 (VR), outer zone → alpha=0 (passthrough).
+    ///              Sky / empty pixels hit the far plane.  rawDepth is linearised via
+    ///              Linear01Depth/_ZBufferParams (handles reversed-Z automatically) and
+    ///              pixels with linearDepth > 0.9999 are treated as xzDist=0 → alpha=1
+    ///              (full VR) so the VR skybox and ceiling stay visible.
     ///
     /// URP prerequisite (already configured in UniversalRP.asset):
     ///   m_AllowPostProcessAlphaOutput: 1
@@ -71,6 +78,7 @@ namespace DreamGuard
         private readonly List<Camera>           _cameras        = new();
         private readonly List<CameraClearFlags> _origClearFlags = new();
         private readonly List<Color>            _origBgColors   = new();
+        private readonly List<bool>             _origRequiresDepth = new();
 
         private OVRPassthroughLayer     _layer;
         private EnvironmentDepthManager _depthManager;
@@ -78,12 +86,11 @@ namespace DreamGuard
         private GameObject              _dome;
         private Material                _fogMaterial;
 
-        private static readonly int PropPlayerPos       = Shader.PropertyToID("_PlayerPos");
-        private static readonly int PropPlayerEyeHeight = Shader.PropertyToID("_PlayerEyeHeight");
-        private static readonly int PropInnerRadius     = Shader.PropertyToID("_InnerRadius");
-        private static readonly int PropFogBand         = Shader.PropertyToID("_FogBandWidth");
-        private static readonly int PropFogColor        = Shader.PropertyToID("_FogColor");
-        private static readonly int PropFogAlpha        = Shader.PropertyToID("_FogMaxAlpha");
+        private static readonly int PropPlayerPos   = Shader.PropertyToID("_PlayerPos");
+        private static readonly int PropInnerRadius = Shader.PropertyToID("_InnerRadius");
+        private static readonly int PropFogBand     = Shader.PropertyToID("_FogBandWidth");
+        private static readonly int PropFogColor    = Shader.PropertyToID("_FogColor");
+        private static readonly int PropFogAlpha    = Shader.PropertyToID("_FogMaxAlpha");
 
         // ── Unity messages ────────────────────────────────────────────────────
 
@@ -100,19 +107,29 @@ namespace DreamGuard
             _layer.overlayType = OVROverlay.OverlayType.Underlay;
             // Reconstructed: full-scene passthrough, not projected onto a mesh surface.
             _layer.projectionSurfaceType = OVRPassthroughLayer.ProjectionSurfaceType.Reconstructed;
-            // Show the fog dome only after the passthrough layer is fully initialized
-            // to avoid a black-frame flicker on first enable.
-            _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
 
             _depthManager = GetComponent<EnvironmentDepthManager>();
-            if (_depthManager != null && EnvironmentDepthManager.IsSupported)
-                _depthManager.OcclusionShadersMode = OcclusionShadersMode.SoftOcclusion;
+            if (_depthManager != null)
+            {
+                bool supported = EnvironmentDepthManager.IsSupported;
+                DreamGuardLog.Log($"[DreamGuardFog] EnvironmentDepthManager found. IsSupported={supported}");
+                if (supported)
+                    _depthManager.OcclusionShadersMode = OcclusionShadersMode.SoftOcclusion;
+            }
+            else
+            {
+                DreamGuardLog.LogWarning("[DreamGuardFog] EnvironmentDepthManager not found on this GameObject.");
+            }
         }
 
         private void Start()
         {
             var rig = FindAnyObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
+            if (_head == null)
+                DreamGuardLog.LogWarning("[DreamGuardFog] No head transform found (OVRCameraRig or Camera.main).");
+            else
+                DreamGuardLog.Log($"[DreamGuardFog] Head transform: {_head.name}");
 
             // Save current camera clear settings so SetFogEnabled(false) can restore them.
             var allCams = new List<Camera>();
@@ -126,11 +143,35 @@ namespace DreamGuard
                 _cameras.Add(cam);
                 _origClearFlags.Add(cam.clearFlags);
                 _origBgColors.Add(cam.backgroundColor);
+                var urpCamData = cam.GetUniversalAdditionalCameraData();
+                bool requiresDepth = urpCamData != null && urpCamData.requiresDepthTexture;
+                _origRequiresDepth.Add(requiresDepth);
             }
+            DreamGuardLog.Log($"[DreamGuardFog] Tracking {_cameras.Count} camera(s): " +
+                      string.Join(", ", _cameras.ConvertAll(c => c.name)));
+
+            foreach (var cam in _cameras)
+            {
+                if (cam == null) continue;
+                var urpCamData = cam.GetUniversalAdditionalCameraData();
+                bool requiresDepth = urpCamData != null && urpCamData.requiresDepthTexture;
+                DreamGuardLog.Log($"[DreamGuardFog]   cam '{cam.name}': " +
+                          $"requiresDepthTexture={requiresDepth}  " +
+                          $"nativeDepthMode={cam.depthTextureMode}  " +
+                          $"clearFlags={cam.clearFlags}  bgAlpha={cam.backgroundColor.a:F2}");
+                if (!requiresDepth)
+                    DreamGuardLog.Log($"[DreamGuardFog]   '{cam.name}' requiresDepthTexture=false — " +
+                                     "will be forced true when fog is enabled.");
+            }
+
+            LogUrpPrerequisites();
 
             _fogMaterial = CreateFogMaterial();
             _dome        = CreateFogDome();
             SyncMaterialProps();
+            DreamGuardLog.Log($"[DreamGuardFog] Dome created. radius={domeRadius}m  " +
+                      $"innerRadius={innerRadius}m  fogBand={fogBandWidth}m");
+            LogDomeState();
 
             // Start hidden; menu enables on demand.
             SetFogEnabled(false);
@@ -145,34 +186,64 @@ namespace DreamGuard
             floorPos.y = 0f;
             _dome.transform.position = floorPos;
             _fogMaterial.SetVector(PropPlayerPos, new Vector4(floorPos.x, floorPos.y, floorPos.z, 0f));
-            _fogMaterial.SetFloat(PropPlayerEyeHeight, headPos.y);
         }
 
         // ── Public API ────────────────────────────────────────────────────────
 
         public void SetFogEnabled(bool enabled)
         {
+            DreamGuardLog.Log($"[DreamGuardFog] SetFogEnabled({enabled})  " +
+                      $"dome={((_dome != null) ? _dome.activeSelf.ToString() : "null")}  " +
+                      $"layer={_layer.enabled}  " +
+                      $"depth={(_depthManager != null ? _depthManager.enabled.ToString() : "n/a")}");
+
             // Cameras must clear to transparent black while fog is active so the
             // compositor sees alpha=0 (passthrough) as the default background.
             // PassthroughCut then stamps the correct vrAmount into every pixel.
+            // requiresDepthTexture must be true while fog is active so URP copies
+            // the depth buffer to _CameraDepthTexture for the fog shader to sample.
             if (enabled)
             {
                 for (int i = 0; i < _cameras.Count; i++)
-                    if (_cameras[i] != null) SetCameraTransparent(_cameras[i]);
+                {
+                    if (_cameras[i] == null) continue;
+                    SetCameraTransparent(_cameras[i]);
+                    var urpData = _cameras[i].GetUniversalAdditionalCameraData();
+                    bool wasDepth = urpData != null && urpData.requiresDepthTexture;
+                    if (urpData != null) urpData.requiresDepthTexture = true;
+                    if (!wasDepth)
+                        DreamGuardLog.Log($"[DreamGuardFog]   cam '{_cameras[i].name}': forced requiresDepthTexture=true");
+                }
             }
             else
             {
                 for (int i = 0; i < _cameras.Count; i++)
+                {
                     RestoreCamera(i);
+                    if (_cameras[i] == null) continue;
+                    var urpData = _cameras[i].GetUniversalAdditionalCameraData();
+                    if (urpData != null && i < _origRequiresDepth.Count)
+                        urpData.requiresDepthTexture = _origRequiresDepth[i];
+                }
             }
 
-            // Always hide the dome immediately. On enable, OnPassthroughLayerResumed
-            // shows it once the layer is fully initialized to avoid a black-frame flicker.
-            // On disable it stays hidden.
-            if (_dome != null) _dome.SetActive(false);
+            foreach (var cam in _cameras)
+            {
+                if (cam == null) continue;
+                var urpData = cam.GetUniversalAdditionalCameraData();
+                DreamGuardLog.Log($"[DreamGuardFog]   cam '{cam.name}': " +
+                          $"clearFlags={cam.clearFlags}  bgAlpha={cam.backgroundColor.a:F2}  " +
+                          $"requiresDepthTexture={urpData?.requiresDepthTexture}  " +
+                          $"enabled={cam.enabled}");
+            }
+
+            if (_dome != null) _dome.SetActive(enabled);
             _layer.enabled = enabled;
             if (_depthManager != null && EnvironmentDepthManager.IsSupported)
                 _depthManager.enabled = enabled;
+
+            DreamGuardLog.Log($"[DreamGuardFog] After enable: dome={_dome?.activeSelf}  " +
+                      $"layer={_layer.enabled}  passthrough={_layer.isActiveAndEnabled}");
         }
 
         public void Toggle() => SetFogEnabled(!_layer.enabled);
@@ -230,12 +301,12 @@ namespace DreamGuard
 
             if (fogShader == null)
             {
-                Debug.LogError("[DreamGuardPassthroughFog] Cannot find shader " +
-                               "'DreamGuard/PassthroughFog'. " +
+                DreamGuardLog.LogError("[DreamGuardFog] Cannot find shader 'DreamGuard/PassthroughFog'. " +
                                "Ensure PassthroughFog.shader is in the project.");
                 return new Material(Shader.Find("Hidden/InternalErrorShader"));
             }
 
+            DreamGuardLog.Log($"[DreamGuardFog] Shader found: {fogShader.name}");
             return new Material(fogShader) { name = "PassthroughFogMat" };
         }
 
@@ -269,17 +340,91 @@ namespace DreamGuard
             _fogMaterial.SetFloat(PropFogAlpha,    fogMaxAlpha);
         }
 
-        private void OnValidate() => SyncMaterialProps();
-
-        private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
+        private void LogUrpPrerequisites()
         {
-            if (_layer.enabled && _dome != null)
-                _dome.SetActive(true);
+            // ── Graphics device / reversed-Z ──────────────────────────────────
+            // The shader uses Linear01Depth(_ZBufferParams) for far-plane detection,
+            // which handles both reversed-Z (Quest/Vulkan: near=1, far=0) and
+            // standard-Z (near=0, far=1) automatically.  Log for diagnostics only.
+            DreamGuardLog.Log($"[DreamGuardFog] Graphics: device={SystemInfo.graphicsDeviceType}  " +
+                      $"usesReversedZBuffer={SystemInfo.usesReversedZBuffer}  " +
+                      $"graphicsAPI={SystemInfo.graphicsDeviceVersion}");
+
+            // ── OVRManager passthrough ────────────────────────────────────────
+            var ovrManager = FindAnyObjectByType<OVRManager>();
+            if (ovrManager != null)
+            {
+                DreamGuardLog.Log($"[DreamGuardFog] OVRManager: isInsightPassthroughEnabled={ovrManager.isInsightPassthroughEnabled}");
+                if (!ovrManager.isInsightPassthroughEnabled)
+                    DreamGuardLog.LogWarning("[DreamGuardFog] OVRManager.isInsightPassthroughEnabled=false — " +
+                                     "the underlay layer will not show real-world passthrough.");
+            }
+            else
+            {
+                DreamGuardLog.LogWarning("[DreamGuardFog] OVRManager not found in scene — passthrough will not work.");
+            }
+
+            // ── URP asset ─────────────────────────────────────────────────────
+            var urpAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            if (urpAsset == null)
+            {
+                DreamGuardLog.LogWarning("[DreamGuardFog] No UniversalRenderPipelineAsset found — not running URP?");
+                return;
+            }
+
+            // m_AllowPostProcessAlphaOutput is not exposed as a public property in all
+            // URP versions — read it via reflection.
+            var alphaField = typeof(UniversalRenderPipelineAsset).GetField(
+                "m_AllowPostProcessAlphaOutput",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            bool? preserveAlpha = alphaField != null ? (bool?)alphaField.GetValue(urpAsset) : null;
+
+            // m_RequireDepthTexture controls whether URP generates _CameraDepthTexture
+            // globally (individual cameras can also override this).  If false and no
+            // camera overrides it, the depth texture is unavailable for transparent passes
+            // and the fog dome cannot sample scene depth.
+            var depthField = typeof(UniversalRenderPipelineAsset).GetField(
+                "m_RequireDepthTexture",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            bool? requireDepth = depthField != null ? (bool?)depthField.GetValue(urpAsset) : null;
+
+            DreamGuardLog.Log($"[DreamGuardFog] URP asset: '{urpAsset.name}'  " +
+                      $"preserveFramebufferAlpha={preserveAlpha?.ToString() ?? "unknown"}  " +
+                      $"requireDepthTexture={requireDepth?.ToString() ?? "unknown"}  " +
+                      $"msaa={urpAsset.msaaSampleCount}  hdr={urpAsset.supportsHDR}");
+
+            if (preserveAlpha == false)
+                DreamGuardLog.LogWarning("[DreamGuardFog] preserveFramebufferAlpha is OFF — " +
+                                 "ColorMask A writes will be discarded before reaching the " +
+                                 "compositor. Enable it in Player Settings → Android → " +
+                                 "Preserve Framebuffer Alpha.");
+
+            if (requireDepth == false)
+            {
+                DreamGuardLog.Log("[DreamGuardFog] URP requireDepthTexture=false — " +
+                                  "forcing it true at runtime so _CameraDepthTexture is available.");
+                depthField?.SetValue(urpAsset, true);
+            }
         }
+
+        private void LogDomeState()
+        {
+            if (_dome == null) { DreamGuardLog.LogWarning("[DreamGuardFog] Dome is null."); return; }
+
+            var rend = _dome.GetComponent<MeshRenderer>();
+            bool shaderValid = rend.sharedMaterial?.shader != null &&
+                               rend.sharedMaterial.shader.name != "Hidden/InternalErrorShader";
+            DreamGuardLog.Log($"[DreamGuardFog] Dome renderer: enabled={rend.enabled}  " +
+                      $"mat='{rend.sharedMaterial?.name}'  " +
+                      $"shader='{rend.sharedMaterial?.shader?.name}'  " +
+                      $"shaderValid={shaderValid}  " +
+                      $"scale={_dome.transform.localScale.x:F1}m-diameter");
+        }
+
+        private void OnValidate() => SyncMaterialProps();
 
         private void OnDestroy()
         {
-            if (_layer       != null) _layer.passthroughLayerResumed.RemoveListener(OnPassthroughLayerResumed);
             if (_fogMaterial != null) Destroy(_fogMaterial);
             if (_dome        != null) Destroy(_dome);
         }

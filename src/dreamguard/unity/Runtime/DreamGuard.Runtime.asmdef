@@ -3,7 +3,8 @@
     "rootNamespace": "DreamGuard",
     "references": [
         "Oculus.VR",
-        "Meta.XR.EnvironmentDepth"
+        "Meta.XR.EnvironmentDepth",
+        "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

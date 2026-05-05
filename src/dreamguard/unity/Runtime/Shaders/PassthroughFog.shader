@@ -12,32 +12,36 @@ Shader "DreamGuard/PassthroughFog"
     //   (ColorMask A, ZTest Always).  Inner zone → vrAmount=1 (VR),
     //   outer zone → vrAmount=0 (passthrough), transition → smooth gradient.
     //
-    // Both passes determine the XZ player distance by:
-    //   1. Projecting the dome fragment through _EnvironmentDepthReprojectionMatrices
-    //      to obtain the corresponding UV in the environment depth camera.
-    //   2. Sampling SampleEnvironmentDepthLinear for the real-world depth (metres).
-    //   3. xzDist = envDepth * length(normalize(domeFrag - camera).xz)
-    //      — the horizontal distance of the real-world surface from the player.
+    // Distance model
+    // ──────────────
+    // Both passes sample the URP scene depth buffer (_CameraDepthTexture) at the
+    // screen position of each dome fragment to find the depth of VR geometry
+    // rendered before the dome.  They then reconstruct the world-space position
+    // and compute xzDist = length(reconstructed.xz - _PlayerPos.xz).
     //
-    // This means the boundary follows real-world geometry rather than a fixed
-    // analytical radius, which is the correct model for a passthrough MR effect.
+    //   xzDist < _InnerRadius              → full VR     (vrAmount = 1)
+    //   xzDist > _InnerRadius+_FogBandWidth → passthrough (vrAmount = 0)
+    //   in between                          → smooth gradient + fog haze
+    //
+    // Sky / empty pixels (no VR geometry) hit the far plane.  rawDepth is
+    // converted to linear [0=near, 1=far] via Linear01Depth/_ZBufferParams,
+    // which handles both reversed-Z (Quest/Vulkan) and standard-Z automatically.
+    // Far-plane pixels (linearDepth > 0.9999) are treated as xzDist=0 (inner VR
+    // zone) so the VR skybox and ceiling remain visible rather than becoming passthrough.
     //
     // Prerequisites (already configured):
     //   • OVRPassthroughLayer (Underlay) on this GameObject.
-    //   • EnvironmentDepthManager on this GameObject — populates
-    //     _EnvironmentDepthTexture and _EnvironmentDepthReprojectionMatrices.
+    //   • Cameras clear to SolidColor, backgroundColor.a = 0 while fog is active.
     //   • m_AllowPostProcessAlphaOutput: 1 in UniversalRP.asset so URP preserves
     //     alpha through to the XR swapchain.
 
     Properties
     {
-        _PlayerPos            ("Player World Position (xyz)", Vector) = (0, 0, 0, 0)
-        _PlayerEyeHeight      ("Player Eye Height (metres)",  Float)  = 1.6
-        _InnerRadius          ("Inner Radius (full VR)",      Float)  = 3.0
-        _FogBandWidth         ("Fog Band Width",              Float)  = 2.0
-        _FogColor             ("Fog Color",                   Color)  = (0.05, 0.05, 0.08, 1.0)
-        _FogMaxAlpha          ("Fog Max Alpha",               Range(0, 1)) = 0.92
-        _EnvironmentDepthBias ("Depth Bias",                  Float)  = 0.06
+        _PlayerPos    ("Player World Position (xyz)", Vector)       = (0, 0, 0, 0)
+        _InnerRadius  ("Inner Radius (full VR)",      Float)        = 3.0
+        _FogBandWidth ("Fog Band Width",              Float)        = 2.0
+        _FogColor     ("Fog Color",                   Color)        = (0.05, 0.05, 0.08, 1.0)
+        _FogMaxAlpha  ("Fog Max Alpha",               Range(0, 1)) = 0.92
     }
 
     SubShader
@@ -46,8 +50,8 @@ Shader "DreamGuard/PassthroughFog"
         {
             "RenderType"     = "Transparent"
             "RenderPipeline" = "UniversalPipeline"
-            // Render after all opaque geometry so the depth texture and environment
-            // depth are fully available.
+            // Render after all opaque geometry so _CameraDepthTexture is fully
+            // populated with VR scene depth before we sample it.
             "Queue"          = "Overlay+10"
         }
 
@@ -63,18 +67,15 @@ Shader "DreamGuard/PassthroughFog"
             HLSLPROGRAM
             #pragma vertex   vert
             #pragma fragment frag
-            #pragma multi_compile _ HARD_OCCLUSION SOFT_OCCLUSION
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/URP/EnvironmentOcclusionURP.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _PlayerPos;
-                float  _PlayerEyeHeight;
                 float  _InnerRadius;
                 float  _FogBandWidth;
                 float4 _FogColor;
                 float  _FogMaxAlpha;
-                float  _EnvironmentDepthBias;
             CBUFFER_END
 
             struct Attributes
@@ -86,7 +87,6 @@ Shader "DreamGuard/PassthroughFog"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float3 worldPos   : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -95,9 +95,7 @@ Shader "DreamGuard/PassthroughFog"
                 Varyings OUT;
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
-                VertexPositionInputs vpi = GetVertexPositionInputs(IN.positionOS.xyz);
-                OUT.positionCS = vpi.positionCS;
-                OUT.worldPos   = vpi.positionWS;
+                OUT.positionCS = GetVertexPositionInputs(IN.positionOS.xyz).positionCS;
                 return OUT;
             }
 
@@ -105,22 +103,30 @@ Shader "DreamGuard/PassthroughFog"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
-                // Reproject dome fragment into environment depth camera space.
-                float4 depthSpace = mul(_EnvironmentDepthReprojectionMatrices[unity_StereoEyeIndex],
-                                        float4(IN.worldPos, 1.0));
-                float2 uvCoords   = (depthSpace.xy / depthSpace.w + 1.0f) * 0.5f;
+                float2 screenUV = IN.positionCS.xy / _ScreenParams.xy;
+                float  rawDepth = SampleSceneDepth(screenUV);
 
-                // Real-world linear depth in this direction (metres from camera).
-                float  envDepth   = SampleEnvironmentDepthLinear(uvCoords);
+                // Convert raw device depth to linear [0=near, 1=far] using _ZBufferParams.
+                // This handles both reversed-Z (Quest/Vulkan: near=1, far=0) and standard-Z.
+                float linearDepth = Linear01Depth(rawDepth, _ZBufferParams);
 
-                // Horizontal distance of the real-world surface from the player.
-                float3 dir        = normalize(IN.worldPos - _WorldSpaceCameraPos);
-                float  xzDist     = envDepth * length(dir.xz);
+                // Sky / empty VR space → far plane (linearDepth ≈ 1).
+                // Treat as inner zone so the VR sky/ceiling stays visible.
+                float xzDist;
+                if (linearDepth > 0.9999)
+                {
+                    xzDist = 0.0;
+                }
+                else
+                {
+                    float3 sceneWS = ComputeWorldSpacePosition(screenUV, rawDepth, UNITY_MATRIX_I_VP);
+                    xzDist = length(sceneWS.xz - _PlayerPos.xz);
+                }
 
-                float  t          = saturate((xzDist - _InnerRadius) / max(_FogBandWidth, 0.001));
-                // Bell-curve mask: peaks at the centre of the transition band.
-                float  fogMask    = smoothstep(0.0, 0.5, t) * smoothstep(1.0, 0.6, t);
-                half   alpha      = fogMask * _FogMaxAlpha;
+                // Bell-curve mask: zero at inner edge, peaks mid-band, zero at outer edge.
+                float  t       = saturate((xzDist - _InnerRadius) / max(_FogBandWidth, 0.001));
+                float  fogMask = smoothstep(0.0, 0.5, t) * smoothstep(1.0, 0.6, t);
+                half   alpha   = fogMask * _FogMaxAlpha;
                 return half4(_FogColor.rgb, alpha);
             }
             ENDHLSL
@@ -141,16 +147,14 @@ Shader "DreamGuard/PassthroughFog"
             #pragma vertex   vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/URP/EnvironmentOcclusionURP.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _PlayerPos;
-                float  _PlayerEyeHeight;
                 float  _InnerRadius;
                 float  _FogBandWidth;
                 float4 _FogColor;
                 float  _FogMaxAlpha;
-                float  _EnvironmentDepthBias;
             CBUFFER_END
 
             struct Attributes
@@ -162,7 +166,6 @@ Shader "DreamGuard/PassthroughFog"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float3 worldPos   : TEXCOORD0;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -171,9 +174,7 @@ Shader "DreamGuard/PassthroughFog"
                 Varyings OUT;
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
-                VertexPositionInputs vpi = GetVertexPositionInputs(IN.positionOS.xyz);
-                OUT.positionCS = vpi.positionCS;
-                OUT.worldPos   = vpi.positionWS;
+                OUT.positionCS = GetVertexPositionInputs(IN.positionOS.xyz).positionCS;
                 return OUT;
             }
 
@@ -181,21 +182,29 @@ Shader "DreamGuard/PassthroughFog"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
-                // Reproject dome fragment into environment depth camera space.
-                float4 depthSpace = mul(_EnvironmentDepthReprojectionMatrices[unity_StereoEyeIndex],
-                                        float4(IN.worldPos, 1.0));
-                float2 uvCoords   = (depthSpace.xy / depthSpace.w + 1.0f) * 0.5f;
+                float2 screenUV = IN.positionCS.xy / _ScreenParams.xy;
+                float  rawDepth = SampleSceneDepth(screenUV);
 
-                // Real-world linear depth in this direction (metres from camera).
-                float  envDepth   = SampleEnvironmentDepthLinear(uvCoords);
+                // Convert raw device depth to linear [0=near, 1=far] using _ZBufferParams.
+                // This handles both reversed-Z (Quest/Vulkan: near=1, far=0) and standard-Z.
+                float linearDepth = Linear01Depth(rawDepth, _ZBufferParams);
 
-                // Horizontal distance of the real-world surface from the player.
-                float3 dir        = normalize(IN.worldPos - _WorldSpaceCameraPos);
-                float  xzDist     = envDepth * length(dir.xz);
+                // Sky / empty VR space → far plane (linearDepth ≈ 1).
+                // Treat as inner zone (vrAmount = 1) so the VR skybox/ceiling stays visible.
+                float xzDist;
+                if (linearDepth > 0.9999)
+                {
+                    xzDist = 0.0;
+                }
+                else
+                {
+                    float3 sceneWS = ComputeWorldSpacePosition(screenUV, rawDepth, UNITY_MATRIX_I_VP);
+                    xzDist = length(sceneWS.xz - _PlayerPos.xz);
+                }
 
-                float  outerEdge  = _InnerRadius + _FogBandWidth;
+                float outerEdge = _InnerRadius + _FogBandWidth;
                 // 1 = keep VR,  0 = reveal passthrough.
-                float  vrAmount   = 1.0 - smoothstep(_InnerRadius, outerEdge, xzDist);
+                float vrAmount  = 1.0 - smoothstep(_InnerRadius, outerEdge, xzDist);
                 return half4(0, 0, 0, vrAmount);
             }
             ENDHLSL

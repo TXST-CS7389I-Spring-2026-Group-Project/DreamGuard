@@ -85,6 +85,10 @@ namespace DreamGuard
         private GameObject          _cylinder;
         private Material            _material;
 
+        private Camera           _camera;
+        private CameraClearFlags _origClearFlags;
+        private Color            _origBgColor;
+
         private static readonly int PropGapCenterY        = Shader.PropertyToID("_GapCenterY");
         private static readonly int PropGapHalfWidth      = Shader.PropertyToID("_GapHalfWidth");
         private static readonly int PropEdgeFringe        = Shader.PropertyToID("_EdgeFringe");
@@ -105,12 +109,16 @@ namespace DreamGuard
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
             // Transparent camera background required for the passthrough compositor.
-            if (Camera.main != null)
+            // Save the original settings so SetEnabled(false) can restore them.
+            _camera = Camera.main;
+            if (_camera != null)
             {
-                Camera.main.clearFlags = CameraClearFlags.SolidColor;
-                Color bg = Camera.main.backgroundColor;
-                bg.a = 0f;
-                Camera.main.backgroundColor = bg;
+                _origClearFlags         = _camera.clearFlags;
+                _origBgColor            = _camera.backgroundColor;
+                _camera.clearFlags      = CameraClearFlags.SolidColor;
+                Color bg                = _camera.backgroundColor;
+                bg.a                    = 0f;
+                _camera.backgroundColor = bg;
             }
 
             _material = CreateMaterial();
@@ -151,6 +159,22 @@ namespace DreamGuard
         {
             if (_cylinder != null) _cylinder.SetActive(enabled);
             _layer.enabled = enabled;
+
+            if (_camera != null)
+            {
+                if (enabled)
+                {
+                    _camera.clearFlags      = CameraClearFlags.SolidColor;
+                    Color bg                = _camera.backgroundColor;
+                    bg.a                    = 0f;
+                    _camera.backgroundColor = bg;
+                }
+                else
+                {
+                    _camera.clearFlags      = _origClearFlags;
+                    _camera.backgroundColor = _origBgColor;
+                }
+            }
         }
 
         /// <summary>Toggle the fold effect on/off.</summary>
