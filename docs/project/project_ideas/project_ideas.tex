@@ -1,0 +1,411 @@
+% $Id: template.tex 11 2007-04-03 22:25:53Z jpeltier $
+%
+% CS 7389I -- Project Ideas
+% TODO: Verify all citations on Google Scholar / ACM DL before final submission.
+%       Each entry is noted with confidence level in template.bib.
+
+\documentclass{styling/vgtc}                          % final (conference style)
+
+\usepackage{mathptmx}
+\usepackage{graphicx}
+\usepackage{times}
+
+\onlineid{0}
+\vgtccategory{Research}
+\vgtcinsertpkg
+
+\title{Project Ideas: Novel Interaction Techniques in Immersive Environments}
+
+\author{Andrew Scouten\\ %
+        \scriptsize{yzb2@txstate.edu}\\ %
+        \scriptsize Texas State University
+\and Avery R Vanausdal\\ %
+        \scriptsize{arv107@txstate.edu}\\ %
+        \scriptsize Texas State University}
+
+\abstract{This document presents five potential research project ideas for
+CS~7389I, each exploring a novel interaction technique in virtual or mixed
+reality. The ideas address AR-guided device repair, immersion-preserving
+safety transitions, bystander awareness in VR, gaze-directed annotation in
+mixed reality, and spatially-adaptive VR interface layout. Each idea is
+motivated by a concrete research problem, defines a core interaction
+contribution, proposes a study or prototype system to test it, and is
+grounded in relevant prior literature.
+} % end of abstract
+
+\CCScatlist{
+  \CCScat{H.5.2}{Information Interfaces and Presentation}{User Interfaces}%
+{Interaction styles};
+  \CCScat{H.5.1}{Information Interfaces and Presentation}{Multimedia Information Systems}%
+{Artificial, augmented, and virtual realities}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% START OF THE PAPER %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\firstsection{Promising Ideas}
+
+\maketitle
+
+From the five project ideas presented in this document, we identify the following three as
+particularly noteworthy.
+
+\subsection{Most Feasible Idea: DreamGuard}
+
+DreamGuard is the most realistic to complete within the course timeline. The system relies
+entirely on capabilities already exposed by the Meta Quest~3 SDK---color passthrough,
+depth estimation, and person detection via the Passthrough Camera API---without requiring
+custom hardware or difficult-to-recruit participant populations. The within-subjects
+study design is straightforward to administer in a standard lab play space using a scripted
+confederate, and the primary outcome measures (IPQ, SSQ, and motion-capture contact
+logs) are well-established instruments that require no custom tooling to deploy.
+
+\subsection{Most Creative Idea: SpatialFix}
+
+SpatialFix represents the most unconventional concept in our set. Applying a learned
+feature-matching pipeline (SuperGlue or LoFTR) to real-time passthrough video in order to
+spatially anchor iFixIt repair instructions onto an arbitrary physical device---without
+fiducial markers or CAD models---is a combination that has not been demonstrated on a
+consumer headset. The idea reimagines the entire class of AR maintenance systems by
+replacing per-device engineering effort with a generalized, appearance-based registration
+approach, and pairs it with a hands-free, gaze- or voice-driven step-advancement interface
+that keeps the technician's attention and hands fully on the repair task.
+
+\subsection{Most Promising Idea: GazePin}
+
+GazePin has the greatest potential to produce meaningful, generalizable research results.
+The Midas Touch problem is well-known but remains unsolved for real-world object
+annotation on consumer MR headsets, and the three-way empirical comparison (dwell,
+gaze-plus-pinch, and pointing) maps directly onto a design question that headset
+manufacturers and MR application developers face today. The study yields concrete,
+actionable design guidelines supported by quantitative metrics (completion time, false
+activation rate, NASA-TLX), and the availability of combined eye tracking and hand
+tracking on the Meta Quest Pro makes it possible to run all three conditions on a single
+commercially available device.
+
+%%-------------------------------------------------------------------
+\section{SpatialFix: AR-Guided Device Repair via Feature-Matched Instruction Overlays}
+
+\subsection{Introduction}
+
+Screen-based repair guides, such as those provided by iFixIt, require
+technicians to constantly shift attention between an external display and the
+physical device under repair, increasing cognitive load and the risk of
+assembly errors. Spatial augmented reality affords the opportunity to anchor
+step-by-step instructions directly onto the physical object, eliminating this
+attention-splitting and freeing both hands for the task. A consumer passthrough
+VR headset such as the Meta Quest~3---combining high-resolution color
+passthrough, inside-out tracking, hand tracking, and an accessible developer
+ecosystem---provides a compelling platform for exploring this interaction. Recent
+reviews of AR-assisted maintenance also highlight the growing role of markerless
+computer-vision pipelines in repair workflows~\cite{malta2023maintenance}.
+
+\subsection{Core Contribution}
+
+This project proposes a system that applies learned feature matching
+(e.g., SuperGlue or LoFTR) to recognize a target device from the Quest
+passthrough camera feed and spatially registers iFixIt repair steps as
+anchored AR overlays onto the physical object in real time. The key
+interaction contribution is a hands-free, gaze- or voice-driven
+step-advancement interface that allows the technician to progress through
+instructions without ever touching a secondary screen. Unlike prior AR
+maintenance systems that required fiducial markers or CAD model registration,
+the proposed approach relies entirely on appearance-based matching against
+reference images scraped from publicly available repair guides, enabling the
+technique to generalize to the breadth of the iFixIt device catalog without
+per-device engineering effort.
+
+\subsubsection{Reference Image Acquisition}
+iFixIt publishes its repair guides under a Creative Commons license and provides a
+public REST API that exposes guide metadata, step text, and step images for thousands
+of devices. At project start we would query this API for a target set of devices
+(e.g., a representative sample of laptop and smartphone models), downloading one or
+more per-step reference images per device and organizing them into a local index keyed
+by device identifier and step number. These reference images serve as the database
+against which the feature-matching pipeline compares live passthrough frames at
+runtime. No scraping of the iFixIt website itself would be necessary; the official API
+endpoints support bulk retrieval within the terms of service. The resulting dataset would
+be bundled with the prototype and made available alongside the project code repository.
+
+\subsection{Proposed Study}
+
+We would conduct a within-subjects comparative study in which
+participants perform a standardized multi-step laptop disassembly and
+reassembly task under three conditions: (1) a tablet displaying the iFixIt
+web guide, (2) the proposed spatial AR overlay system on a Meta Quest~3, and
+(3) an AR system using fiducial marker anchoring as a technical baseline.
+Primary outcome measures are task completion time, number of assembly errors
+(e.g., missed screws, incorrect component seating), and NASA-TLX workload
+ratings. Secondary measures include head and hand motion patterns derived from
+the headset sensors, as well as post-task semi-structured interview responses
+probing trust in the spatial overlays and frustrations with feature-matching
+failures or drift.
+
+\subsection{Related Work}
+
+Henderson and Feiner~\cite{henderson:2011:ar} conducted a seminal controlled
+study comparing AR-overlaid maintenance documentation against paper and
+monitor-based instructions for maintenance tasks inside an armored personnel carrier turret, finding
+significant reductions in time-on-task and head movement when instructions
+were spatially registered to the physical object. Our work extends this
+finding to a self-contained consumer passthrough headset, replacing their
+tethered see-through HMD and CAD-model registration pipeline with a
+learned correspondence-based approach. Malta et al.~\cite{malta2023maintenance}
+show that recent AR maintenance systems are increasingly moving toward
+markerless computer-vision pipelines and more scalable deployment models,
+which makes a photo-based registration strategy timely. By substituting
+per-device CAD alignment with SuperGlue or LoFTR estimation, our approach
+generalizes to arbitrary devices for which only a photographic repair guide
+exists---a scalability advance that Henderson and Feiner's system did not
+address.
+
+%%-------------------------------------------------------------------
+\section{DreamGuard: Immersion-Preserving Passthrough Safety Transitions in Virtual Reality}
+
+\subsection{Introduction}
+
+Consumer VR headsets such as the Meta Quest series rely on guardian grid
+overlays to warn users of physical boundaries, but these grids abruptly
+interrupt the virtual experience with a jarring visual signal that has no
+aesthetic relationship to the virtual world. This break in immersion can
+cause disorientation and, in extended-use scenarios, contribute to
+cybersickness. Although current headsets increasingly support passthrough and
+boundary visualization, recent work shows that open design questions remain
+about how safety cues should communicate nearby hazards without unnecessarily
+breaking immersion~\cite{qin2024brokenwall,wu2023guardian}.
+
+\subsection{Core Contribution}
+
+We propose \emph{DreamGuard}, a proximity-triggered safety system that
+gradually blends the passthrough camera feed into the virtual scene using
+aesthetically-matched visual transitions---soft fog, light bloom, or
+environment-themed effects---rather than a hard grid overlay. The transition
+is driven by depth estimation or person detection from the headset cameras,
+begins before a collision is imminent, and fades back to full VR once the
+user moves to safety. The core research contribution is the design and
+empirical evaluation of immersion-preserving safety transitions: does a
+seamless aesthetic blend produce fewer cybersickness symptoms and less
+presence disruption than the standard guardian grid, while maintaining
+equivalent safety outcomes?
+
+\subsection{Proposed Study}
+
+Participants would complete an immersive exploration task in a
+standardized lab play space while scripted proximity events (a confederate
+walking nearby, the user approaching a wall) occur at fixed intervals.
+A within-subjects design would compare three conditions: (1) the standard
+Meta Quest guardian grid, (2) DreamGuard with an aesthetic passthrough
+blend, and (3) a no-warning control. Presence would be measured with the
+Igroup Presence Questionnaire (IPQ) after each condition, cybersickness with
+the Simulator Sickness Questionnaire (SSQ), and safety outcomes by logging
+near-miss and contact events from motion-capture data.
+
+\subsection{Related Work}
+
+Milgram and Kishino~\cite{milgram:1994:taxonomy} introduced the
+Reality-Virtuality Continuum, establishing that mixed-reality displays
+exist on a spectrum between fully virtual and fully real environments and
+that perceptual coherence across transitions along that spectrum is a
+fundamental design challenge. DreamGuard operationalizes this continuum
+dynamically: a safety event triggers a controlled traversal from fully
+virtual toward the real end of the continuum, and recovery moves the user
+back. Rather than a binary mode switch (as in the Guardian grid), our
+system treats the transition itself as a designable interaction artifact.
+Recent work on guardian cues and metaphor-based boundary transformations has
+already shown that the form of a safety warning changes detection speed and
+subjective experience~\cite{wu2023guardian,qin2024brokenwall}. Our project
+extends that line of work by specifically testing gradual, aesthetically
+integrated passthrough blends rather than discrete boundary widgets.
+
+%%-------------------------------------------------------------------
+\section{Who's There? Representing Nearby Bystanders in VR to Balance Collision Safety and Immersion}
+
+\subsection{Introduction}
+
+Standalone VR headsets still provide limited support for awareness of people
+who walk into a user's play space mid-session, creating real risks of
+collision and social awkwardness. Existing research and commercial systems
+span full passthrough, abstract alerts, and blended awareness cues, but there
+is still no clear design guidance on what person representation best
+preserves immersion while reliably prompting collision avoidance~\cite{ohagan2023bystander,qin2024brokenwall}.
+
+\subsection{Core Contribution}
+
+This project investigates four progressively abstract representations of a
+camera-detected bystander rendered inside the VR scene: (1)~a cropped
+passthrough video silhouette, (2)~a stylized low-poly avatar, (3)~a ghosted
+wireframe outline, and (4)~visible arms and hands only. The core contribution
+is an empirical comparison of these conditions on both safety outcomes and
+subjective immersion, producing concrete design guidelines for headset
+manufacturers and VR developers. Unlike prior work focused on social presence
+between co-present VR users, this work targets the asymmetric case of a
+non-HMD bystander intruding into a single user's virtual space.
+
+\subsection{Proposed Study}
+
+Participants will complete an immersive VR task (a puzzle or navigation
+game) in a lab space where a confederate bystander walks through the play
+area at scripted intervals, with bystander representation assigned in a
+within-subjects counterbalanced design across the four conditions. Primary
+safety metrics will be near-miss and contact frequency derived from
+motion-capture logs. Immersion and presence will be measured with the IPQ
+after each condition, and social comfort and perceived intrusiveness will be
+captured via post-hoc 7-point Likert scales. A secondary eye-tracking
+measure will assess how often participants fixate on the bystander
+representation, providing insight into the attentional cost of each style.
+
+\subsection{Related Work}
+
+Latoschik et al.~\cite{latoschik2017avatar} demonstrated that avatar
+realism significantly affects social presence and behavior in immersive VR,
+showing that even stylized representations can sustain strong social
+signals. More recently, O'Hagan et al.~\cite{ohagan2023bystander} showed that
+VR users' awareness needs during bystander interactions depend strongly on
+social context rather than raw cue visibility alone. Together, these works
+motivate our choice of a range of abstraction levels, from photorealistic
+passthrough to minimalist hand outlines. Our project extends them by
+addressing the asymmetric intrusion case of a non-HMD bystander whose
+real-world geometry must be translated into a VR-native representation in
+real time.
+
+%%-------------------------------------------------------------------
+\section{GazePin: Gaze-Directed Object Annotation in Mixed Reality with Multi-Modal Activation}
+
+\subsection{Introduction}
+
+Annotating or retrieving information about real-world objects in mixed
+reality currently requires users to manually point or reach toward target
+objects, which is physically effortful and fatiguing over time. Eye gaze is
+a natural, low-effort pointing channel---users look at objects before
+interacting with them---yet na\"{i}ve gaze-selection systems suffer from the
+\emph{Midas Touch} problem: unintended activations occur because the system
+cannot distinguish looking at an object from selecting it. No established
+design solution balances the efficiency of gaze input with reliable,
+intentional activation for real-world object annotation on consumer MR
+headsets~\cite{pfeuffer2023palmgazer}.
+
+\subsection{Core Contribution}
+
+We propose \emph{GazePin}, a system that uses the Meta Quest Pro's eye
+tracker\footnote{GazePin requires a Meta Quest Pro or other MR headset equipped with
+an eye-tracking sensor. The standard Meta Quest~3 does not include eye tracking and
+cannot run the gaze-based conditions; access to a Quest Pro (or equivalent device) is a
+prerequisite for this project.} to detect fixation on a physical object via the passthrough camera
+and triggers a contextual virtual annotation overlay using one of three
+studied activation modalities: (1)~dwell time, (2)~gaze combined with a
+hand pinch gesture, or (3)~hand pointing alone as a baseline. The core
+research contribution is the first empirical comparison of these activation
+methods for real-world object annotation on a consumer MR headset,
+quantifying the tradeoff between annotation speed, false activation rate,
+and cognitive load across modalities.
+
+\subsection{Proposed Study}
+
+A within-subjects study would ask participants to annotate a
+series of labeled real-world objects in a structured lab environment under
+the three activation conditions. Each condition requires selecting objects
+of varying size and distance. Primary metrics are annotation completion
+time, false activation rate (Midas Touch errors), and NASA-TLX cognitive
+load scores. Secondary measures include subjective preference ratings and
+semi-structured interview responses about perceived naturalness and
+reliability of each activation method. Eye-tracking fixation data will be
+logged throughout to analyze gaze patterns preceding correct and false
+activations.
+
+\subsection{Related Work}
+
+Jacob~\cite{jacob:1991:eye} established the foundational paradigm for using
+eye movements as a direct input channel in interactive systems and identified
+the Midas Touch problem, proposing dwell time as a primary mitigation
+strategy. More recent XR work such as PalmGazer~\cite{pfeuffer2023palmgazer}
+suggests that eye--hand combinations may support selection in
+AR interfaces, though its results were preliminary; it does not address annotation of physical scene objects.
+Our project extends this line of work by moving from menu interaction to
+consumer passthrough MR object annotation, introducing the challenge of
+spatially registering gaze with physical real-world objects rather than
+on-screen UI elements. The availability of combined eye tracking and hand
+tracking on the Meta Quest Pro enables us to empirically evaluate the
+gaze-plus-gesture condition with contemporary hardware.
+
+%%-------------------------------------------------------------------
+\section{RoomFit: Spatially-Adaptive VR Interface Layout Guided by Detected Room Geometry}
+
+\subsection{Introduction}
+
+Virtual reality interfaces---menus, panels, and toolbars---are typically
+designed for a fixed virtual layout without accounting for the user's actual
+physical room dimensions or the positions of walls and furniture. When
+physical space is limited or irregularly shaped, users may reach toward a
+virtual panel and collide with a real wall, or find themselves physically
+constrained in ways that create frustration or break immersion. There is still limited design guidance for VR UIs that proactively adapt to
+the physical environment the user inhabits, especially across rooms with
+different sizes and furniture constraints~\cite{cheng2023interactionadapt}.
+
+\subsection{Core Contribution}
+
+We propose \emph{RoomFit}, a system that queries the Meta Quest's scene
+understanding API to retrieve detected room geometry (walls, floor, ceiling,
+and furniture bounding boxes) and uses this information to dynamically adapt
+the placement, scale, and reach distance of VR UI panels at session start.
+Panels are placed only in physically free space, interaction distances are
+scaled to available arm reach within detected bounds, and UI elements that
+would require the user to reach into a detected wall are relocated. The core
+research contribution is an empirical evaluation of whether this spatial
+adaptation reduces physical collisions and improves task performance
+compared to a fixed-layout baseline, particularly in small or cluttered
+rooms.
+
+\subsection{Proposed Study}
+
+A between-subjects study would have participants complete a series
+of standardized VR menu navigation tasks in three physical room size
+conditions (small: $2{\times}2$~m, medium: $3{\times}3$~m, large:
+$4{\times}4$~m) under either the RoomFit adaptive layout or a fixed-layout
+control. Primary metrics are the number of physical wall or furniture
+contacts, task completion time, and presence as measured by the IPQ. We
+hypothesize that the adaptive condition will show the greatest safety benefit
+in small rooms, allowing us to characterize the conditions under which
+spatial adaptation provides the most value.
+
+The three room-size conditions would be realized within a single large lab
+space rather than requiring three separate rooms. Colored tape on the floor
+would mark the active play-area boundary for each condition, and portable
+soft barriers (foam pool noodles or padded dividers on stands) would provide
+physical feedback at the boundary edges. Before each condition block, the
+Quest's Scene Understanding API would be re-invoked with the headset
+positioned at the center of the newly marked zone so that the system ingests
+the correct boundary geometry; furniture bounding boxes within the active
+zone would be represented by cardboard box stand-ins of standardized sizes
+placed at fixed relative positions. This approach keeps the physical setup
+repeatable across participants while eliminating the logistical burden of
+booking three different rooms.
+
+\subsection{Related Work}
+
+Lu et al.~\cite{lu2024adaptive} present the most directly related prior
+work: an adaptive MR UI placement system that uses deep reinforcement
+learning to position 3D interface panels relative to the user's detected
+pose and physical environment, framing UI placement as an optimization
+problem in the presence of dynamic real-world constraints. RoomFit shares
+this core framing but targets a complementary scenario---room geometry known
+at session start rather than pose-driven real-time repositioning---and
+evaluates safety outcomes (physical contacts) rather than ergonomic
+preferences. Cheng et al.~\cite{cheng2023interactionadapt} similarly showed
+that VR workspace layouts can be adapted to physical affordances and
+obstacles, confirming that environment-aware adaptation improves usability.
+Together, these works establish that the physical context of a VR session is
+a first-class design variable for interface layout; RoomFit extends this
+direction to safety-oriented reconfiguration of standard menus and panels
+driven by room-scan geometry.
+
+%%-------------------------------------------------------------------
+
+\acknowledgements{The authors would like to thank the CS~7389I course
+instructors for their guidance on this project.}
+
+\bibliographystyle{abbrv}
+\bibliography{references/project_ideas}
+\end{document}

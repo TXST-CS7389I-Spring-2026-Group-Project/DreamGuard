@@ -1,7 +1,0 @@
-This checkpoint marks the transition from prototyping to a near-complete research contribution. At this stage, your project should have its core element implemented and in a form that can be demonstrated, evaluated, or meaningfully analyzed. The emphasis is on substance over polish: your system or study should be functionally complete in the aspects that directly support your research question.
-
-For system-oriented projects, the primary research functionality should be implemented and stable enough to support an evaluation. For study-based projects, all materials should be finalized, data collection should be underway with at least ten participants completed, and you should have an initial analysis of your results (statistical and/or qualitative). Null or inconclusive results are acceptable at this stage, provided you can clearly interpret them and outline reasonable next steps.
-
-By the end of the project fair, submit all relevant materials along with a one-page document via the course site. This document should summarize your current status, key findings or progress, and a concrete plan for what remains before the final presentations.
-
-We will use the last 30 minutes of class for a project showcase. Come prepared to demonstrate your system, present your study setup or findings, and discuss your work with others. Bring any materials necessary for a clear and functional presentation of your progress.
