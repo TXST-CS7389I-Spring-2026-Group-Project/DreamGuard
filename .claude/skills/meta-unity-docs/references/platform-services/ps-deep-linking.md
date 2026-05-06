@@ -1,0 +1,82 @@
+# Ps Deep Linking
+
+**Documentation Index:** Learn about ps deep linking in this documentation.
+
+---
+
+---
+title: "App Deep Linking"
+description: "Launch users directly into a specific destination or gameplay mode in another Meta Quest app."
+last_updated: "2026-03-19"
+---
+
+<oc-devui-note type="note" heading="This is a Platform SDK feature requiring Data Use Checkup"> To use this or any other Platform SDK feature, you must <a href="/resources/publish-data-use/">complete a Data Use Checkup (DUC)</a>. The DUC ensures that you comply with Developer Policies. It requires an administrator from your team to certify that your use of user data aligns with platform guidelines. Until the app review team reviews and approves your DUC, platform features are only available for <a href="/resources/test-users/">test users</a>.</oc-devui-note>
+
+App deep linking allows you to launch users directly into another app and can be configured to launch directly into that app's special event or gameplay mode.
+
+For example, you may have two separate applications, one single player and one multiplayer. If you implement app deep linking in both apps, a user can join a multiplayer session from the single player app.
+
+Deep linking requires an integration in both the app the request originates from, and the target app.
+The next sections describe the implementation required for both apps.
+
+Monetizing the use of deep links between apps is not permitted. See [Cross-app linking](/policy/app-policies/#33-cross-app-linking) in our app policy topic for more details.
+
+You should obtain informed user consent for accessing links. For cross-app linking, you must provide meaningful information about the destination, including the content rating of the destination app, whether it is a free or paid experience, if the destination app includes multiplayer or voice communications, what user information will be shared with the destination app, and if parental approval will be needed for users under 13.
+
+Additionally, you must comply with our [Developer Data Use policy](/policy/data-use) which limits data sharing with third parties. For example, if you share a user ID with the destination app, that app will then become subject to Data Use Check-up for receiving that information. We recommend that you only share a session ID to avoid this if the destination app is not already subject to Data Use Check-up.
+
+## Originating app implementation
+
+The originating app will call the `LaunchOtherApp` method to launch the other application.
+
+ [`Application.LaunchOtherApp(appId, deeplink_options)`](/reference/platform-unity/latest/class_oculus_platform_application/) 
+
+This method launches a different application in the user's library. If the user does not have that application installed, they will be taken to that app's page in the Meta Horizon Store.
+
+**Parameters:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `appID` | The ID of the app to launch |
+| `deeplink_options` | Additional configuration for this request. Optional.
+
+For example, a request from an unity application may resemble:
+```
+var options = new ApplicationOptions();
+options.SetDeeplinkMessage("abc");
+Application.LaunchOtherApp(appId, options);
+```
+
+Once the request has been made, you should check to see if the target application launched successfully. The request will only succeed if the user is both entitled to (owns) and has installed the target app. If the user does not own the app, or has not downloaded the app, they will be directed to the product information page in the 2D Store where they can purchase and download the app.
+
+> **Note**: Meta Horizon Link only - After receiving the notification that the target app was launched successfully, you must quit the originating app yourself before the target app can continue.
+
+### Launching a Horizon World
+Note: You can set the target application to be a Horizon World. In this case, the user will be taken to the Horizon Worlds app and the target world will be loaded. To do this:
+ 
+  1. Set the `appID` parameter to the hardcoded Horizon Worlds app ID: `2532035600194083`.
+  2. On the `ApplicationOptions` object, use `SetDeeplinkMessage` with value = `"together://world_builder/wb_visit?world_id=<TargetHorizonWorldID>"` where `<TargetHorizonWorldID>` is the ID of the world to be loaded.
+  3. On the `ApplicationOptions` object, use `SetDestinationApiName` with value `<TargetHorizonWorldID>` (the same Horizon World ID as the `world_id` parameter in the deeplink message).
+  
+  
+  
+
+## Receiving app implementation
+
+Apps launched by
+
+ `Application.LaunchOtherApp(appId, deeplink_options)` 
+
+will launch as normal, and will receive a notification of type
+
+  `Notification_ApplicationLifecycle_LaunchIntentChanged` 
+
+on the message queue.
+
+On a Unity app, at startup, check for this notification and call `ApplicationLifecycle.GetLaunchDetails()` to retrieve information about how the app was launched.
+
+All notifications generated by this API will have a launch type of `DEEPLINK`. This information allows you to direct the user to the proper app location.
+
+If the user is on a Meta Horizon Link device and the user does not own the app, the `LaunchOtherApp` request returns an error, which should be handled appropriately in your code. If the user does own the app, after receiving the notification that the target app was launched successfully, you must quit the originating app yourself before the target app can continue.
+
+If the user is on a Meta Quest device, and the user does not own the app, or has not downloaded the app, they will be directed to the product information page in the Store where they can purchase and download the app.
