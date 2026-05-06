@@ -25,6 +25,7 @@
       "mcp__UnityMCP__execute_menu_item",
       "mcp__UnityMCP__batch_execute",
       "mcp__UnityMCP__execute_code",
+      "Skill(research-companion:research-companion)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:godotvr.github.io)",
@@ -34,8 +35,5 @@
       "WebFetch(domain:developer.oculus.com)",
       "WebFetch(domain:docs.unity3d.com)"
     ]
-  },
-  "enabledPlugins": {
-    "research-companion@andrehuang-research-companion": false
   }
 }
