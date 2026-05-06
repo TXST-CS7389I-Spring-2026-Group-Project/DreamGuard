@@ -47,10 +47,10 @@ namespace DreamGuard
         private bool _open;
 
         private DreamGuardWindowedPassthrough _windowPassthrough;
-        // private DreamGuardGridPassthrough    _gridPassthrough;
-        // private DreamGuardVerticalFold       _verticalFold;
-        // private DreamGuardPassthroughFog     _passthroughFog;
-        // private PassthroughPlane              _passthroughPlane;
+        private DreamGuardGridPassthrough    _gridPassthrough;
+        private DreamGuardVerticalFold       _verticalFold;
+        private DreamGuardPassthroughFog     _passthroughFog;
+        private PassthroughPlane             _passthroughPlane;
 
         private void Start()
         {
@@ -67,80 +67,49 @@ namespace DreamGuard
             }
 
             _windowPassthrough = FindFirstObjectByType<DreamGuardWindowedPassthrough>(FindObjectsInactive.Include);
-            // _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
-            // _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
-            // _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
-            // _passthroughPlane = FindFirstObjectByType<PassthroughPlane>(FindObjectsInactive.Include);
-            DreamGuardLog.Log($"[DreamGuardMenu] Techniques found — window={_windowPassthrough != null}  ");// +
-                // $"grid={_gridPassthrough != null}  fold={_verticalFold != null}  " +
-                // $"fog={_passthroughFog != null}  plane={_passthroughPlane != null}");
+            _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
+            _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
+            _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
+            _passthroughPlane = FindFirstObjectByType<PassthroughPlane>(FindObjectsInactive.Include);
+            DreamGuardLog.Log($"[DreamGuardMenu] Techniques found — " +
+                $"window={_windowPassthrough != null}  grid={_gridPassthrough != null}  " +
+                $"fold={_verticalFold != null}  fog={_passthroughFog != null}  " +
+                $"plane={_passthroughPlane != null}");
 
             if (menuPanel != null)
             {
                 _buttons.AddRange(menuPanel.GetComponentsInChildren<DreamGuardMenuButton>());
 
-                // Each action activates/deactivates the technique's GameObject as well as
-                // calling the technique's own enable/disable method. Activating the GO first
-                // lets Awake+Start run before the enable call; deactivating last lets the
-                // disable call clean up cameras and layers before the GO goes dormant.
-                // The disable path guards activeSelf so it's safe to call on dormant techniques.
+                // Each action activates or deactivates the technique via ActivateTechnique.
+                // The GO is activated exactly once the first time the technique is selected;
+                // after that it is never deactivated (SetActive(false) does not reliably
+                // recover the native OVRPassthroughLayer handle on a second activation,
+                // causing global red/green compositor corruption).
+                // The disable path guards activeSelf so it's safe before first activation.
                 foreach (var btn in _buttons)
                 {
                     switch (btn.ButtonLabel)
                     {
                         case "Window Passthrough":
                             if (_windowPassthrough != null)
-                                _buttonPassthrough[btn] = v => {
-                                    if (v)
-                                    {
-                                        // Activate the GO exactly once so Awake/Start initialise the layer.
-                                        // After that the GO stays active permanently — OVRPassthroughLayer
-                                        // does not reliably recover its native layer after a
-                                        // SetActive(false) → SetActive(true) cycle, causing global red/green
-                                        // texture corruption on the second enable.
-                                        if (!_windowPassthrough.gameObject.activeSelf)
-                                            _windowPassthrough.gameObject.SetActive(true);
-                                        // Set bgAlpha=0 so the Meta compositor shows the passthrough feed
-                                        // through background pixels before enabling the layer.
-                                        DreamGuardPlayer.Instance?.SetPassthroughBackground(true);
-                                        _windowPassthrough.SetEnabled(true);
-                                    }
-                                    else if (_windowPassthrough.gameObject.activeSelf)
-                                    {
-                                        // Guard prevents calling SetEnabled before Awake runs (_layer is null).
-                                        _windowPassthrough.SetEnabled(false);
-                                        // Do NOT call gameObject.SetActive(false) — see enable comment above.
-                                    }
-                                };
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_windowPassthrough, v);
                             break;
-                        // case "Grid Passthrough":
-                        //     if (_gridPassthrough != null)
-                        //         _buttonPassthrough[btn] = v => {
-                        //             if (v) { _gridPassthrough.gameObject.SetActive(true); _gridPassthrough.SetEnabled(true); }
-                        //             else if (_gridPassthrough.gameObject.activeSelf) { _gridPassthrough.SetEnabled(false); _gridPassthrough.gameObject.SetActive(false); }
-                        //         };
-                        //     break;
-                        // case "Vertical Fold":
-                        //     if (_verticalFold != null)
-                        //         _buttonPassthrough[btn] = v => {
-                        //             if (v) { _verticalFold.gameObject.SetActive(true); _verticalFold.SetEnabled(true); }
-                        //             else if (_verticalFold.gameObject.activeSelf) { _verticalFold.SetEnabled(false); _verticalFold.gameObject.SetActive(false); }
-                        //         };
-                        //     break;
-                        // case "Passthrough Fog":
-                        //     if (_passthroughFog != null)
-                        //         _buttonPassthrough[btn] = v => {
-                        //             if (v) { _passthroughFog.gameObject.SetActive(true); _passthroughFog.SetFogEnabled(true); }
-                        //             else if (_passthroughFog.gameObject.activeSelf) { _passthroughFog.SetFogEnabled(false); _passthroughFog.gameObject.SetActive(false); }
-                        //         };
-                        //     break;
-                        // case "Passthrough Plane":
-                        //     if (_passthroughPlane != null)
-                        //         _buttonPassthrough[btn] = v => {
-                        //             if (v) { _passthroughPlane.gameObject.SetActive(true); _passthroughPlane.SetEnabled(true); }
-                        //             else if (_passthroughPlane.gameObject.activeSelf) { _passthroughPlane.SetEnabled(false); _passthroughPlane.gameObject.SetActive(false); }
-                        //         };
-                        //     break;
+                        case "Grid Passthrough":
+                            if (_gridPassthrough != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_gridPassthrough, v);
+                            break;
+                        case "Vertical Fold":
+                            if (_verticalFold != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_verticalFold, v);
+                            break;
+                        case "Passthrough Fog":
+                            if (_passthroughFog != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_passthroughFog, v);
+                            break;
+                        case "Passthrough Plane":
+                            if (_passthroughPlane != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_passthroughPlane, v);
+                            break;
                     }
                 }
             }
@@ -277,11 +246,26 @@ namespace DreamGuard
 
         // ── selection ─────────────────────────────────────────────────────────────
 
-        private void UpdatePassthrough<P>(P passthrough, bool value) where P : MonoBehaviour, IDreamGuardPassthrough
+        // Activate or deactivate a passthrough technique.
+        // The GO is activated the first time it is needed (so Awake/Start initialise
+        // the OVRPassthroughLayer); after that it stays active permanently.
+        // Calling SetActive(false) → SetActive(true) a second time does not reliably
+        // recover the native compositor layer handle and causes global red/green texture
+        // corruption, so we never deactivate a technique GO once it has been started.
+        private void ActivateTechnique<P>(P technique, bool value) where P : MonoBehaviour, IDreamGuardPassthrough
         {
-            DreamGuardLog.Log($"[DreamGuardMenu] UpdatePassthrough {passthrough.GetType().Name} → {value}");
-            if (value) { passthrough.gameObject.SetActive(true);  passthrough.SetEnabled(true); }
-            else       { passthrough.SetEnabled(false); passthrough.gameObject.SetActive(false); }
+            DreamGuardLog.Log($"[DreamGuardMenu] ActivateTechnique {technique.GetType().Name} → {value}");
+            if (value)
+            {
+                if (!technique.gameObject.activeSelf)
+                    technique.gameObject.SetActive(true);
+                technique.SetEnabled(true);
+            }
+            else if (technique.gameObject.activeSelf)
+            {
+                technique.SetEnabled(false);
+                // Do NOT call SetActive(false) — see comment above.
+            }
         }
 
         private void DisableAllPassthroughs()
@@ -289,8 +273,9 @@ namespace DreamGuard
             DreamGuardLog.Log($"[DreamGuardMenu] DisableAllPassthroughs  count={_buttonPassthrough.Count}");
             foreach (var setter in _buttonPassthrough.Values)
                 setter(false);
-            // Restore opaque background: no passthrough layer is active so bgAlpha=0 would
-            // cause the Meta compositor to enter the red/green error state.
+            // Ensure the base passthrough layer's underlay is hidden (textureOpacity=0)
+            // while no technique is active. Each Underlay technique restores its own
+            // camera clear settings in SetEnabled(false).
             DreamGuardPlayer.Instance?.SetPassthroughBackground(false);
         }
 

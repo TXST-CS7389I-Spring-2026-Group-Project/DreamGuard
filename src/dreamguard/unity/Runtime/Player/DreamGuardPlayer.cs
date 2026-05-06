@@ -37,8 +37,7 @@ namespace DreamGuard
 
         // The base passthrough layer is always kept active so the Meta compositor never
         // enters the red/green error state.  When no passthrough technique is selected,
-        // camera.backgroundColor.a=1 makes the VR scene render opaque over the underlay,
-        // so the passthrough feed is invisible even though the layer is enabled.
+        // textureOpacity=0 keeps the underlay feed invisible even though the layer is enabled.
         private OVRPassthroughLayer _basePassthroughLayer;
 
         private void Start()
@@ -307,13 +306,15 @@ namespace DreamGuard
         }
 
         /// <summary>
-        /// Switch between full-VR and passthrough-background modes.
+        /// Switch the base passthrough underlay between visible and hidden.
         ///
-        /// Pass <c>true</c>  (MR mode)  — sets bgAlpha=0, so background pixels reveal the
-        /// passthrough underlay.  VR geometry still renders opaque on top.
-        /// Pass <c>false</c> (VR mode)  — sets bgAlpha=1, so the camera background is a
-        /// solid colour and the passthrough underlay is hidden behind it.
-        /// The base OVRPassthroughLayer remains enabled in both modes.
+        /// Pass <c>true</c>  — sets textureOpacity=1 (underlay visible) and bgAlpha=0.
+        /// Pass <c>false</c> — sets textureOpacity=0 (underlay hidden) and bgAlpha=1.
+        ///
+        /// Note: individual passthrough techniques (Grid, Fog, VerticalFold) manage their
+        /// own OVRPassthroughLayer and camera settings directly.  This method controls only
+        /// the always-on base layer.  The camera bgAlpha path requires Preserve Framebuffer
+        /// Alpha to be enabled in the Build Profile; without it, only textureOpacity matters.
         /// </summary>
         public void SetPassthroughBackground(bool passthroughActive)
         {
@@ -325,9 +326,9 @@ namespace DreamGuard
                 DreamGuardLog.Log($"[DreamGuardPlayer] SetPassthroughBackground({passthroughActive}) → textureOpacity={_basePassthroughLayer.textureOpacity:F0}");
             }
 
-            // Camera background alpha drives the XR swapchain clear:
-            //   1 → swapchain clears to alpha=1 → compositor shows VR everywhere
-            //   0 → swapchain clears to alpha=0 → compositor shows underlay through background pixels
+            // Camera background alpha: only reaches the XR swapchain if Preserve Framebuffer
+            // Alpha is enabled in the Build Profile. Set it regardless as a belt-and-braces
+            // measure, but do not rely on it as the sole visibility mechanism.
             var cam = Camera.main;
             if (cam == null)
             {

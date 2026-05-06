@@ -89,6 +89,10 @@ namespace DreamGuard
         private CameraClearFlags _origClearFlags;
         private Color            _origBgColor;
 
+        // Tracks the intended enabled state so passthroughLayerResumed events that fire
+        // while the technique is inactive can be suppressed.
+        private bool _intendedEnabled = false;
+
         private static readonly int PropGapCenterY        = Shader.PropertyToID("_GapCenterY");
         private static readonly int PropGapHalfWidth      = Shader.PropertyToID("_GapHalfWidth");
         private static readonly int PropEdgeFringe        = Shader.PropertyToID("_EdgeFringe");
@@ -105,9 +109,24 @@ namespace DreamGuard
         {
             DreamGuardLog.Log("[DreamGuardVerticalFold] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
-            // Disable immediately so the compositor never sees an active Underlay
-            // passthrough layer at startup before this technique has been selected.
+            // Disable the layer immediately — OVRPassthroughLayer.Awake() creates a native
+            // compositor handle when the GO becomes active, but we don't want it rendering
+            // until the technique is explicitly selected from the menu.
             _layer.enabled = false;
+            _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
+        }
+
+        private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
+        {
+            DreamGuardLog.LogWarning($"[DreamGuardVerticalFold] passthroughLayerResumed  intended={_intendedEnabled}");
+            if (!_intendedEnabled)
+            {
+                // The OVR runtime resumed the native layer handle, but this technique has
+                // not been selected. Force the layer back off to prevent an active Underlay
+                // with no camera alpha configured, which causes red/green compositor errors.
+                DreamGuardLog.LogWarning("[DreamGuardVerticalFold] Suppressing unexpected native resume");
+                _layer.enabled = false;
+            }
         }
 
         private void Start()
@@ -163,6 +182,7 @@ namespace DreamGuard
         /// <summary>Show or hide the fold effect and its passthrough layer.</summary>
         public void SetEnabled(bool enabled)
         {
+            _intendedEnabled = enabled;
             DreamGuardLog.Log($"[DreamGuardVerticalFold] SetEnabled({enabled})");
             if (_cylinder != null) _cylinder.SetActive(enabled);
             _layer.enabled = enabled;
@@ -292,6 +312,7 @@ namespace DreamGuard
 
         private void OnDestroy()
         {
+            if (_layer    != null) _layer.passthroughLayerResumed.RemoveListener(OnPassthroughLayerResumed);
             if (_material != null) Destroy(_material);
             if (_cylinder  != null) Destroy(_cylinder);
         }

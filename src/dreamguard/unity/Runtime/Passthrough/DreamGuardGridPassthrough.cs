@@ -86,6 +86,10 @@ namespace DreamGuard
         private CameraClearFlags _origClearFlags;
         private Color            _origBgColor;
 
+        // Tracks the intended enabled state so passthroughLayerResumed events that fire
+        // while the technique is inactive can be suppressed rather than showing planes.
+        private bool _intendedEnabled = false;
+
         // Cached shader property IDs.
         private static readonly int PropPlayerPos     = Shader.PropertyToID("_PlayerPos");
         private static readonly int PropInnerRadius   = Shader.PropertyToID("_InnerRadius");
@@ -101,15 +105,25 @@ namespace DreamGuard
         {
             DreamGuardLog.Log("[DreamGuardGridPassthrough] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
-            // Disable immediately so the compositor never sees an active Underlay
-            // passthrough layer at startup before this technique has been selected.
+            // Disable the layer immediately — OVRPassthroughLayer.Awake() creates a native
+            // compositor handle when the GO becomes active, but we don't want it rendering
+            // until the technique is explicitly selected from the menu.
             _layer.enabled = false;
             _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
         }
 
         private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
         {
-            DreamGuardLog.Log("[DreamGuardGridPassthrough] OnPassthroughLayerResumed — showing planes");
+            DreamGuardLog.Log($"[DreamGuardGridPassthrough] OnPassthroughLayerResumed  intended={_intendedEnabled}");
+            if (!_intendedEnabled)
+            {
+                // The OVR runtime resumed the native layer handle, but this technique has
+                // not been selected. Force the layer back off to prevent an active Underlay
+                // with no camera alpha configured, which causes red/green compositor errors.
+                DreamGuardLog.LogWarning("[DreamGuardGridPassthrough] Suppressing unexpected native resume");
+                _layer.enabled = false;
+                return;
+            }
             if (_floorPlane   != null && showFloor)   _floorPlane.SetActive(true);
             if (_ceilingPlane != null && showCeiling) _ceilingPlane.SetActive(true);
         }
@@ -157,6 +171,7 @@ namespace DreamGuard
         /// <summary>Show or hide the grid overlay and underlying passthrough layer.</summary>
         public void SetEnabled(bool enabled)
         {
+            _intendedEnabled = enabled;
             DreamGuardLog.Log($"[DreamGuardGridPassthrough] SetEnabled({enabled})");
             // Always hide planes immediately; on enable they reappear via
             // OnPassthroughLayerResumed to avoid a black-frame flicker.

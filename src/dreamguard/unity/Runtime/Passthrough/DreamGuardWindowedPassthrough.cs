@@ -38,11 +38,11 @@ namespace DreamGuard
             _layer.overlayType = OVROverlay.OverlayType.Overlay;
 
             // Create the quad but do NOT register it as surface geometry yet.
-            // Calling AddSurfaceGeometry() here causes the compositor to see a
-            // UserDefined Overlay layer with unpositioned geometry as soon as
-            // passthroughLayerResumed fires (~5 s after launch), which produces
-            // a full-screen depth-texture visualisation even though the layer is
-            // C#-disabled.  Surface geometry is registered only in SetEnabled(true).
+            // Registering it in Awake means a passthroughLayerResumed event (which fires
+            // when the OVR runtime resumes all native layer handles after InputFocusAcquired)
+            // would find a UserDefined Overlay layer with unpositioned geometry, producing
+            // a full-screen red/green depth-texture pattern even though the layer is
+            // C#-disabled.  Surface geometry is registered lazily in SetEnabled(true).
             if (windowSurface == null)
                 windowSurface = CreateWindowQuad();
 

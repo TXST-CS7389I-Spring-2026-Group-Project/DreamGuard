@@ -52,14 +52,19 @@ namespace DreamGuard
         private CameraClearFlags _origClearFlags;
         private Color            _origBgColor;
 
+        // Tracks the intended enabled state so passthroughLayerResumed events that fire
+        // while the technique is inactive can be suppressed.
+        private bool _intendedEnabled = false;
+
         // ── Unity messages ─────────────────────────────────────────────────────
 
         private void Awake()
         {
             DreamGuardLog.Log("[PassthroughPlane] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
-            // Disable immediately so the compositor never sees an active Underlay
-            // layer at startup before this technique has been selected.
+            // Disable the layer immediately — OVRPassthroughLayer.Awake() creates a native
+            // compositor handle when the GO becomes active, but we don't want it rendering
+            // until the technique is explicitly selected from the menu.
             _layer.enabled = false;
             _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
         }
@@ -73,6 +78,16 @@ namespace DreamGuard
             {
                 _origClearFlags = _camera.clearFlags;
                 _origBgColor    = _camera.backgroundColor;
+
+                // SetEnabled(true) may have been called before Start() (the menu activates
+                // the GO then immediately calls SetEnabled, but Start is deferred).
+                // Apply the transparent camera clear now if the technique is already intended.
+                if (_intendedEnabled)
+                {
+                    DreamGuardLog.Log("[PassthroughPlane] Start: _intendedEnabled already true — applying transparent camera clear");
+                    _camera.clearFlags      = CameraClearFlags.SolidColor;
+                    _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+                }
             }
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
@@ -86,7 +101,16 @@ namespace DreamGuard
 
         private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
         {
-            DreamGuardLog.Log("[PassthroughPlane] Passthrough layer resumed — showing plane");
+            DreamGuardLog.Log($"[PassthroughPlane] passthroughLayerResumed  intended={_intendedEnabled}");
+            if (!_intendedEnabled)
+            {
+                // The OVR runtime resumed the native layer handle, but this technique has
+                // not been selected. Force the layer back off to prevent an active Underlay
+                // with no camera alpha configured, which causes red/green compositor errors.
+                DreamGuardLog.LogWarning("[PassthroughPlane] Suppressing unexpected native resume");
+                _layer.enabled = false;
+                return;
+            }
             if (_plane != null)
                 _plane.SetActive(true);
         }
@@ -96,6 +120,7 @@ namespace DreamGuard
         /// <summary>Show or hide the depth-plane passthrough technique.</summary>
         public void SetEnabled(bool enabled)
         {
+            _intendedEnabled = enabled;
             DreamGuardLog.Log($"[PassthroughPlane] SetEnabled({enabled})");
 
             if (_plane != null)
@@ -117,6 +142,9 @@ namespace DreamGuard
                 }
             }
         }
+
+        /// <summary>Toggle the depth-plane passthrough technique on/off.</summary>
+        public void Toggle() => SetEnabled(!_intendedEnabled);
 
         // ── Private helpers ────────────────────────────────────────────────────
 
@@ -157,6 +185,12 @@ namespace DreamGuard
                 rend.sharedMaterial = _planeMaterial;
 
             return plane;
+        }
+
+        private void OnDestroy()
+        {
+            if (_layer != null) _layer.passthroughLayerResumed.RemoveListener(OnPassthroughLayerResumed);
+            if (_plane != null) Destroy(_plane);
         }
     }
 }
