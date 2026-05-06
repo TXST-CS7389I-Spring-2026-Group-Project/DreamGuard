@@ -6,9 +6,13 @@ namespace DreamGuard
     /// Grid passthrough overlay for the dungeon floor and ceiling.
     ///
     /// Places a large world-aligned grid on both horizontal surfaces.  Near the
-    /// player the grid is fully opaque VR content; further away the fill between
-    /// grid lines fades to passthrough first, with the lines themselves fading
-    /// last, creating a gradual dissolve to the real world at a distance.
+    /// Guardian boundary the grid fades to passthrough; well inside the play
+    /// space the fill between grid lines is fully opaque VR content.
+    ///
+    /// This makes the Grid <b>boundary-aware</b>: the passthrough gradient is
+    /// driven by distance to the real-world Guardian boundary polygon, not
+    /// by distance from the player.  The floor/ceiling reveal the real world
+    /// wherever you are close to a physical wall.
     ///
     /// How it works
     /// ────────────
@@ -16,18 +20,18 @@ namespace DreamGuard
     ///   wherever the VR framebuffer alpha == 0.
     /// • Two flat plane meshes — one at floor level, one at ceiling level — are
     ///   rendered via DreamGuard/GridPassthrough (two passes):
-    ///     Pass 0 – GridColor:  paints the grid with distance-based opacity.
-    ///     Pass 1 – AlphaHole: writes alpha = 0 in the fill areas beyond the VR
-    ///                          zone, letting passthrough bleed through the floor /
-    ///                          ceiling tiles.
+    ///     Pass 0 – GridColor:  paints the grid with boundary-distance-based opacity.
+    ///     Pass 1 – AlphaHole: writes alpha = 0 in fill areas near the boundary,
+    ///                          letting passthrough bleed through the floor/ceiling.
     ///
     /// Setup
     /// ─────
     ///   1. Add this component to the same GameObject as OVRPassthroughLayer.
     ///   2. OVRPassthroughLayer: Overlay Type = Underlay.
     ///   3. OVRManager: isInsightPassthroughEnabled = true.
-    ///   4. Camera background alpha = 0 (set automatically in Start).
+    ///   4. Camera background alpha = 0 (set automatically on enable).
     ///   5. Adjust Floor Y and Ceiling Y to match your level geometry.
+    ///   6. Guardian must be configured on the device for the boundary to be read.
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
     public class DreamGuardGridPassthrough : MonoBehaviour, IDreamGuardPassthrough
@@ -47,12 +51,10 @@ namespace DreamGuard
         [SerializeField] private bool showFloor   = true;
         [SerializeField] private bool showCeiling = true;
 
-        [Header("Passthrough Gradient")]
-        [Tooltip("Horizontal distance (metres) from the player where the grid is fully VR.")]
-        [SerializeField] private float innerRadius = 4f;
-
-        [Tooltip("Distance (metres) beyond innerRadius over which passthrough gradually fades in.")]
-        [SerializeField] private float gradientWidth = 6f;
+        [Header("Passthrough Gradient (Boundary-Aware)")]
+        [Tooltip("Distance (metres) inward from the Guardian boundary over which passthrough fades in. " +
+                 "At the boundary edge passthrough is full; beyond this distance it is zero.")]
+        [SerializeField] private float gradientWidth = 1.5f;
 
         [Header("Grid Appearance")]
         [Tooltip("Size of each grid cell in world-space metres.")]
@@ -73,10 +75,15 @@ namespace DreamGuard
         [Tooltip("Leave null – found by name at runtime.")]
         [SerializeField] private Shader gridShader;
 
+        // ── Constants ──────────────────────────────────────────────────────────
+
+        private const int   MaxBoundaryPoints  = 16;
+        private const float BoundaryRefreshInterval = 1f; // seconds
+
         // ── Private state ──────────────────────────────────────────────────────
 
         private OVRPassthroughLayer _layer;
-        private Transform           _head;
+        private OVRCameraRig        _rig;
         private GameObject          _floorPlane;
         private GameObject          _ceilingPlane;
         private Material            _gridMaterial;
@@ -86,18 +93,23 @@ namespace DreamGuard
         private CameraClearFlags _origClearFlags;
         private Color            _origBgColor;
 
+        // Boundary data passed to the shader.
+        private readonly Vector4[] _boundaryShaderPoints = new Vector4[MaxBoundaryPoints];
+        private int                _boundaryPointCount   = 0;
+        private float              _boundaryRefreshTimer = 0f;
+
         // Tracks the intended enabled state so passthroughLayerResumed events that fire
         // while the technique is inactive can be suppressed rather than showing planes.
         private bool _intendedEnabled = false;
 
         // Cached shader property IDs.
-        private static readonly int PropPlayerPos     = Shader.PropertyToID("_PlayerPos");
-        private static readonly int PropInnerRadius   = Shader.PropertyToID("_InnerRadius");
-        private static readonly int PropGradientWidth = Shader.PropertyToID("_GradientWidth");
-        private static readonly int PropGridSpacing   = Shader.PropertyToID("_GridSpacing");
-        private static readonly int PropLineWidth     = Shader.PropertyToID("_LineWidth");
-        private static readonly int PropGridColor     = Shader.PropertyToID("_GridColor");
-        private static readonly int PropGridAlpha     = Shader.PropertyToID("_GridAlpha");
+        private static readonly int PropBoundaryPoints     = Shader.PropertyToID("_BoundaryPoints");
+        private static readonly int PropBoundaryPointCount = Shader.PropertyToID("_BoundaryPointCount");
+        private static readonly int PropGradientWidth      = Shader.PropertyToID("_GradientWidth");
+        private static readonly int PropGridSpacing        = Shader.PropertyToID("_GridSpacing");
+        private static readonly int PropLineWidth          = Shader.PropertyToID("_LineWidth");
+        private static readonly int PropGridColor          = Shader.PropertyToID("_GridColor");
+        private static readonly int PropGridAlpha          = Shader.PropertyToID("_GridAlpha");
 
         // ── Unity messages ─────────────────────────────────────────────────────
 
@@ -131,15 +143,11 @@ namespace DreamGuard
         private void Start()
         {
             DreamGuardLog.Log("[DreamGuardGridPassthrough] Start");
-            // Resolve head transform for player-position tracking.
-            var rig = FindFirstObjectByType<OVRCameraRig>();
-            _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
+
+            _rig    = FindFirstObjectByType<OVRCameraRig>();
+            _camera = Camera.main;
 
             // Save the original camera settings so SetEnabled(false) can restore them.
-            // Do NOT modify the camera here — it is only made transparent in SetEnabled(true).
-            // Modifying camera alpha=0 at startup (without an active passthrough layer) causes
-            // the Meta compositor to show undefined content for empty pixels.
-            _camera = Camera.main;
             if (_camera != null)
             {
                 _origClearFlags = _camera.clearFlags;
@@ -154,16 +162,22 @@ namespace DreamGuard
             if (showFloor)   { _floorPlane   = CreateGridPlane("GridFloor",   floorY);   _floorPlane.SetActive(false); }
             if (showCeiling) { _ceilingPlane = CreateGridPlane("GridCeiling", ceilingY); _ceilingPlane.SetActive(false); }
 
+            RefreshBoundaryPoints();
             SyncMaterialProps();
         }
 
         private void LateUpdate()
         {
-            if (_head == null || _gridMaterial == null) return;
+            if (_gridMaterial == null) return;
 
-            // Update player position uniform every frame so the gradient follows the player.
-            Vector3 pos = _head.position;
-            _gridMaterial.SetVector(PropPlayerPos, new Vector4(pos.x, pos.y, pos.z, 0f));
+            // Refresh Guardian boundary points periodically (they rarely change, but
+            // the player may open/close the guardian setup during a session).
+            _boundaryRefreshTimer -= Time.deltaTime;
+            if (_boundaryRefreshTimer <= 0f)
+            {
+                RefreshBoundaryPoints();
+                _boundaryRefreshTimer = BoundaryRefreshInterval;
+            }
         }
 
         // ── Public API ─────────────────────────────────────────────────────────
@@ -173,6 +187,7 @@ namespace DreamGuard
         {
             _intendedEnabled = enabled;
             DreamGuardLog.Log($"[DreamGuardGridPassthrough] SetEnabled({enabled})");
+
             // Always hide planes immediately; on enable they reappear via
             // OnPassthroughLayerResumed to avoid a black-frame flicker.
             if (_floorPlane   != null) _floorPlane.SetActive(false);
@@ -185,6 +200,10 @@ namespace DreamGuard
                 {
                     _camera.clearFlags      = CameraClearFlags.SolidColor;
                     _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+
+                    // Eagerly refresh boundary so the first frame has correct data.
+                    RefreshBoundaryPoints();
+                    _boundaryRefreshTimer = BoundaryRefreshInterval;
                 }
                 else
                 {
@@ -197,13 +216,6 @@ namespace DreamGuard
         /// <summary>Toggle the grid overlay on/off.</summary>
         public void Toggle() => SetEnabled(!_intendedEnabled);
 
-        /// <summary>Change the inner clear-zone radius at runtime.</summary>
-        public void SetInnerRadius(float metres)
-        {
-            innerRadius = metres;
-            _gridMaterial?.SetFloat(PropInnerRadius, innerRadius);
-        }
-
         /// <summary>Change the gradient fade width at runtime.</summary>
         public void SetGradientWidth(float metres)
         {
@@ -213,6 +225,58 @@ namespace DreamGuard
 
         // ── Private helpers ────────────────────────────────────────────────────
 
+        /// <summary>
+        /// Reads the Guardian outer boundary from OVRBoundary, transforms the
+        /// polygon vertices from tracking space to world space, and uploads them
+        /// to the shader as XZ pairs packed into float4.xy.
+        /// Falls back gracefully when the Guardian is not configured.
+        /// </summary>
+        private void RefreshBoundaryPoints()
+        {
+            if (!OVRManager.boundary.GetConfigured())
+            {
+                if (_boundaryPointCount != 0)
+                    DreamGuardLog.LogWarning("[DreamGuardGridPassthrough] Guardian not configured — boundary passthrough inactive");
+                _boundaryPointCount = 0;
+                _gridMaterial?.SetInt(PropBoundaryPointCount, 0);
+                return;
+            }
+
+            Vector3[] rawPoints = OVRManager.boundary.GetGeometry(OVRBoundary.BoundaryType.OuterBoundary);
+            if (rawPoints == null || rawPoints.Length < 3)
+            {
+                DreamGuardLog.LogWarning($"[DreamGuardGridPassthrough] Boundary returned {rawPoints?.Length ?? 0} points — skipping");
+                _boundaryPointCount = 0;
+                _gridMaterial?.SetInt(PropBoundaryPointCount, 0);
+                return;
+            }
+
+            // OVR boundary geometry is in local OVR tracking space.
+            // Transform each point to Unity world space via the tracking-space transform.
+            Transform trackingSpace = _rig != null ? _rig.trackingSpace : null;
+            int count = Mathf.Min(rawPoints.Length, MaxBoundaryPoints);
+
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 worldPt = trackingSpace != null
+                    ? trackingSpace.TransformPoint(rawPoints[i])
+                    : rawPoints[i]; // fallback: assume tracking space == world space
+
+                // Pack XZ world coordinates into xy of float4.
+                _boundaryShaderPoints[i] = new Vector4(worldPt.x, worldPt.z, 0f, 0f);
+            }
+
+            _boundaryPointCount = count;
+
+            if (_gridMaterial != null)
+            {
+                _gridMaterial.SetVectorArray(PropBoundaryPoints, _boundaryShaderPoints);
+                _gridMaterial.SetInt(PropBoundaryPointCount, _boundaryPointCount);
+            }
+
+            DreamGuardLog.Log($"[DreamGuardGridPassthrough] Boundary refreshed: {_boundaryPointCount} points");
+        }
+
         private Material CreateGridMaterial()
         {
             if (gridShader == null)
@@ -220,7 +284,7 @@ namespace DreamGuard
 
             if (gridShader == null)
             {
-                Debug.LogError("[DreamGuardGridPassthrough] Cannot find shader " +
+                DreamGuardLog.LogError("[DreamGuardGridPassthrough] Cannot find shader " +
                                "'DreamGuard/GridPassthrough'. " +
                                "Ensure GridPassthrough.shader is in the project.");
                 return new Material(Shader.Find("Hidden/InternalErrorShader"));
@@ -260,14 +324,13 @@ namespace DreamGuard
         {
             if (_gridMaterial == null) return;
 
-            Vector3 p = _head != null ? _head.position : Vector3.zero;
-            _gridMaterial.SetVector(PropPlayerPos,     new Vector4(p.x, p.y, p.z, 0f));
-            _gridMaterial.SetFloat(PropInnerRadius,    innerRadius);
-            _gridMaterial.SetFloat(PropGradientWidth,  gradientWidth);
-            _gridMaterial.SetFloat(PropGridSpacing,    gridSpacing);
-            _gridMaterial.SetFloat(PropLineWidth,      lineWidth);
-            _gridMaterial.SetColor(PropGridColor,      gridColor);
-            _gridMaterial.SetFloat(PropGridAlpha,      gridAlpha);
+            _gridMaterial.SetVectorArray(PropBoundaryPoints,    _boundaryShaderPoints);
+            _gridMaterial.SetInt(PropBoundaryPointCount,        _boundaryPointCount);
+            _gridMaterial.SetFloat(PropGradientWidth,           gradientWidth);
+            _gridMaterial.SetFloat(PropGridSpacing,             gridSpacing);
+            _gridMaterial.SetFloat(PropLineWidth,               lineWidth);
+            _gridMaterial.SetColor(PropGridColor,               gridColor);
+            _gridMaterial.SetFloat(PropGridAlpha,               gridAlpha);
         }
 
         private void OnValidate()

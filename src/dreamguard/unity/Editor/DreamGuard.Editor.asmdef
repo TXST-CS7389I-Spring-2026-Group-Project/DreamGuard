@@ -3,6 +3,7 @@
     "rootNamespace": "DreamGuard.Editor",
     "references": [
         "DreamGuard.Runtime",
+        "DreamGuard.Passthrough.Detection",
         "Oculus.VR",
         "Oculus.VR.Editor"
     ],

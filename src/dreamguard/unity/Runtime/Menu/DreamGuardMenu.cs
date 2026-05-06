@@ -49,8 +49,8 @@ namespace DreamGuard
         private DreamGuardWindowedPassthrough _windowPassthrough;
         private DreamGuardGridPassthrough    _gridPassthrough;
         private DreamGuardVerticalFold       _verticalFold;
-        private DreamGuardPassthroughFog     _passthroughFog;
         private PassthroughSphere            _passthroughSphere;
+        private DetectionBasedPassthrough    _passthroughDetection;
 
         private void Start()
         {
@@ -66,16 +66,16 @@ namespace DreamGuard
                 DreamGuardLog.LogWarning("[DreamGuardMenu] No OVRCameraRig found — menu positioning and laser will not work");
             }
 
-            _windowPassthrough = FindFirstObjectByType<DreamGuardWindowedPassthrough>(FindObjectsInactive.Include);
             _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
             _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
-            _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
+            _windowPassthrough = FindFirstObjectByType<DreamGuardWindowedPassthrough>(FindObjectsInactive.Include);
             _passthroughSphere = FindFirstObjectByType<PassthroughSphere>(FindObjectsInactive.Include);
+            _passthroughDetection = FindFirstObjectByType<DetectionBasedPassthrough>(FindObjectsInactive.Include);
 
             DreamGuardLog.Log($"[DreamGuardMenu] Techniques found — " +
                 $"window={_windowPassthrough != null}  grid={_gridPassthrough != null}  " +
-                $"fold={_verticalFold != null}  fog={_passthroughFog != null}  " +
-                $"sphere={_passthroughSphere != null}");
+                $"fold={_verticalFold != null}  sphere={_passthroughSphere != null}  " +
+                $"detection={_passthroughDetection != null}");
 
             if (menuPanel != null)
             {
@@ -91,10 +91,6 @@ namespace DreamGuard
                 {
                     switch (btn.ButtonLabel)
                     {
-                        case "Window Passthrough":
-                            if (_windowPassthrough != null)
-                                _buttonPassthrough[btn] = v => ActivateTechnique(_windowPassthrough, v);
-                            break;
                         case "Grid Passthrough":
                             if (_gridPassthrough != null)
                                 _buttonPassthrough[btn] = v => ActivateTechnique(_gridPassthrough, v);
@@ -103,13 +99,17 @@ namespace DreamGuard
                             if (_verticalFold != null)
                                 _buttonPassthrough[btn] = v => ActivateTechnique(_verticalFold, v);
                             break;
-                        case "Passthrough Fog":
-                            if (_passthroughFog != null)
-                                _buttonPassthrough[btn] = v => ActivateTechnique(_passthroughFog, v);
+                        case "Window Passthrough":
+                            if (_windowPassthrough != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_windowPassthrough, v);
                             break;
-                        case "Passthrough Plane":
-                            if (_passthroughPlane != null)
-                                _buttonPassthrough[btn] = v => ActivateTechnique(_passthroughPlane, v);
+                        case "Passthrough Sphere":
+                            if (_passthroughSphere != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_passthroughSphere, v);
+                            break;
+                        case "Passthrough Detection":
+                            if (_passthroughDetection != null)
+                                _buttonPassthrough[btn] = v => ActivateTechnique(_passthroughDetection, v);
                             break;
                     }
                 }

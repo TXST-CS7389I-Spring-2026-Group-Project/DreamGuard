@@ -34,9 +34,19 @@ namespace DreamGuard
             // Build-and-Run launches the app unfocused (headset not yet worn /
             // Quest home hasn't handed off), no frames are submitted, and the
             // Meta compositor kills the session after ~5 s ("not responding").
-            while (!OVRPlugin.hasVrFocus)
+            // Cap the wait: if the headset is off (proximity sensor never fires),
+            // hasVrFocus stays false indefinitely and Meta shows "not responding".
+            const float focusTimeoutSeconds = 8f;
+            float focusWaitElapsed = 0f;
+            while (!OVRPlugin.hasVrFocus && focusWaitElapsed < focusTimeoutSeconds)
+            {
+                focusWaitElapsed += Time.unscaledDeltaTime;
                 yield return null;
-            DreamGuardLog.Log("[DreamGuardBootstrap] VR focus acquired");
+            }
+            if (OVRPlugin.hasVrFocus)
+                DreamGuardLog.Log("[DreamGuardBootstrap] VR focus acquired");
+            else
+                DreamGuardLog.LogWarning($"[DreamGuardBootstrap] VR focus wait timed out after {focusWaitElapsed:F1}s — proceeding without focus");
 
             // Wait a few frames for OVRManager and passthrough to initialize
             // before starting the scene load, so Boot renders passthrough instead

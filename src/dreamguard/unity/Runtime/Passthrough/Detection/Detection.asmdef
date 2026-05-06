@@ -1,0 +1,20 @@
+{
+    "name": "DreamGuard.Passthrough.Detection",
+    "rootNamespace": "DreamGuard",
+    "references": [
+        "Oculus.VR",
+        "meta.xr.mrutilitykit",
+        "Unity.InferenceEngine",
+        "DreamGuard.Debug",
+        "DreamGuard.Passthrough.Interface"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -170,7 +170,6 @@ Shader "DreamGuard/VerticalFoldPassthrough"
             ZWrite Off
             ZTest Always
             ColorMask A
-            Blend Zero One
 
             HLSLPROGRAM
             #pragma vertex   vert

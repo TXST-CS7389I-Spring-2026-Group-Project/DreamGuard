@@ -65,8 +65,13 @@ namespace DreamGuard
 
         private void EnsureBasePassthroughLayer()
         {
-            // Reuse an existing layer on this GameObject if one was added in the prefab.
-            _basePassthroughLayer = GetComponentInChildren<OVRPassthroughLayer>(includeInactive: true);
+            // Only reuse a layer on an *active* child GO — technique GOs start inactive,
+            // and GetComponentInChildren(includeInactive:true) would grab one of their
+            // OVRPassthroughLayer components and use it as the base layer.  That causes
+            // the technique's layer to be pre-configured as an Underlay by DreamGuardPlayer,
+            // which then conflicts when the technique's Awake() tries to change it to an
+            // Overlay/UserDefined layer, preventing the technique from rendering correctly.
+            _basePassthroughLayer = GetComponentInChildren<OVRPassthroughLayer>();
             if (_basePassthroughLayer == null)
             {
                 var go = new GameObject("PassthroughBase");

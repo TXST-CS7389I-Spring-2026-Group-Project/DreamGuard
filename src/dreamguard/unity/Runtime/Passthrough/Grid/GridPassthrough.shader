@@ -1,18 +1,18 @@
 Shader "DreamGuard/GridPassthrough"
 {
     // Renders a world-aligned grid on horizontal surfaces (floor / ceiling) with a
-    // distance-based passthrough gradient.
+    // boundary-aware passthrough gradient.
     //
     // The mesh this shader sits on should be a large flat plane (Unity Plane
     // primitive, scaled to cover the level).
     //
     // Visual behaviour
     // ────────────────
-    // • Within innerRadius of the player  → grid fully opaque (VR content visible).
-    // • Between innerRadius and innerRadius + gradientWidth
+    // • Further than _GradientWidth from the Guardian boundary  → grid fully opaque (VR).
+    // • Within _GradientWidth of the boundary edge
     //     – Fill between grid lines fades to passthrough first.
     //     – Grid lines themselves fade out more slowly.
-    // • Beyond innerRadius + gradientWidth → full passthrough.
+    // • At the boundary edge → full passthrough.
     //
     // Two-pass compositor model (Meta Quest / OVRPassthroughLayer Underlay Skybox):
     //   alpha == 1  →  show VR content
@@ -23,14 +23,13 @@ Shader "DreamGuard/GridPassthrough"
     //   VR geometry.  ZWrite Off so it doesn't depth-fight with the floor/ceiling.
     //
     // Pass 1 – AlphaHole:
-    //   Writes alpha = 0 to the framebuffer in the fill areas at distance, revealing
-    //   passthrough there.  ColorMask A + Blend Zero One preserves RGB.
+    //   Writes alpha = 0 to the framebuffer in the fill areas near the boundary,
+    //   revealing passthrough there.  ColorMask A + Blend Zero One preserves RGB.
 
     Properties
     {
-        _PlayerPos      ("Player World Position (xyz)", Vector) = (0, 0, 0, 0)
-        _InnerRadius    ("Inner Radius – full VR (m)", Float) = 4.0
-        _GradientWidth  ("Gradient Width (m)", Float) = 6.0
+        // _BoundaryPoints and _BoundaryPointCount are set programmatically.
+        _GradientWidth  ("Gradient Width from Boundary (m)", Float) = 1.5
         _GridSpacing    ("Grid Cell Size (m)", Float) = 1.0
         _LineWidth      ("Line Width (fraction of cell)", Range(0.01, 0.49)) = 0.04
         _GridColor      ("Grid Line Color", Color) = (0.3, 0.8, 1.0, 1.0)
@@ -62,8 +61,8 @@ Shader "DreamGuard/GridPassthrough"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
-                float4 _PlayerPos;
-                float  _InnerRadius;
+                float4 _BoundaryPoints[16];
+                int    _BoundaryPointCount;
                 float  _GradientWidth;
                 float  _GridSpacing;
                 float  _LineWidth;
@@ -87,14 +86,34 @@ Shader "DreamGuard/GridPassthrough"
                 return OUT;
             }
 
+            // Minimum distance from point p to line segment [a, b] in XZ.
+            float DistToSegment(float2 p, float2 a, float2 b)
+            {
+                float2 ab = b - a;
+                float2 ap = p - a;
+                float t = saturate(dot(ap, ab) / max(dot(ab, ab), 1e-6));
+                return length(p - (a + t * ab));
+            }
+
+            // Minimum distance from XZ point to the guardian boundary perimeter.
+            // Returns a large value when no boundary is configured.
+            float BoundaryDist(float2 p)
+            {
+                if (_BoundaryPointCount < 2) return 1e9;
+                float minD = 1e9;
+                for (int i = 0; i < _BoundaryPointCount; i++)
+                {
+                    int j = (i + 1) % _BoundaryPointCount;
+                    minD = min(minD, DistToSegment(p, _BoundaryPoints[i].xy, _BoundaryPoints[j].xy));
+                }
+                return minD;
+            }
+
             half4 frag(Varyings IN) : SV_Target
             {
-                // Horizontal (XZ-plane) distance from the player.
-                float2 delta = IN.worldPos.xz - _PlayerPos.xz;
-                float  dist  = length(delta);
-
-                // Passthrough gradient: 0 = full VR, 1 = full passthrough.
-                float passT = saturate((dist - _InnerRadius) / max(_GradientWidth, 0.001));
+                // passT: 0 = full VR (well inside boundary), 1 = full passthrough (at boundary edge).
+                float dist  = BoundaryDist(IN.worldPos.xz);
+                float passT = 1.0 - saturate(dist / max(_GradientWidth, 0.001));
 
                 // World-space grid pattern.
                 float2 cellFrac  = frac(IN.worldPos.xz / _GridSpacing);
@@ -124,8 +143,8 @@ Shader "DreamGuard/GridPassthrough"
         }
 
         // ── Pass 1: Alpha hole-cutter ─────────────────────────────────────────────
-        // Writes 0 to the alpha channel in fill areas at distance so the Meta Quest
-        // compositor reveals passthrough through the floor / ceiling holes there.
+        // Writes 0 to the alpha channel in fill areas near the boundary so the Meta
+        // Quest compositor reveals passthrough through the floor / ceiling holes there.
         Pass
         {
             Name "AlphaHole"
@@ -142,8 +161,8 @@ Shader "DreamGuard/GridPassthrough"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
-                float4 _PlayerPos;
-                float  _InnerRadius;
+                float4 _BoundaryPoints[16];
+                int    _BoundaryPointCount;
                 float  _GradientWidth;
                 float  _GridSpacing;
                 float  _LineWidth;
@@ -167,13 +186,31 @@ Shader "DreamGuard/GridPassthrough"
                 return OUT;
             }
 
+            float DistToSegment(float2 p, float2 a, float2 b)
+            {
+                float2 ab = b - a;
+                float2 ap = p - a;
+                float t = saturate(dot(ap, ab) / max(dot(ab, ab), 1e-6));
+                return length(p - (a + t * ab));
+            }
+
+            float BoundaryDist(float2 p)
+            {
+                if (_BoundaryPointCount < 2) return 1e9;
+                float minD = 1e9;
+                for (int i = 0; i < _BoundaryPointCount; i++)
+                {
+                    int j = (i + 1) % _BoundaryPointCount;
+                    minD = min(minD, DistToSegment(p, _BoundaryPoints[i].xy, _BoundaryPoints[j].xy));
+                }
+                return minD;
+            }
+
             // Output alpha:  1 = keep VR,  0 = reveal passthrough.
             half4 frag(Varyings IN) : SV_Target
             {
-                float2 delta = IN.worldPos.xz - _PlayerPos.xz;
-                float  dist  = length(delta);
-
-                float passT = saturate((dist - _InnerRadius) / max(_GradientWidth, 0.001));
+                float dist  = BoundaryDist(IN.worldPos.xz);
+                float passT = 1.0 - saturate(dist / max(_GradientWidth, 0.001));
 
                 // Grid pattern (same logic as Pass 0).
                 float2 cellFrac   = frac(IN.worldPos.xz / _GridSpacing);
@@ -185,7 +222,7 @@ Shader "DreamGuard/GridPassthrough"
                 float isLineZ = 1.0 - smoothstep(lineHalf - fw.y, lineHalf + fw.y, distToLine.y);
                 float isLine  = max(isLineX, isLineZ);
 
-                // Fill alpha decreases linearly — holes open up as passT grows.
+                // Fill alpha decreases first — holes open near boundary.
                 float fillKeep = 1.0 - passT;
                 // Lines stay opaque longer (quadratic fade).
                 float lineKeep = 1.0 - passT * passT;
