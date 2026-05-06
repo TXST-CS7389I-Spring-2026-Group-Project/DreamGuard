@@ -3,7 +3,12 @@
     "rootNamespace": "DreamGuard.Menu",
     "references": [
         "Oculus.VR",
-        "DreamGuard.Passthrough",
+        "DreamGuard.Passthrough.Interface",
+        "DreamGuard.Passthrough.Grid",
+        "DreamGuard.Passthrough.Fog",
+        "DreamGuard.Passthrough.VerticalFold",
+        "DreamGuard.Passthrough.Windowed",
+        "DreamGuard.Passthrough.DepthPlane",
         "DreamGuard.Player",
         "DreamGuard.Debug"
     ],

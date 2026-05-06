@@ -4,17 +4,23 @@ Shader "Custom/PassthroughDepthPlane"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _EnvironmentDepthBias ("Environment Depth Bias", Float) = 0.0
-        _DreamGuardDepthThreshold ("DreamGuard Depth Threshold", Float) = 1
+        _DreamGuardDepthThreshold ("Depth Threshold (m)", Float) = 1.5
+
+        [Header(Pixelation)]
+        _BlockSize ("Block Size (UV)", Float) = 0.03
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Opaque" "Queue"="Overlay" }
         LOD 100
 
         Pass
         {
            BlendOp RevSub
            Blend One Zero, Zero Zero
+           ZWrite Off
+           ZTest Always
+           Cull Front
 
             CGPROGRAM
 
@@ -37,7 +43,7 @@ Shader "Custom/PassthroughDepthPlane"
                 float4 vertex : SV_POSITION;
                 // World position variable must have this name to work with EnvironmentDepth Macros
                 float3 posWorld : TEXCOORD1;
-                
+
                 UNITY_VERTEX_INPUT_INSTANCE_ID
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -47,6 +53,7 @@ Shader "Custom/PassthroughDepthPlane"
 
             float _EnvironmentDepthBias;
             float _DreamGuardDepthThreshold;
+            float _BlockSize;
 
             v2f vert (appdata v)
             {
@@ -60,7 +67,6 @@ Shader "Custom/PassthroughDepthPlane"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex).xyz;
-                META_DEPTH_INITIALIZE_VERTEX_OUTPUT(o, v.vertex.xyz);
                 return o;
             }
 
@@ -73,19 +79,19 @@ Shader "Custom/PassthroughDepthPlane"
                     mul(_EnvironmentDepthReprojectionMatrices[unity_StereoEyeIndex], float4(i.posWorld, 1.0));
                 float2 uvCoords = (depthSpace.xy / depthSpace.w + 1.0f) * 0.5f;
 
-                // soften
-                const float2 halfPixelOffset = 0.5f * float2(_PreprocessedEnvironmentDepthTexture_TexelSize.xy);
-                uvCoords -= halfPixelOffset;
+                // Snap UVs to a coarse block grid so each spatial block samples one
+                // depth value — gives the pixelated look.
+                float2 snappedUV = (floor(uvCoords / _BlockSize) + 0.5) * _BlockSize;
 
-                float depth = SampleEnvironmentDepthLinear(uvCoords);
+                float depth = SampleEnvironmentDepthLinear(snappedUV) + _EnvironmentDepthBias;
 
-                // Cull fragments of the passthrough that are farther than the threshold 
+                // Passthrough where real-world surfaces are within the threshold;
+                // dungeon everywhere else.
                 clip(depth < _DreamGuardDepthThreshold ? 1 : -1);
-                
+
                 return float4(0, 0, 0, 0);
             }
             ENDCG
         }
     }
 }
-

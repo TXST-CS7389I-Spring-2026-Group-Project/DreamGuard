@@ -1,0 +1,19 @@
+{
+    "name": "DreamGuard.Passthrough.DepthPlane",
+    "rootNamespace": "DreamGuard",
+    "references": [
+        "Oculus.VR",
+        "Meta.XR.EnvironmentDepth",
+        "DreamGuard.Debug",
+        "DreamGuard.Passthrough.Interface"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

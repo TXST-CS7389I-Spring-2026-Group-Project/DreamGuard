@@ -1,3 +1,4 @@
+using Meta.XR.EnvironmentDepth;
 using UnityEngine;
 
 namespace DreamGuard
@@ -31,11 +32,8 @@ namespace DreamGuard
     public class PassthroughPlane : MonoBehaviour, IDreamGuardPassthrough
     {
         [Header("Plane")]
-        [Tooltip("World-space Y position of the depth plane.")]
-        [SerializeField] private float planeY = 0.01f;
-
-        [Tooltip("Half-extent (metres) of the depth plane in X and Z.")]
-        [SerializeField] private float planeHalfSize = 32f;
+        [Tooltip("Radius (metres) of the depth sphere surrounding the camera.")]
+        [SerializeField] private float sphereRadius = 50f;
 
         [Header("Shader Reference")]
         [Tooltip("Leave null – found by name at runtime.")]
@@ -43,14 +41,19 @@ namespace DreamGuard
 
         // ── Private state ──────────────────────────────────────────────────────
 
-        private OVRPassthroughLayer _layer;
-        private GameObject          _plane;
-        private Material            _planeMaterial;
+        private OVRPassthroughLayer    _layer;
+        private EnvironmentDepthManager _depthManager;
+        private GameObject              _plane;
+        private Material                _planeMaterial;
 
         // Saved camera state so SetEnabled(false) can restore them.
         private Camera           _camera;
         private CameraClearFlags _origClearFlags;
         private Color            _origBgColor;
+
+        // Saved depth-manager state so SetEnabled(false) can restore defaults.
+        private bool                 _origDepthManagerEnabled;
+        private OcclusionShadersMode _origOcclusionShadersMode;
 
         // Tracks the intended enabled state so passthroughLayerResumed events that fire
         // while the technique is inactive can be suppressed.
@@ -62,6 +65,16 @@ namespace DreamGuard
         {
             DreamGuardLog.Log("[PassthroughPlane] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
+            _depthManager = FindAnyObjectByType<EnvironmentDepthManager>(FindObjectsInactive.Include);
+            if (_depthManager != null)
+            {
+                DreamGuardLog.Log($"[PassthroughPlane] EnvironmentDepthManager found on '{_depthManager.gameObject.name}'");
+                _origDepthManagerEnabled  = _depthManager.enabled;
+                _origOcclusionShadersMode = _depthManager.OcclusionShadersMode;
+                DreamGuardLog.Log($"[PassthroughPlane] Saved depth state: enabled={_origDepthManagerEnabled}, mode={_origOcclusionShadersMode}");
+            }
+            else
+                DreamGuardLog.LogWarning("[PassthroughPlane] EnvironmentDepthManager not found — depth occlusion will not work");
             // Disable the layer immediately — OVRPassthroughLayer.Awake() creates a native
             // compositor handle when the GO becomes active, but we don't want it rendering
             // until the technique is explicitly selected from the menu.
@@ -84,9 +97,9 @@ namespace DreamGuard
                 // Apply the transparent camera clear now if the technique is already intended.
                 if (_intendedEnabled)
                 {
-                    DreamGuardLog.Log("[PassthroughPlane] Start: _intendedEnabled already true — applying transparent camera clear");
+                    DreamGuardLog.Log("[PassthroughPlane] Start: _intendedEnabled already true — applying opaque camera clear");
                     _camera.clearFlags      = CameraClearFlags.SolidColor;
-                    _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+                    _camera.backgroundColor = new Color(0f, 0f, 0f, 1f);
                 }
             }
 
@@ -97,6 +110,13 @@ namespace DreamGuard
             _planeMaterial = CreatePlaneMaterial();
             _plane         = CreateDepthPlane();
             _plane.SetActive(false);
+        }
+
+        private void Update()
+        {
+            // Keep the sphere centred on the camera so it always surrounds the player.
+            if (_plane != null && _plane.activeSelf && _camera != null)
+                _plane.transform.position = _camera.transform.position;
         }
 
         private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
@@ -133,13 +153,28 @@ namespace DreamGuard
                 if (enabled)
                 {
                     _camera.clearFlags      = CameraClearFlags.SolidColor;
-                    _camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+                    _camera.backgroundColor = new Color(0f, 0f, 0f, 1f);
                 }
                 else
                 {
                     _camera.clearFlags      = _origClearFlags;
                     _camera.backgroundColor = _origBgColor;
                 }
+            }
+
+            if (_depthManager != null && EnvironmentDepthManager.IsSupported)
+            {
+                if (enabled)
+                {
+                    _depthManager.enabled              = true;
+                    _depthManager.OcclusionShadersMode = OcclusionShadersMode.SoftOcclusion;
+                }
+                else
+                {
+                    _depthManager.OcclusionShadersMode = _origOcclusionShadersMode;
+                    _depthManager.enabled              = _origDepthManagerEnabled;
+                }
+                DreamGuardLog.Log($"[PassthroughPlane] DepthManager enabled={_depthManager.enabled}, mode={_depthManager.OcclusionShadersMode}");
             }
         }
 
@@ -166,25 +201,28 @@ namespace DreamGuard
 
         private GameObject CreateDepthPlane()
         {
-            var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.name = "DepthPlane";
+            // A large sphere surrounding the camera lets the depth threshold test work
+            // in all view directions — no horizontal horizon line.  Cull Front in the
+            // shader renders the inward-facing back faces so the inside is visible.
+            var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.name = "DepthSphere";
 
-            // World-space — must NOT follow the camera rig.
-            plane.transform.SetParent(null);
-            plane.transform.position   = new Vector3(0f, planeY, 0f);
-            plane.transform.rotation   = Quaternion.identity;
+            sphere.transform.SetParent(null);
+            sphere.transform.position   = _camera != null ? _camera.transform.position : Vector3.zero;
+            sphere.transform.rotation   = Quaternion.identity;
 
-            float scale = planeHalfSize / 5f;
-            plane.transform.localScale = new Vector3(scale, 1f, scale);
+            // Unity sphere primitive has radius 0.5 — scale to desired radius.
+            float s = sphereRadius * 2f;
+            sphere.transform.localScale = new Vector3(s, s, s);
 
             // Remove physics — purely visual.
-            Destroy(plane.GetComponent<MeshCollider>());
+            Destroy(sphere.GetComponent<SphereCollider>());
 
-            var rend = plane.GetComponent<MeshRenderer>();
+            var rend = sphere.GetComponent<MeshRenderer>();
             if (rend != null && _planeMaterial != null)
                 rend.sharedMaterial = _planeMaterial;
 
-            return plane;
+            return sphere;
         }
 
         private void OnDestroy()

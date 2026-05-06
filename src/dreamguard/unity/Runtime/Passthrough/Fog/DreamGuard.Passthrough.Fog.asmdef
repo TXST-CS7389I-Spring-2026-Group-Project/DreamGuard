@@ -1,0 +1,21 @@
+{
+    "name": "DreamGuard.Passthrough.Fog",
+    "rootNamespace": "DreamGuard",
+    "references": [
+        "Oculus.VR",
+        "Meta.XR.EnvironmentDepth",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "DreamGuard.Debug",
+        "DreamGuard.Passthrough.Interface"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

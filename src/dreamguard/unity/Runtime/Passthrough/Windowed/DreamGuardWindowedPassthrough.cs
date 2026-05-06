@@ -22,19 +22,21 @@ namespace DreamGuard
         [SerializeField] private float distanceFromHead = 1.5f;
         [SerializeField] private Vector2 windowSize = new Vector2(0.9f, 0.65f);
 
+        private const string KwSoft = "META_DEPTH_SOFT_OCCLUSION_ENABLED";
+        private const string KwHard = "META_DEPTH_HARD_OCCLUSION_ENABLED";
+
         private OVRPassthroughLayer _layer;
         private Transform _head;
-        private bool _lastLayerEnabled = false;
-        private bool _surfaceRegistered = false;
+        private bool _lastLayerEnabled;
+        private bool _surfaceRegistered;
 
         private void Awake()
         {
             DreamGuardLog.Log("[DreamGuardWindowedPassthrough] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
             _layer.enabled = false;
-#pragma warning disable CS0618
+
             _layer.projectionSurfaceType = OVRPassthroughLayer.ProjectionSurfaceType.UserDefined;
-#pragma warning restore CS0618
             _layer.overlayType = OVROverlay.OverlayType.Overlay;
 
             // Create the quad but do NOT register it as surface geometry yet.
@@ -64,8 +66,8 @@ namespace DreamGuard
             {
                 DreamGuardLog.LogWarning($"[DreamGuardWindowedPassthrough] _layer.enabled changed " +
                     $"{_lastLayerEnabled} → {nowEnabled} outside of SetEnabled() — suppressing  " +
-                    $"SOFT={Shader.IsKeywordEnabled("META_DEPTH_SOFT_OCCLUSION_ENABLED")}  " +
-                    $"HARD={Shader.IsKeywordEnabled("META_DEPTH_HARD_OCCLUSION_ENABLED")}");
+                    $"SOFT={Shader.IsKeywordEnabled(KwSoft)}  " +
+                    $"HARD={Shader.IsKeywordEnabled(KwHard)}");
                 _layer.enabled = _lastLayerEnabled;
             }
 
@@ -73,13 +75,18 @@ namespace DreamGuard
                 PositionWindow();
         }
 
+        private void OnDestroy()
+        {
+            if (_layer != null) _layer.passthroughLayerResumed.RemoveListener(OnLayerResumedUnexpectedly);
+        }
+
         private void OnLayerResumedUnexpectedly(OVRPassthroughLayer layer)
         {
             DreamGuardLog.LogWarning($"[DreamGuardWindowedPassthrough] passthroughLayerResumed fired " +
                 $"— OVR activated this layer natively. layer.enabled={layer.enabled}  " +
                 $"surfaceRegistered={_surfaceRegistered}  " +
-                $"SOFT={Shader.IsKeywordEnabled("META_DEPTH_SOFT_OCCLUSION_ENABLED")}  " +
-                $"HARD={Shader.IsKeywordEnabled("META_DEPTH_HARD_OCCLUSION_ENABLED")}");
+                $"SOFT={Shader.IsKeywordEnabled(KwSoft)}  " +
+                $"HARD={Shader.IsKeywordEnabled(KwHard)}");
 
             // A resumed UserDefined Overlay layer with no surface geometry causes the
             // compositor to render a full-screen red/green depth-texture visualisation.
@@ -91,15 +98,11 @@ namespace DreamGuard
                 _layer.enabled = false;
             }
         }
-
-        // ── public API ────────────────────────────────────────────────────────────
-
-        public void Toggle() => SetEnabled(!_layer.enabled);
-
+        
         public void SetEnabled(bool value)
         {
-            bool softBefore = Shader.IsKeywordEnabled("META_DEPTH_SOFT_OCCLUSION_ENABLED");
-            bool hardBefore = Shader.IsKeywordEnabled("META_DEPTH_HARD_OCCLUSION_ENABLED");
+            bool softBefore = Shader.IsKeywordEnabled(KwSoft);
+            bool hardBefore = Shader.IsKeywordEnabled(KwHard);
             DreamGuardLog.Log($"[DreamGuardWindowedPassthrough] SetEnabled({value})  " +
                 $"layer.enabled={_layer.enabled}  surfaceRegistered={_surfaceRegistered}  " +
                 $"SOFT={softBefore}  HARD={hardBefore}");
@@ -109,26 +112,23 @@ namespace DreamGuard
             // layer when passthroughLayerResumed fires (with wrong surface position → depth texture bug).
             if (value && !_surfaceRegistered)
             {
-#pragma warning disable CS0618
                 _layer.AddSurfaceGeometry(windowSurface, updateTransform: true);
-#pragma warning restore CS0618
                 _surfaceRegistered = true;
                 DreamGuardLog.Log("[DreamGuardWindowedPassthrough] Surface geometry registered");
             }
 
             _layer.enabled = value;
             _lastLayerEnabled = value;
-            bool softAfter = Shader.IsKeywordEnabled("META_DEPTH_SOFT_OCCLUSION_ENABLED");
-            bool hardAfter = Shader.IsKeywordEnabled("META_DEPTH_HARD_OCCLUSION_ENABLED");
+            bool softAfter = Shader.IsKeywordEnabled(KwSoft);
+            bool hardAfter = Shader.IsKeywordEnabled(KwHard);
             if (softAfter != softBefore || hardAfter != hardBefore)
                 DreamGuardLog.LogWarning($"[DreamGuardWindowedPassthrough] Depth keyword changed by layer enable! " +
                     $"SOFT={softBefore}→{softAfter}  HARD={hardBefore}→{hardAfter}");
         }
 
-        private void OnDestroy()
-        {
-            if (_layer != null) _layer.passthroughLayerResumed.RemoveListener(OnLayerResumedUnexpectedly);
-        }
+        // ── public API ────────────────────────────────────────────────────────────
+
+        public void Toggle() => SetEnabled(!_lastLayerEnabled);
 
         // ── private helpers ───────────────────────────────────────────────────────
 

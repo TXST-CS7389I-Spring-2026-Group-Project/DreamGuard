@@ -45,7 +45,6 @@ namespace DreamGuard
     ///      (Underlay is set in Awake).
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
-    [RequireComponent(typeof(EnvironmentDepthManager))]
     public class DreamGuardPassthroughFog : MonoBehaviour, IDreamGuardPassthrough
     {
         // ── Inspector ─────────────────────────────────────────────────────────
@@ -124,21 +123,11 @@ namespace DreamGuard
             // the global red/green texture corruption pattern.
             _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumedUnexpectedly);
 
-            _depthManager = GetComponent<EnvironmentDepthManager>();
+            _depthManager = FindObjectOfType<EnvironmentDepthManager>();
             if (_depthManager != null)
-            {
-                bool supported = EnvironmentDepthManager.IsSupported;
-                DreamGuardLog.Log($"[DreamGuardFog] EnvironmentDepthManager found. IsSupported={supported}");
-                // OcclusionShadersMode is set in SetFogEnabled — NOT here.
-                // Setting it in Awake enables the META_DEPTH_SOFT_OCCLUSION_ENABLED global
-                // keyword immediately, which causes dungeon materials that use Meta depth
-                // occlusion to sample an invalid depth texture and render with garbage colours
-                // (red/green on Vulkan) until the fog is actually active.
-            }
+                DreamGuardLog.Log($"[DreamGuardFog] EnvironmentDepthManager found on '{_depthManager.gameObject.name}'. IsSupported={EnvironmentDepthManager.IsSupported}");
             else
-            {
-                DreamGuardLog.LogWarning("[DreamGuardFog] EnvironmentDepthManager not found on this GameObject.");
-            }
+                DreamGuardLog.LogWarning("[DreamGuardFog] EnvironmentDepthManager not found in scene.");
         }
 
         private void Start()
@@ -237,7 +226,7 @@ namespace DreamGuard
 
         // ── Public API ────────────────────────────────────────────────────────
 
-        public void SetEnabled(bool value) => SetFogEnabled(value);
+        public void SetEnabled(bool enabled) => SetFogEnabled(enabled);
 
         public void SetFogEnabled(bool enabled)
         {
@@ -293,17 +282,16 @@ namespace DreamGuard
             _layer.enabled = enabled;
             if (_depthManager != null && EnvironmentDepthManager.IsSupported)
             {
-                // Set OcclusionShadersMode before changing enabled state so the global
-                // keyword matches the depth manager's active/inactive state.  Setting
-                // SoftOcclusion while the manager is disabled leaves the keyword active
-                // with no valid depth texture — causing materials to sample garbage and
-                // render with incorrect colours on Vulkan (the dungeon red/green issue).
+                // Keep EnvironmentDepthManager always enabled so depth texture stays
+                // populated for other techniques (e.g. PassthroughPlane) that sample it
+                // directly. Only toggle OcclusionShadersMode: SoftOcclusion while fog is
+                // active makes standard shaders occlude behind real-world surfaces; None
+                // while inactive leaves the depth texture available without affecting
+                // standard material rendering.
                 _depthManager.OcclusionShadersMode = enabled
                     ? OcclusionShadersMode.SoftOcclusion
                     : OcclusionShadersMode.None;
-                _depthManager.enabled = enabled;
-                DreamGuardLog.Log($"[DreamGuardFog] DepthManager: enabled={enabled}  " +
-                          $"OcclusionShadersMode={_depthManager.OcclusionShadersMode}");
+                DreamGuardLog.Log($"[DreamGuardFog] DepthManager: OcclusionShadersMode={_depthManager.OcclusionShadersMode}");
             }
 
             DreamGuardLog.Log($"[DreamGuardFog] After enable: dome={_dome?.activeSelf}  " +

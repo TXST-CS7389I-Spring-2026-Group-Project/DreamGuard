@@ -6,8 +6,7 @@ namespace DreamGuard
     /// </summary>
     public interface IDreamGuardPassthrough
     {
-
-        /// <summary>Enable or disable the passthrough technique.</summary>
-        void SetEnabled(bool value);
+        /// <summary>Enable or disable this passthrough technique.</summary>
+        void SetEnabled(bool enabled);
     }
 }

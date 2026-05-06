@@ -71,6 +71,7 @@ namespace DreamGuard
             _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
             _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
             _passthroughPlane = FindFirstObjectByType<PassthroughPlane>(FindObjectsInactive.Include);
+            
             DreamGuardLog.Log($"[DreamGuardMenu] Techniques found — " +
                 $"window={_windowPassthrough != null}  grid={_gridPassthrough != null}  " +
                 $"fold={_verticalFold != null}  fog={_passthroughFog != null}  " +
@@ -255,17 +256,10 @@ namespace DreamGuard
         private void ActivateTechnique<P>(P technique, bool value) where P : MonoBehaviour, IDreamGuardPassthrough
         {
             DreamGuardLog.Log($"[DreamGuardMenu] ActivateTechnique {technique.GetType().Name} → {value}");
-            if (value)
-            {
-                if (!technique.gameObject.activeSelf)
-                    technique.gameObject.SetActive(true);
-                technique.SetEnabled(true);
-            }
-            else if (technique.gameObject.activeSelf)
-            {
-                technique.SetEnabled(false);
-                // Do NOT call SetActive(false) — see comment above.
-            }
+            if (value && !technique.gameObject.activeSelf)
+                technique.gameObject.SetActive(true);
+            if (value || technique.gameObject.activeSelf)
+                technique.SetEnabled(value);
         }
 
         private void DisableAllPassthroughs()

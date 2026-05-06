@@ -1,0 +1,18 @@
+{
+    "name": "DreamGuard.Passthrough.Grid",
+    "rootNamespace": "DreamGuard",
+    "references": [
+        "Oculus.VR",
+        "DreamGuard.Debug",
+        "DreamGuard.Passthrough.Interface"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

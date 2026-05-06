@@ -350,9 +350,10 @@ GameObject:
   - component: {fileID: 6353675589629527658}
   - component: {fileID: 6948930127751390467}
   - component: {fileID: 7449326503016897388}
+  - component: {fileID: 1658710135852052537}
+  - component: {fileID: 3141592653589793238}
   - component: {fileID: 6931916507545740782}
   - component: {fileID: 1234567890123456}
-  - component: {fileID: 3141592653589793238}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -410,7 +411,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _monoscopic: 0
-  _sharpenType: 0
+  _sharpenType: 65536
   _disableRecording: 0
   _enableDynamicResolution: 0
   minDynamicResolutionScale: 1
@@ -513,6 +514,34 @@ MonoBehaviour:
   - <Keyboard>/leftAlt
   - <Keyboard>/rightAlt
   - <Keyboard>/f2
+--- !u!114 &1658710135852052537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033234956083849900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71a155ece80369d4e99bdaf5e59169b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Meta.XR.EnvironmentDepth::Meta.XR.EnvironmentDepth.EnvironmentDepthManager
+  _occlusionShadersMode: 2
+  _removeHands: 0
+  CustomTrackingSpace: {fileID: 0}
+  <MaskMeshFilters>k__BackingField: []
+--- !u!114 &3141592653589793238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033234956083849900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Runtime::DreamGuard.DreamGuardPlayer
 --- !u!114 &6931916507545740782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,8 +555,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Runtime::DreamGuard.DreamGuardLocomotion
   moveSpeed: 2
-  snapAngle: 45
-  snapDeadzone: 0.5
+  snapAngle: 5
+  snapDeadzone: 0.25
 --- !u!143 &1234567890123456
 CharacterController:
   m_ObjectHideFlags: 0
@@ -553,18 +582,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &3141592653589793238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2033234956083849900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Runtime::DreamGuard.DreamGuardPlayer
 --- !u!1 &2791321248593189220
 GameObject:
   m_ObjectHideFlags: 0
@@ -1378,7 +1395,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1738854445234873629}
   - component: {fileID: 5548127448606152207}
-  - component: {fileID: 8881102512713825366}
   - component: {fileID: 6891495472828126347}
   m_Layer: 0
   m_Name: DreamGuardPassthroughFog
@@ -1468,22 +1484,6 @@ MonoBehaviour:
   edgeRenderingEnabled_: 0
   edgeColor_: {r: 1, g: 1, b: 1, a: 1}
   colorMapType: 0
---- !u!114 &8881102512713825366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8381639105298831468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71a155ece80369d4e99bdaf5e59169b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Meta.XR.EnvironmentDepth::Meta.XR.EnvironmentDepth.EnvironmentDepthManager
-  _occlusionShadersMode: 2
-  _removeHands: 0
-  CustomTrackingSpace: {fileID: 0}
-  <MaskMeshFilters>k__BackingField: []
 --- !u!114 &6891495472828126347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1613,8 +1613,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b37a0ce96313e9458da3944a88f3c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Runtime::DreamGuard.PassthroughPlane
-  planeY: 0.01
-  planeHalfSize: 32
+  sphereRadius: 50
   planeShader: {fileID: 0}
 --- !u!1001 &5678901234567890125
 PrefabInstance:

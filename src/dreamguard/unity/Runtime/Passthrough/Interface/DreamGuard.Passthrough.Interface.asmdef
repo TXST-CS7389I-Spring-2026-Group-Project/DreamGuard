@@ -1,0 +1,14 @@
+{
+    "name": "DreamGuard.Passthrough.Interface",
+    "rootNamespace": "DreamGuard",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

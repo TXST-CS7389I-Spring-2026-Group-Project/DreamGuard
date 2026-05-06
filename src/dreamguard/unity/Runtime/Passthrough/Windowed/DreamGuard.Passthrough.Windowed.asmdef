@@ -1,12 +1,10 @@
 {
-    "name": "DreamGuard.Passthrough",
-    "rootNamespace": "DreamGuard.Passthrough",
+    "name": "DreamGuard.Passthrough.Windowed",
+    "rootNamespace": "DreamGuard",
     "references": [
         "Oculus.VR",
-        "Meta.XR.EnvironmentDepth",
-        "Unity.RenderPipelines.Core.Runtime",
-        "Unity.RenderPipelines.Universal.Runtime",
-        "DreamGuard.Debug"
+        "DreamGuard.Debug",
+        "DreamGuard.Passthrough.Interface"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
