@@ -46,36 +46,34 @@ namespace DreamGuard
         private Transform _controllerAnchor;
         private bool _open;
 
-        // Overlay-type passthrough layers composite above the eye buffer, so they
-        // cover 3D menu geometry.  We hide them while the menu is open.
-        private readonly List<DreamGuardWindowedPassthrough> _overlayPassthroughs = new();
-
-        // Other passthrough technique references for auto-wiring.
-        private DreamGuardGridPassthrough    _gridPassthrough;
-        private DreamGuardVerticalFold       _verticalFold;
-        private DreamGuardPassthroughFog     _passthroughFog;
-        private PassthroughPlaneScript       _passthroughPlane;
+        private DreamGuardWindowedPassthrough _windowPassthrough;
+        // private DreamGuardGridPassthrough    _gridPassthrough;
+        // private DreamGuardVerticalFold       _verticalFold;
+        // private DreamGuardPassthroughFog     _passthroughFog;
+        // private PassthroughPlane              _passthroughPlane;
 
         private void Start()
         {
+            DreamGuardLog.Log("[DreamGuardMenu] Start");
             var rig = FindFirstObjectByType<OVRCameraRig>();
             if (rig != null)
             {
                 _head = rig.centerEyeAnchor;
                 _controllerAnchor = rig.rightControllerAnchor;
             }
+            else
+            {
+                DreamGuardLog.LogWarning("[DreamGuardMenu] No OVRCameraRig found — menu positioning and laser will not work");
+            }
 
-            // Include inactive so techniques whose GameObjects start disabled are still found.
-            // Techniques are activated lazily at the GameObject level (one at a time) to
-            // prevent multiple OVRPassthroughLayer.Awake() calls, which crash the VR runtime.
-            _overlayPassthroughs.AddRange(
-                FindObjectsByType<DreamGuardWindowedPassthrough>(
-                    FindObjectsInactive.Include, FindObjectsSortMode.None));
-
-            _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
-            _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
-            _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
-            _passthroughPlane = FindFirstObjectByType<PassthroughPlaneScript>(FindObjectsInactive.Include);
+            _windowPassthrough = FindFirstObjectByType<DreamGuardWindowedPassthrough>(FindObjectsInactive.Include);
+            // _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
+            // _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
+            // _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
+            // _passthroughPlane = FindFirstObjectByType<PassthroughPlane>(FindObjectsInactive.Include);
+            DreamGuardLog.Log($"[DreamGuardMenu] Techniques found — window={_windowPassthrough != null}  ");// +
+                // $"grid={_gridPassthrough != null}  fold={_verticalFold != null}  " +
+                // $"fog={_passthroughFog != null}  plane={_passthroughPlane != null}");
 
             if (menuPanel != null)
             {
@@ -86,46 +84,63 @@ namespace DreamGuard
                 // lets Awake+Start run before the enable call; deactivating last lets the
                 // disable call clean up cameras and layers before the GO goes dormant.
                 // The disable path guards activeSelf so it's safe to call on dormant techniques.
-                var windowPt = FindFirstObjectByType<DreamGuardWindowedPassthrough>(FindObjectsInactive.Include);
                 foreach (var btn in _buttons)
                 {
                     switch (btn.ButtonLabel)
                     {
                         case "Window Passthrough":
-                            if (windowPt != null)
+                            if (_windowPassthrough != null)
                                 _buttonPassthrough[btn] = v => {
-                                    if (v) { windowPt.gameObject.SetActive(true); windowPt.SetActive(true); }
-                                    else if (windowPt.gameObject.activeSelf) { windowPt.SetActive(false); windowPt.gameObject.SetActive(false); }
+                                    if (v)
+                                    {
+                                        // Activate the GO exactly once so Awake/Start initialise the layer.
+                                        // After that the GO stays active permanently — OVRPassthroughLayer
+                                        // does not reliably recover its native layer after a
+                                        // SetActive(false) → SetActive(true) cycle, causing global red/green
+                                        // texture corruption on the second enable.
+                                        if (!_windowPassthrough.gameObject.activeSelf)
+                                            _windowPassthrough.gameObject.SetActive(true);
+                                        // Set bgAlpha=0 so the Meta compositor shows the passthrough feed
+                                        // through background pixels before enabling the layer.
+                                        DreamGuardPlayer.Instance?.SetPassthroughBackground(true);
+                                        _windowPassthrough.SetEnabled(true);
+                                    }
+                                    else if (_windowPassthrough.gameObject.activeSelf)
+                                    {
+                                        // Guard prevents calling SetEnabled before Awake runs (_layer is null).
+                                        _windowPassthrough.SetEnabled(false);
+                                        // Do NOT call gameObject.SetActive(false) — see enable comment above.
+                                    }
                                 };
                             break;
-                        case "Grid Passthrough":
-                            if (_gridPassthrough != null)
-                                _buttonPassthrough[btn] = v => {
-                                    if (v) { _gridPassthrough.gameObject.SetActive(true); _gridPassthrough.SetEnabled(true); }
-                                    else if (_gridPassthrough.gameObject.activeSelf) { _gridPassthrough.SetEnabled(false); _gridPassthrough.gameObject.SetActive(false); }
-                                };
-                            break;
-                        case "Vertical Fold":
-                            if (_verticalFold != null)
-                                _buttonPassthrough[btn] = v => {
-                                    if (v) { _verticalFold.gameObject.SetActive(true); _verticalFold.SetEnabled(true); }
-                                    else if (_verticalFold.gameObject.activeSelf) { _verticalFold.SetEnabled(false); _verticalFold.gameObject.SetActive(false); }
-                                };
-                            break;
-                        case "Passthrough Fog":
-                            if (_passthroughFog != null)
-                                _buttonPassthrough[btn] = v => {
-                                    if (v) { _passthroughFog.gameObject.SetActive(true); _passthroughFog.SetFogEnabled(true); }
-                                    else if (_passthroughFog.gameObject.activeSelf) { _passthroughFog.SetFogEnabled(false); _passthroughFog.gameObject.SetActive(false); }
-                                };
-                            break;
-                        case "Passthrough Plane":
-                            if (_passthroughPlane != null)
-                                _buttonPassthrough[btn] = v => {
-                                    if (v) { _passthroughPlane.gameObject.SetActive(true); _passthroughPlane.SetEnabled(true); }
-                                    else if (_passthroughPlane.gameObject.activeSelf) { _passthroughPlane.SetEnabled(false); _passthroughPlane.gameObject.SetActive(false); }
-                                };
-                            break;
+                        // case "Grid Passthrough":
+                        //     if (_gridPassthrough != null)
+                        //         _buttonPassthrough[btn] = v => {
+                        //             if (v) { _gridPassthrough.gameObject.SetActive(true); _gridPassthrough.SetEnabled(true); }
+                        //             else if (_gridPassthrough.gameObject.activeSelf) { _gridPassthrough.SetEnabled(false); _gridPassthrough.gameObject.SetActive(false); }
+                        //         };
+                        //     break;
+                        // case "Vertical Fold":
+                        //     if (_verticalFold != null)
+                        //         _buttonPassthrough[btn] = v => {
+                        //             if (v) { _verticalFold.gameObject.SetActive(true); _verticalFold.SetEnabled(true); }
+                        //             else if (_verticalFold.gameObject.activeSelf) { _verticalFold.SetEnabled(false); _verticalFold.gameObject.SetActive(false); }
+                        //         };
+                        //     break;
+                        // case "Passthrough Fog":
+                        //     if (_passthroughFog != null)
+                        //         _buttonPassthrough[btn] = v => {
+                        //             if (v) { _passthroughFog.gameObject.SetActive(true); _passthroughFog.SetFogEnabled(true); }
+                        //             else if (_passthroughFog.gameObject.activeSelf) { _passthroughFog.SetFogEnabled(false); _passthroughFog.gameObject.SetActive(false); }
+                        //         };
+                        //     break;
+                        // case "Passthrough Plane":
+                        //     if (_passthroughPlane != null)
+                        //         _buttonPassthrough[btn] = v => {
+                        //             if (v) { _passthroughPlane.gameObject.SetActive(true); _passthroughPlane.SetEnabled(true); }
+                        //             else if (_passthroughPlane.gameObject.activeSelf) { _passthroughPlane.SetEnabled(false); _passthroughPlane.gameObject.SetActive(false); }
+                        //         };
+                        //     break;
                     }
                 }
             }
@@ -142,13 +157,14 @@ namespace DreamGuard
                 }
             }
 
-            SetOpen(false);
+            SetOpen(false, false);
+            DisableAllPassthroughs();
         }
 
         private void Update()
         {
             if (OVRInput.GetDown(menuButton))
-                SetOpen(!_open);
+                SetOpen(!_open, false);
 
             if (!_open) return;
 
@@ -160,65 +176,40 @@ namespace DreamGuard
             if (triggerDown && _hovered != null)
             {
                 ActivateButton(_hovered);
-                SetOpen(false);
+                SetOpen(false, true);
             }
         }
 
         // ── menu state ────────────────────────────────────────────────────────────
 
-        private void SetOpen(bool value)
+        private void SetOpen(bool value, bool updated)
         {
             _open = value;
+            DreamGuardLog.Log($"[DreamGuardMenu] SetOpen({value})  active={_active?.ButtonLabel ?? "none"}  " +
+                $"SOFT={Shader.IsKeywordEnabled("META_DEPTH_SOFT_OCCLUSION_ENABLED")}  " +
+                $"HARD={Shader.IsKeywordEnabled("META_DEPTH_HARD_OCCLUSION_ENABLED")}");
 
             if (menuPanel != null)
                 menuPanel.gameObject.SetActive(value);
             if (laserBeam != null)
                 laserBeam.gameObject.SetActive(value);
 
-            // Overlay-type passthrough layers sit above the eye buffer and cover
-            // 3D geometry.  Hide them while the menu is open so it stays visible.
-            foreach (var pt in _overlayPassthroughs)
-                if (pt != null) pt.HideForMenu(value);
-
             if (value)
             {
-                // Disable all underlay passthrough techniques while the menu is open
+                // Disable all passthrough techniques while the menu is open
                 // so they do not render over the menu geometry or obscure the buttons.
-                DisableUnderlayPassthroughs();
+                DisableAllPassthroughs();
                 PositionMenu();
             }
             else
             {
                 // Restore the active underlay technique when the menu closes.
-                if (_active != null && _buttonPassthrough.TryGetValue(_active, out var restore))
+                if (!updated && _active != null && _buttonPassthrough.TryGetValue(_active, out var restore))
+                    // DreamGuardLog.Log($"[DreamGuardMenu] Restored PASSTHROUGH={_active.ButtonLabel}");
                     restore(true);
 
                 _hovered?.SetHovered(false);
                 _hovered = null;
-            }
-        }
-
-        private void DisableUnderlayPassthroughs()
-        {
-            if (_gridPassthrough != null && _gridPassthrough.gameObject.activeSelf)
-            {
-                _gridPassthrough.SetEnabled(false);
-                _gridPassthrough.gameObject.SetActive(false);
-            }
-            if (_verticalFold != null && _verticalFold.gameObject.activeSelf)
-            {
-                _verticalFold.SetEnabled(false);
-                _verticalFold.gameObject.SetActive(false);
-            }
-            if (_passthroughFog != null && _passthroughFog.gameObject.activeSelf)
-            {
-                _passthroughFog.SetFogEnabled(false);
-                _passthroughFog.gameObject.SetActive(false);
-            }
-            if (_passthroughPlane != null && _passthroughPlane.gameObject.activeSelf)
-            {
-                _passthroughPlane.SetEnabled(false);
-                _passthroughPlane.gameObject.SetActive(false);
             }
         }
 
@@ -286,10 +277,21 @@ namespace DreamGuard
 
         // ── selection ─────────────────────────────────────────────────────────────
 
+        private void UpdatePassthrough<P>(P passthrough, bool value) where P : MonoBehaviour, IDreamGuardPassthrough
+        {
+            DreamGuardLog.Log($"[DreamGuardMenu] UpdatePassthrough {passthrough.GetType().Name} → {value}");
+            if (value) { passthrough.gameObject.SetActive(true);  passthrough.SetEnabled(true); }
+            else       { passthrough.SetEnabled(false); passthrough.gameObject.SetActive(false); }
+        }
+
         private void DisableAllPassthroughs()
         {
+            DreamGuardLog.Log($"[DreamGuardMenu] DisableAllPassthroughs  count={_buttonPassthrough.Count}");
             foreach (var setter in _buttonPassthrough.Values)
                 setter(false);
+            // Restore opaque background: no passthrough layer is active so bgAlpha=0 would
+            // cause the Meta compositor to enter the red/green error state.
+            DreamGuardPlayer.Instance?.SetPassthroughBackground(false);
         }
 
         private void ActivateButton(DreamGuardMenuButton btn)
@@ -307,10 +309,5 @@ namespace DreamGuard
             if (_active != null && _buttonPassthrough.TryGetValue(_active, out var enable))
                 enable(true);
         }
-
-        // ── public API ────────────────────────────────────────────────────────────
-
-        /// <summary>Open or close the menu from another script.</summary>
-        public void ToggleMenu() => SetOpen(!_open);
     }
 }

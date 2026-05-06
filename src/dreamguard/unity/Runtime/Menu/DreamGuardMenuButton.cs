@@ -34,9 +34,12 @@ namespace DreamGuard
 
         private void Awake()
         {
+            DreamGuardLog.Log($"[DreamGuardMenuButton] Awake  label='{buttonLabel}'");
             _renderer = GetComponentInChildren<Renderer>();
             if (_renderer != null)
                 _matInstance = _renderer.material; // per-instance copy, avoids shared-material mutation
+            else
+                DreamGuardLog.LogWarning($"[DreamGuardMenuButton] No Renderer found on '{buttonLabel}'");
             ApplyLabel();
             ApplyColor(normalColor);
         }

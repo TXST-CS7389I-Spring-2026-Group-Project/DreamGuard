@@ -25,7 +25,7 @@ namespace DreamGuard
     ///   5. Call SetFoldProgress(0→1) to animate the gap opening.
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
-    public class DreamGuardVerticalFold : MonoBehaviour
+    public class DreamGuardVerticalFold : MonoBehaviour, IDreamGuardPassthrough
     {
         // ── Inspector ──────────────────────────────────────────────────────────────
 
@@ -103,6 +103,7 @@ namespace DreamGuard
 
         private void Awake()
         {
+            DreamGuardLog.Log("[DreamGuardVerticalFold] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
             // Disable immediately so the compositor never sees an active Underlay
             // passthrough layer at startup before this technique has been selected.
@@ -111,6 +112,7 @@ namespace DreamGuard
 
         private void Start()
         {
+            DreamGuardLog.Log("[DreamGuardVerticalFold] Start");
             var rig = FindFirstObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
 
@@ -161,6 +163,7 @@ namespace DreamGuard
         /// <summary>Show or hide the fold effect and its passthrough layer.</summary>
         public void SetEnabled(bool enabled)
         {
+            DreamGuardLog.Log($"[DreamGuardVerticalFold] SetEnabled({enabled})");
             if (_cylinder != null) _cylinder.SetActive(enabled);
             _layer.enabled = enabled;
 

@@ -46,7 +46,7 @@ namespace DreamGuard
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
     [RequireComponent(typeof(EnvironmentDepthManager))]
-    public class DreamGuardPassthroughFog : MonoBehaviour
+    public class DreamGuardPassthroughFog : MonoBehaviour, IDreamGuardPassthrough
     {
         // ── Inspector ─────────────────────────────────────────────────────────
 
@@ -86,6 +86,10 @@ namespace DreamGuard
         private GameObject              _dome;
         private Material                _fogMaterial;
 
+        // Tracks the intended enabled state so we can guard against OVR auto-resuming
+        // the layer during passthrough initialization and revert it each frame.
+        private bool _fogIntendedEnabled = false;
+
         private static readonly int PropPlayerPos   = Shader.PropertyToID("_PlayerPos");
         private static readonly int PropInnerRadius = Shader.PropertyToID("_InnerRadius");
         private static readonly int PropFogBand     = Shader.PropertyToID("_FogBandWidth");
@@ -96,6 +100,7 @@ namespace DreamGuard
 
         private void Awake()
         {
+            DreamGuardLog.Log("[DreamGuardPassthroughFog] Awake");
             // NOTE: URP needs "Preserve Framebuffer Alpha" enabled so that ColorMask A writes
             // (PassthroughCut pass) reach the compositor.  In Unity 6 / URP 17 this is
             // read-only at runtime — enable it in:
@@ -111,6 +116,13 @@ namespace DreamGuard
             // Without this, the layer is briefly active between Awake and the
             // SetFogEnabled(false) call at the end of Start.
             _layer.enabled = false;
+
+            // Guard against OVR auto-resuming this layer during passthrough initialization
+            // (~5 s after launch).  Without this listener, passthroughLayerResumed sets
+            // _layer.enabled=true in the native compositor even though the fog was never
+            // selected — a Reconstructed Underlay in an invalid compositor state causes
+            // the global red/green texture corruption pattern.
+            _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumedUnexpectedly);
 
             _depthManager = GetComponent<EnvironmentDepthManager>();
             if (_depthManager != null)
@@ -185,6 +197,33 @@ namespace DreamGuard
             SetFogEnabled(false);
         }
 
+        private void Update()
+        {
+            // Guard: OVR can set _layer.enabled=true during passthrough initialization
+            // (~5 s after launch) even when we explicitly disabled it. Without this check
+            // the layer stays active as a Reconstructed Underlay with no valid compositor
+            // state, producing the global red/green texture corruption pattern.
+            if (_layer.enabled != _fogIntendedEnabled)
+            {
+                DreamGuardLog.LogWarning(
+                    $"[DreamGuardFog] _layer.enabled changed to {_layer.enabled} outside " +
+                    $"SetFogEnabled — OVR auto-resumed. Reverting to intended={_fogIntendedEnabled}.");
+                _layer.enabled = _fogIntendedEnabled;
+            }
+        }
+
+        private void OnPassthroughLayerResumedUnexpectedly(OVRPassthroughLayer _)
+        {
+            DreamGuardLog.LogWarning(
+                $"[DreamGuardFog] passthroughLayerResumed fired — OVR activated this layer natively. " +
+                $"intended={_fogIntendedEnabled}");
+            if (!_fogIntendedEnabled)
+            {
+                DreamGuardLog.LogWarning("[DreamGuardFog] Suppressing unexpected native resume — forcing layer.enabled=false");
+                _layer.enabled = false;
+            }
+        }
+
         private void LateUpdate()
         {
             if (_head == null || _dome == null) return;
@@ -198,8 +237,13 @@ namespace DreamGuard
 
         // ── Public API ────────────────────────────────────────────────────────
 
+        public void SetEnabled(bool value) => SetFogEnabled(value);
+
         public void SetFogEnabled(bool enabled)
         {
+            // Track intent FIRST so the Update() guard doesn't fight SetFogEnabled
+            // in the same frame that OVR auto-resumes the layer.
+            _fogIntendedEnabled = enabled;
             DreamGuardLog.Log($"[DreamGuardFog] SetFogEnabled({enabled})  " +
                       $"dome={((_dome != null) ? _dome.activeSelf.ToString() : "null")}  " +
                       $"layer={_layer.enabled}  " +
@@ -266,7 +310,7 @@ namespace DreamGuard
                       $"layer={_layer.enabled}  passthrough={_layer.isActiveAndEnabled}");
         }
 
-        public void Toggle() => SetFogEnabled(!_layer.enabled);
+        public void Toggle() => SetFogEnabled(!_fogIntendedEnabled);
 
         public void SetInnerRadius(float metres)
         {
@@ -445,6 +489,7 @@ namespace DreamGuard
 
         private void OnDestroy()
         {
+            if (_layer != null) _layer.passthroughLayerResumed.RemoveListener(OnPassthroughLayerResumedUnexpectedly);
             if (_fogMaterial != null) Destroy(_fogMaterial);
             if (_dome        != null) Destroy(_dome);
         }

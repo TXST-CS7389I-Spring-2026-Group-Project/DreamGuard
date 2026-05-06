@@ -28,7 +28,7 @@ namespace DreamGuard
     ///   4. Enable via DreamGuardMenu — the technique's GameObject starts inactive.
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
-    public class PassthroughPlaneScript : MonoBehaviour
+    public class PassthroughPlane : MonoBehaviour, IDreamGuardPassthrough
     {
         [Header("Plane")]
         [Tooltip("World-space Y position of the depth plane.")]
@@ -64,13 +64,6 @@ namespace DreamGuard
             _layer.passthroughLayerResumed.AddListener(OnPassthroughLayerResumed);
         }
 
-        private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
-        {
-            DreamGuardLog.Log("[PassthroughPlane] Passthrough layer resumed — showing plane");
-            if (_plane != null)
-                _plane.SetActive(true);
-        }
-
         private void Start()
         {
             DreamGuardLog.Log("[PassthroughPlane] Start");
@@ -89,6 +82,13 @@ namespace DreamGuard
             _planeMaterial = CreatePlaneMaterial();
             _plane         = CreateDepthPlane();
             _plane.SetActive(false);
+        }
+
+        private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
+        {
+            DreamGuardLog.Log("[PassthroughPlane] Passthrough layer resumed — showing plane");
+            if (_plane != null)
+                _plane.SetActive(true);
         }
 
         // ── Public API ─────────────────────────────────────────────────────────

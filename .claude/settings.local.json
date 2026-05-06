@@ -1,4 +1,5 @@
 {
+  "showThinkingSummaries": true,
   "permissions": {
     "allow": [
       "Bash(ls:*)",
@@ -16,14 +17,20 @@
       "mcp__UnityMCP__unity_reflect",
       "mcp__UnityMCP__manage_graphics",
       "mcp__UnityMCP__manage_asset",
+      "mcp__UnityMCP__manage_scene",
       "mcp__UnityMCP__refresh_unity",
       "mcp__UnityMCP__execute_code",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:godotvr.github.io)",
       "WebFetch(domain:docs.godotengine.org)",
+      "WebFetch(domain:developer.meta.com)",
       "WebFetch(domain:developers.meta.com)",
-      "WebFetch(domain:developer.oculus.com)"
+      "WebFetch(domain:developer.oculus.com)",
+      "WebFetch(domain:docs.unity3d.com)"
+    ],
+    "deny": [
+      "ReadMcpResource"
     ]
   },
   "enabledPlugins": {

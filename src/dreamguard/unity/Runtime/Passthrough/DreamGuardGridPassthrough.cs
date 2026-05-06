@@ -30,7 +30,7 @@ namespace DreamGuard
     ///   5. Adjust Floor Y and Ceiling Y to match your level geometry.
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
-    public class DreamGuardGridPassthrough : MonoBehaviour
+    public class DreamGuardGridPassthrough : MonoBehaviour, IDreamGuardPassthrough
     {
         // ── Inspector ──────────────────────────────────────────────────────────
 
@@ -99,6 +99,7 @@ namespace DreamGuard
 
         private void Awake()
         {
+            DreamGuardLog.Log("[DreamGuardGridPassthrough] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
             // Disable immediately so the compositor never sees an active Underlay
             // passthrough layer at startup before this technique has been selected.
@@ -108,12 +109,14 @@ namespace DreamGuard
 
         private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
         {
+            DreamGuardLog.Log("[DreamGuardGridPassthrough] OnPassthroughLayerResumed — showing planes");
             if (_floorPlane   != null && showFloor)   _floorPlane.SetActive(true);
             if (_ceilingPlane != null && showCeiling) _ceilingPlane.SetActive(true);
         }
 
         private void Start()
         {
+            DreamGuardLog.Log("[DreamGuardGridPassthrough] Start");
             // Resolve head transform for player-position tracking.
             var rig = FindFirstObjectByType<OVRCameraRig>();
             _head = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
@@ -154,6 +157,7 @@ namespace DreamGuard
         /// <summary>Show or hide the grid overlay and underlying passthrough layer.</summary>
         public void SetEnabled(bool enabled)
         {
+            DreamGuardLog.Log($"[DreamGuardGridPassthrough] SetEnabled({enabled})");
             // Always hide planes immediately; on enable they reappear via
             // OnPassthroughLayerResumed to avoid a black-frame flicker.
             if (_floorPlane   != null) _floorPlane.SetActive(false);

@@ -25,10 +25,15 @@ namespace DreamGuard
 
         private void Start()
         {
+            DreamGuardLog.Log("[DreamGuardLocomotion] Start");
             // OVRCameraRig exposes CenterEyeAnchor; fall back to Camera.main
             var rig = GetComponent<OVRCameraRig>();
             _headTransform = rig != null ? rig.centerEyeAnchor : Camera.main?.transform;
             _controller = GetComponent<CharacterController>();
+            if (_headTransform == null)
+                DreamGuardLog.LogWarning("[DreamGuardLocomotion] No head transform found");
+            if (_controller == null)
+                DreamGuardLog.LogWarning("[DreamGuardLocomotion] No CharacterController found — using transform movement");
         }
 
         private void Update()

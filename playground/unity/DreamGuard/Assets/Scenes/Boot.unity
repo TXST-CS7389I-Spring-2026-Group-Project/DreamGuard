@@ -164,7 +164,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1143313220734674468, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
@@ -210,8 +211,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b12d04e65df7dd43b6d4d70541020ff, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   _firstScene: Dungeon
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
