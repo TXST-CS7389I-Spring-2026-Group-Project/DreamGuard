@@ -1,0 +1,19 @@
+{
+    "name": "DreamGuard.Player",
+    "rootNamespace": "DreamGuard.Player",
+    "references": [
+        "Oculus.VR",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "DreamGuard.Debug"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

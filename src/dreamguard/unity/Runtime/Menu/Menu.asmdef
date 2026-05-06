@@ -1,0 +1,19 @@
+{
+    "name": "DreamGuard.Menu",
+    "rootNamespace": "DreamGuard.Menu",
+    "references": [
+        "Oculus.VR",
+        "DreamGuard.Passthrough",
+        "DreamGuard.Player",
+        "DreamGuard.Debug"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
