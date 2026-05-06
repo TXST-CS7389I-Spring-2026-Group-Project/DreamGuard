@@ -8,7 +8,7 @@
         "DreamGuard.Passthrough.Fog",
         "DreamGuard.Passthrough.VerticalFold",
         "DreamGuard.Passthrough.Windowed",
-        "DreamGuard.Passthrough.DepthPlane",
+        "DreamGuard.Passthrough.Sphere",
         "DreamGuard.Player",
         "DreamGuard.Debug"
     ],

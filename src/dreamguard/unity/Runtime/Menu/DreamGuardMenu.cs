@@ -50,7 +50,7 @@ namespace DreamGuard
         private DreamGuardGridPassthrough    _gridPassthrough;
         private DreamGuardVerticalFold       _verticalFold;
         private DreamGuardPassthroughFog     _passthroughFog;
-        private PassthroughPlane             _passthroughPlane;
+        private PassthroughSphere            _passthroughSphere;
 
         private void Start()
         {
@@ -70,12 +70,12 @@ namespace DreamGuard
             _gridPassthrough  = FindFirstObjectByType<DreamGuardGridPassthrough>(FindObjectsInactive.Include);
             _verticalFold     = FindFirstObjectByType<DreamGuardVerticalFold>(FindObjectsInactive.Include);
             _passthroughFog   = FindFirstObjectByType<DreamGuardPassthroughFog>(FindObjectsInactive.Include);
-            _passthroughPlane = FindFirstObjectByType<PassthroughPlane>(FindObjectsInactive.Include);
-            
+            _passthroughSphere = FindFirstObjectByType<PassthroughSphere>(FindObjectsInactive.Include);
+
             DreamGuardLog.Log($"[DreamGuardMenu] Techniques found — " +
                 $"window={_windowPassthrough != null}  grid={_gridPassthrough != null}  " +
                 $"fold={_verticalFold != null}  fog={_passthroughFog != null}  " +
-                $"plane={_passthroughPlane != null}");
+                $"sphere={_passthroughSphere != null}");
 
             if (menuPanel != null)
             {

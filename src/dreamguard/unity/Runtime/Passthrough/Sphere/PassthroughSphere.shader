@@ -1,4 +1,4 @@
-Shader "Custom/PassthroughDepthPlane"
+Shader "Custom/PassthroughSphere"
 {
     Properties
     {

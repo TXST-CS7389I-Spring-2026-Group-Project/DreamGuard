@@ -4,9 +4,9 @@ using UnityEngine;
 namespace DreamGuard
 {
     /// <summary>
-    /// Depth-plane passthrough technique for Meta Quest.
+    /// Depth-sphere passthrough technique for Meta Quest.
     ///
-    /// Renders a large world-space plane with the DreamGuard/PassthroughDepthPlane
+    /// Renders a large world-space sphere with the DreamGuard/PassthroughSphere
     /// shader.  The shader punches alpha = 0 into the framebuffer wherever VR
     /// geometry is closer than a configurable depth threshold, revealing the
     /// passthrough underlay.
@@ -15,7 +15,7 @@ namespace DreamGuard
     /// ────────────
     /// • An OVRPassthroughLayer (Underlay) fills the compositor wherever the VR
     ///   framebuffer has alpha == 0.
-    /// • A large plane mesh at floor level renders the PassthroughDepthPlane shader
+    /// • A large sphere mesh surrounding the camera renders the PassthroughSphere shader
     ///   (BlendOp RevSub / Blend One Zero):  writing 0 into alpha for pixels where
     ///   the sampled environment depth is within the threshold.
     /// • OVRManager.eyeFovPremultipliedAlphaModeEnabled = false is required so the
@@ -29,7 +29,7 @@ namespace DreamGuard
     ///   4. Enable via DreamGuardMenu — the technique's GameObject starts inactive.
     /// </summary>
     [RequireComponent(typeof(OVRPassthroughLayer))]
-    public class PassthroughPlane : MonoBehaviour, IDreamGuardPassthrough
+    public class PassthroughSphere : MonoBehaviour, IDreamGuardPassthrough
     {
         [Header("Plane")]
         [Tooltip("Radius (metres) of the depth sphere surrounding the camera.")]
@@ -63,18 +63,18 @@ namespace DreamGuard
 
         private void Awake()
         {
-            DreamGuardLog.Log("[PassthroughPlane] Awake");
+            DreamGuardLog.Log("[PassthroughSphere] Awake");
             _layer = GetComponent<OVRPassthroughLayer>();
             _depthManager = FindAnyObjectByType<EnvironmentDepthManager>(FindObjectsInactive.Include);
             if (_depthManager != null)
             {
-                DreamGuardLog.Log($"[PassthroughPlane] EnvironmentDepthManager found on '{_depthManager.gameObject.name}'");
+                DreamGuardLog.Log($"[PassthroughSphere] EnvironmentDepthManager found on '{_depthManager.gameObject.name}'");
                 _origDepthManagerEnabled  = _depthManager.enabled;
                 _origOcclusionShadersMode = _depthManager.OcclusionShadersMode;
-                DreamGuardLog.Log($"[PassthroughPlane] Saved depth state: enabled={_origDepthManagerEnabled}, mode={_origOcclusionShadersMode}");
+                DreamGuardLog.Log($"[PassthroughSphere] Saved depth state: enabled={_origDepthManagerEnabled}, mode={_origOcclusionShadersMode}");
             }
             else
-                DreamGuardLog.LogWarning("[PassthroughPlane] EnvironmentDepthManager not found — depth occlusion will not work");
+                DreamGuardLog.LogWarning("[PassthroughSphere] EnvironmentDepthManager not found — depth occlusion will not work");
             // Disable the layer immediately — OVRPassthroughLayer.Awake() creates a native
             // compositor handle when the GO becomes active, but we don't want it rendering
             // until the technique is explicitly selected from the menu.
@@ -84,7 +84,7 @@ namespace DreamGuard
 
         private void Start()
         {
-            DreamGuardLog.Log("[PassthroughPlane] Start");
+            DreamGuardLog.Log("[PassthroughSphere] Start");
 
             _camera = Camera.main;
             if (_camera != null)
@@ -97,7 +97,7 @@ namespace DreamGuard
                 // Apply the transparent camera clear now if the technique is already intended.
                 if (_intendedEnabled)
                 {
-                    DreamGuardLog.Log("[PassthroughPlane] Start: _intendedEnabled already true — applying opaque camera clear");
+                    DreamGuardLog.Log("[PassthroughSphere] Start: _intendedEnabled already true — applying opaque camera clear");
                     _camera.clearFlags      = CameraClearFlags.SolidColor;
                     _camera.backgroundColor = new Color(0f, 0f, 0f, 1f);
                 }
@@ -108,7 +108,7 @@ namespace DreamGuard
 #endif
 
             _planeMaterial = CreatePlaneMaterial();
-            _plane         = CreateDepthPlane();
+            _plane         = CreateDepthSphere();
             _plane.SetActive(false);
         }
 
@@ -121,13 +121,13 @@ namespace DreamGuard
 
         private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
         {
-            DreamGuardLog.Log($"[PassthroughPlane] passthroughLayerResumed  intended={_intendedEnabled}");
+            DreamGuardLog.Log($"[PassthroughSphere] passthroughLayerResumed  intended={_intendedEnabled}");
             if (!_intendedEnabled)
             {
                 // The OVR runtime resumed the native layer handle, but this technique has
                 // not been selected. Force the layer back off to prevent an active Underlay
                 // with no camera alpha configured, which causes red/green compositor errors.
-                DreamGuardLog.LogWarning("[PassthroughPlane] Suppressing unexpected native resume");
+                DreamGuardLog.LogWarning("[PassthroughSphere] Suppressing unexpected native resume");
                 _layer.enabled = false;
                 return;
             }
@@ -141,7 +141,7 @@ namespace DreamGuard
         public void SetEnabled(bool enabled)
         {
             _intendedEnabled = enabled;
-            DreamGuardLog.Log($"[PassthroughPlane] SetEnabled({enabled})");
+            DreamGuardLog.Log($"[PassthroughSphere] SetEnabled({enabled})");
 
             if (_plane != null)
                 _plane.SetActive(false);
@@ -174,7 +174,7 @@ namespace DreamGuard
                     _depthManager.OcclusionShadersMode = _origOcclusionShadersMode;
                     _depthManager.enabled              = _origDepthManagerEnabled;
                 }
-                DreamGuardLog.Log($"[PassthroughPlane] DepthManager enabled={_depthManager.enabled}, mode={_depthManager.OcclusionShadersMode}");
+                DreamGuardLog.Log($"[PassthroughSphere] DepthManager enabled={_depthManager.enabled}, mode={_depthManager.OcclusionShadersMode}");
             }
         }
 
@@ -186,20 +186,20 @@ namespace DreamGuard
         private Material CreatePlaneMaterial()
         {
             if (planeShader == null)
-                planeShader = Shader.Find("Custom/PassthroughDepthPlane");
+                planeShader = Shader.Find("Custom/PassthroughSphere");
 
             if (planeShader == null)
             {
-                DreamGuardLog.LogError("[PassthroughPlane] Cannot find shader " +
-                                       "'Custom/PassthroughDepthPlane'. " +
-                                       "Ensure PassthroughDepthPlane.shader is in the project.");
+                DreamGuardLog.LogError("[PassthroughSphere] Cannot find shader " +
+                                       "'Custom/PassthroughSphere'. " +
+                                       "Ensure PassthroughSphere.shader is in the project.");
                 return new Material(Shader.Find("Hidden/InternalErrorShader"));
             }
 
-            return new Material(planeShader) { name = "PassthroughDepthPlaneMat" };
+            return new Material(planeShader) { name = "PassthroughSphereMat" };
         }
 
-        private GameObject CreateDepthPlane()
+        private GameObject CreateDepthSphere()
         {
             // A large sphere surrounding the camera lets the depth threshold test work
             // in all view directions — no horizontal horizon line.  Cull Front in the

@@ -1,5 +1,5 @@
 {
-    "name": "DreamGuard.Passthrough.DepthPlane",
+    "name": "DreamGuard.Passthrough.Sphere",
     "rootNamespace": "DreamGuard",
     "references": [
         "Oculus.VR",
