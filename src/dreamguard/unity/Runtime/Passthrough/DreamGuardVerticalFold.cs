@@ -118,7 +118,7 @@ namespace DreamGuard
 
         private void OnPassthroughLayerResumed(OVRPassthroughLayer _)
         {
-            DreamGuardLog.LogWarning($"[DreamGuardVerticalFold] passthroughLayerResumed  intended={_intendedEnabled}");
+            DreamGuardLog.Log($"[DreamGuardVerticalFold] passthroughLayerResumed  intended={_intendedEnabled}");
             if (!_intendedEnabled)
             {
                 // The OVR runtime resumed the native layer handle, but this technique has
@@ -205,7 +205,7 @@ namespace DreamGuard
         }
 
         /// <summary>Toggle the fold effect on/off.</summary>
-        public void Toggle() => SetEnabled(!_layer.enabled);
+        public void Toggle() => SetEnabled(!_intendedEnabled);
 
         // ── Private helpers ────────────────────────────────────────────────────────
 

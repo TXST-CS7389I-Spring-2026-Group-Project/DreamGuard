@@ -125,6 +125,11 @@ namespace DreamGuard
                     $"SOFT={softBefore}→{softAfter}  HARD={hardBefore}→{hardAfter}");
         }
 
+        private void OnDestroy()
+        {
+            if (_layer != null) _layer.passthroughLayerResumed.RemoveListener(OnLayerResumedUnexpectedly);
+        }
+
         // ── private helpers ───────────────────────────────────────────────────────
 
         private void PositionWindow()

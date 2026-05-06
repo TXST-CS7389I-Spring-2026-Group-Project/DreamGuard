@@ -195,7 +195,7 @@ namespace DreamGuard
         }
 
         /// <summary>Toggle the grid overlay on/off.</summary>
-        public void Toggle() => SetEnabled(!_layer.enabled);
+        public void Toggle() => SetEnabled(!_intendedEnabled);
 
         /// <summary>Change the inner clear-zone radius at runtime.</summary>
         public void SetInnerRadius(float metres)
