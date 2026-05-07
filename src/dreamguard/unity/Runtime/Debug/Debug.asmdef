@@ -1,7 +1,9 @@
 {
     "name": "DreamGuard.Debug",
     "rootNamespace": "DreamGuard.Debug",
-    "references": [],
+    "references": [
+        "Oculus.VR"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
