@@ -1,6 +1,6 @@
 {
-    "name": "DreamGuard.Debug",
-    "rootNamespace": "DreamGuard.Debug",
+    "name": "DreamGuard.Logging",
+    "rootNamespace": "DreamGuard.Logging",
     "references": [
         "Oculus.VR"
     ],

@@ -4,7 +4,7 @@
     "references": [
         "Oculus.VR",
         "Meta.XR.EnvironmentDepth",
-        "DreamGuard.Debug",
+        "DreamGuard.Logging",
         "DreamGuard.Passthrough.Interface"
     ],
     "includePlatforms": [],

@@ -3,7 +3,7 @@
     "rootNamespace": "DreamGuard",
     "references": [
         "Oculus.VR",
-        "DreamGuard.Debug",
+        "DreamGuard.Logging",
         "DreamGuard.Passthrough.Interface"
     ],
     "includePlatforms": [],

@@ -5,7 +5,7 @@
         "Oculus.VR",
         "meta.xr.mrutilitykit",
         "Unity.InferenceEngine",
-        "DreamGuard.Debug",
+        "DreamGuard.Logging",
         "DreamGuard.Passthrough.Interface",
         "Meta.XR.ImmersiveDebugger",
         "Meta.XR.ImmersiveDebugger.Interface"

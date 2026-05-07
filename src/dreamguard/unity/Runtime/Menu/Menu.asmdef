@@ -10,7 +10,7 @@
         "DreamGuard.Passthrough.Sphere",
         "DreamGuard.Passthrough.Detection",
         "DreamGuard.Player",
-        "DreamGuard.Debug"
+        "DreamGuard.Logging"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

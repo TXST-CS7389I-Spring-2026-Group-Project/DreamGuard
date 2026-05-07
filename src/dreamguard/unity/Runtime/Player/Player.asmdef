@@ -5,7 +5,7 @@
         "Oculus.VR",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
-        "DreamGuard.Debug"
+        "DreamGuard.Logging"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
