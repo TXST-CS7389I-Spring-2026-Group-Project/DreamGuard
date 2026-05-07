@@ -824,6 +824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Passthrough.Detection::DreamGuard.DetectionBasedPassthrough
   targetObjects:
   - person
+  - train
   - cat
   - dog
   - backpack
@@ -842,8 +843,8 @@ MonoBehaviour:
   - laptop
   - mouse
   - keyboard
-  detectionInterval: 0.5
-  confidenceThreshold: 0.35
+  detectionInterval: 1
+  confidenceThreshold: 0.8
   sentisModel: {fileID: 5022602860645237092, guid: a4afe4d6b3c39604d84055daf11b698f, type: 3}
   labelsAsset: {fileID: 4900000, guid: dec3b46b17dc44843862a0ec7a293e71, type: 3}
   backend: 256
@@ -854,7 +855,12 @@ MonoBehaviour:
   outputScoresName: output_1
   outputClassIdsName: output_2
   debugDrawBBoxes: 1
-  detectionTimeout: 3
+  detectionTimeout: 5
+  sphereRadius: 50
+  detectionShader: {fileID: 4800000, guid: c3022e53bc5d50b4185e92bdd773c0a5, type: 3}
+  revealDistance: 2
+  revealRadiusScale: 1.2
+  revealShader: {fileID: 0}
 --- !u!114 &1191699903446405561
 MonoBehaviour:
   m_ObjectHideFlags: 0

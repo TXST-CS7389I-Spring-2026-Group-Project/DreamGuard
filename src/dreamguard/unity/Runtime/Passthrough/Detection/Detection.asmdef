@@ -6,7 +6,9 @@
         "meta.xr.mrutilitykit",
         "Unity.InferenceEngine",
         "DreamGuard.Debug",
-        "DreamGuard.Passthrough.Interface"
+        "DreamGuard.Passthrough.Interface",
+        "Meta.XR.ImmersiveDebugger",
+        "Meta.XR.ImmersiveDebugger.Interface"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
