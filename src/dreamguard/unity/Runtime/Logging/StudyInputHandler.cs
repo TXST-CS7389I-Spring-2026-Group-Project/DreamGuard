@@ -28,6 +28,12 @@ namespace DreamGuard
         [Tooltip("Which button on that controller triggers INTRUSION_MARK.")]
         [SerializeField] private OVRInput.Button intrusionButton = OVRInput.Button.One; // X on left, A on right
 
+        [Header("Tracking Transforms")]
+        [Tooltip("Root transform of the player rig (world-space position logged to position.csv).")]
+        [SerializeField] private Transform playerTransform;
+        [Tooltip("Camera / CenterEyeAnchor transform (logged to headset.csv).")]
+        [SerializeField] private Transform headsetTransform;
+
         private void Start()
         {
             DreamGuardLog.Log($"[StudyInputHandler] Start — participant={participantId} condition={condition}");
@@ -40,6 +46,23 @@ namespace DreamGuard
             {
                 DreamGuardLog.Log("[StudyInputHandler] Intrusion mark button pressed.");
                 StudyLogger.LogIntrusionMark();
+            }
+
+            if (StudyLogger.IsActive)
+            {
+                if (playerTransform != null)
+                    StudyLogger.LogPlayerPosition(playerTransform.position);
+
+                StudyLogger.LogRightController(
+                    OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch),
+                    OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch));
+
+                StudyLogger.LogLeftController(
+                    OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch),
+                    OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch));
+
+                if (headsetTransform != null)
+                    StudyLogger.LogHeadset(headsetTransform.position, headsetTransform.rotation);
             }
         }
 

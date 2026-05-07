@@ -1,6 +1,6 @@
 {
     "name": "DreamGuard.Passthrough.Sphere",
-    "rootNamespace": "DreamGuard",
+    "rootNamespace": "DreamGuard.Passthrough.Sphere",
     "references": [
         "Oculus.VR",
         "Meta.XR.EnvironmentDepth",

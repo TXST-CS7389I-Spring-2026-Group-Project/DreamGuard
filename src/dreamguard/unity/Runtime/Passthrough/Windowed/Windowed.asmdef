@@ -1,6 +1,6 @@
 {
     "name": "DreamGuard.Passthrough.Windowed",
-    "rootNamespace": "DreamGuard",
+    "rootNamespace": "DreamGuard.Passthrough.Windowed",
     "references": [
         "Oculus.VR",
         "DreamGuard.Logging",

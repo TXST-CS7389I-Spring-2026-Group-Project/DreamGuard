@@ -1,6 +1,6 @@
 {
     "name": "DreamGuard.Passthrough.Interface",
-    "rootNamespace": "DreamGuard",
+    "rootNamespace": "DreamGuard.Passthrough.Interface",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

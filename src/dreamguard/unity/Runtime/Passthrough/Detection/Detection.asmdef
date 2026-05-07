@@ -1,6 +1,6 @@
 {
     "name": "DreamGuard.Passthrough.Detection",
-    "rootNamespace": "DreamGuard",
+    "rootNamespace": "DreamGuard.Passthrough.Detection",
     "references": [
         "Oculus.VR",
         "meta.xr.mrutilitykit",

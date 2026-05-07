@@ -26,9 +26,28 @@ namespace DreamGuard
     public static class StudyLogger
     {
         private static StreamWriter _csv;
+        private static StreamWriter _positionCsv;
+        private static StreamWriter _rControllerCsv;
+        private static StreamWriter _lControllerCsv;
+        private static StreamWriter _headsetCsv;
+
         private static string _participantId;
         private static string _condition;
         private static bool _active;
+
+        // Last-written tracking values — NaN sentinel forces a write on the first frame.
+        private static Vector3    _lastPlayerPos = NaNVec3;
+        private static Vector3    _lastRCtrlPos  = NaNVec3;
+        private static Quaternion _lastRCtrlRot  = NaNQuat;
+        private static Vector3    _lastLCtrlPos  = NaNVec3;
+        private static Quaternion _lastLCtrlRot  = NaNQuat;
+        private static Vector3    _lastHeadPos   = NaNVec3;
+        private static Quaternion _lastHeadRot   = NaNQuat;
+
+        private const float kEpsilon = 0.0001f;
+
+        private static Vector3    NaNVec3 => new Vector3(float.NaN, float.NaN, float.NaN);
+        private static Quaternion NaNQuat => new Quaternion(float.NaN, float.NaN, float.NaN, float.NaN);
 
         public static bool IsActive => _active;
 
@@ -53,6 +72,16 @@ namespace DreamGuard
                 string csvPath = Path.Combine(sessionDir, "study.csv");
                 _csv = new StreamWriter(csvPath, append: false) { AutoFlush = true };
                 _csv.WriteLine("timestamp_iso,event_type,condition,participant_id,detail");
+
+                _positionCsv    = OpenTrackingCsv(sessionDir, "position.csv",     "timestamp_iso,x,y,z");
+                _rControllerCsv = OpenTrackingCsv(sessionDir, "r_controller.csv", "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
+                _lControllerCsv = OpenTrackingCsv(sessionDir, "l_controller.csv", "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
+                _headsetCsv     = OpenTrackingCsv(sessionDir, "headset.csv",      "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
+
+                _lastPlayerPos = NaNVec3;
+                _lastRCtrlPos  = NaNVec3; _lastRCtrlRot = NaNQuat;
+                _lastLCtrlPos  = NaNVec3; _lastLCtrlRot = NaNQuat;
+                _lastHeadPos   = NaNVec3; _lastHeadRot  = NaNQuat;
 
                 _active = true;
 
@@ -109,6 +138,56 @@ namespace DreamGuard
         public static void LogTechniqueChange(string technique) =>
             Log("TECHNIQUE_CHANGE", $"technique={technique}");
 
+        // ── per-frame tracking ───────────────────────────────────────────────────
+
+        /// <summary>
+        /// Logs the player's world-space position to position.csv.
+        /// Skips the write if the position has not changed beyond kEpsilon.
+        /// </summary>
+        public static void LogPlayerPosition(Vector3 pos)
+        {
+            if (!_active) return;
+            if (Vec3Close(pos, _lastPlayerPos)) return;
+            _lastPlayerPos = pos;
+            _positionCsv?.WriteLine($"{Ts()},{pos.x:F4},{pos.y:F4},{pos.z:F4}");
+        }
+
+        /// <summary>
+        /// Logs the right controller's local position and orientation to r_controller.csv.
+        /// Skips the write if neither value has changed beyond kEpsilon.
+        /// </summary>
+        public static void LogRightController(Vector3 pos, Quaternion rot)
+        {
+            if (!_active) return;
+            if (Vec3Close(pos, _lastRCtrlPos) && QuatClose(rot, _lastRCtrlRot)) return;
+            _lastRCtrlPos = pos; _lastRCtrlRot = rot;
+            _rControllerCsv?.WriteLine($"{Ts()},{pos.x:F4},{pos.y:F4},{pos.z:F4},{rot.x:F4},{rot.y:F4},{rot.z:F4},{rot.w:F4}");
+        }
+
+        /// <summary>
+        /// Logs the left controller's local position and orientation to l_controller.csv.
+        /// Skips the write if neither value has changed beyond kEpsilon.
+        /// </summary>
+        public static void LogLeftController(Vector3 pos, Quaternion rot)
+        {
+            if (!_active) return;
+            if (Vec3Close(pos, _lastLCtrlPos) && QuatClose(rot, _lastLCtrlRot)) return;
+            _lastLCtrlPos = pos; _lastLCtrlRot = rot;
+            _lControllerCsv?.WriteLine($"{Ts()},{pos.x:F4},{pos.y:F4},{pos.z:F4},{rot.x:F4},{rot.y:F4},{rot.z:F4},{rot.w:F4}");
+        }
+
+        /// <summary>
+        /// Logs the headset (camera) world-space position and orientation to headset.csv.
+        /// Skips the write if neither value has changed beyond kEpsilon.
+        /// </summary>
+        public static void LogHeadset(Vector3 pos, Quaternion rot)
+        {
+            if (!_active) return;
+            if (Vec3Close(pos, _lastHeadPos) && QuatClose(rot, _lastHeadRot)) return;
+            _lastHeadPos = pos; _lastHeadRot = rot;
+            _headsetCsv?.WriteLine($"{Ts()},{pos.x:F4},{pos.y:F4},{pos.z:F4},{rot.x:F4},{rot.y:F4},{rot.z:F4},{rot.w:F4}");
+        }
+
         /// <summary>Writes SESSION_END and closes the CSV file.</summary>
         public static void EndSession()
         {
@@ -117,9 +196,12 @@ namespace DreamGuard
             Log("SESSION_END");
             _active = false;
 
-            try { _csv?.Close(); }
-            catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close failed: {e.Message}"); }
-            finally { _csv = null; }
+            try { _csv?.Close(); }            catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close study.csv failed: {e.Message}"); }
+            try { _positionCsv?.Close(); }    catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close position.csv failed: {e.Message}"); }
+            try { _rControllerCsv?.Close(); } catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close r_controller.csv failed: {e.Message}"); }
+            try { _lControllerCsv?.Close(); } catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close l_controller.csv failed: {e.Message}"); }
+            try { _headsetCsv?.Close(); }     catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close headset.csv failed: {e.Message}"); }
+            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = null;
 
             DreamGuardLog.Log("[StudyLogger] Session ended.");
         }
@@ -142,6 +224,27 @@ namespace DreamGuard
 
             return max + 1;
         }
+
+        private static string Ts() => DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff");
+
+        private static StreamWriter OpenTrackingCsv(string dir, string filename, string header)
+        {
+            string path   = Path.Combine(dir, filename);
+            var    writer = new StreamWriter(path, append: false) { AutoFlush = true };
+            writer.WriteLine(header);
+            return writer;
+        }
+
+        private static bool Vec3Close(Vector3 a, Vector3 b) =>
+            Mathf.Abs(a.x - b.x) < kEpsilon &&
+            Mathf.Abs(a.y - b.y) < kEpsilon &&
+            Mathf.Abs(a.z - b.z) < kEpsilon;
+
+        private static bool QuatClose(Quaternion a, Quaternion b) =>
+            Mathf.Abs(a.x - b.x) < kEpsilon &&
+            Mathf.Abs(a.y - b.y) < kEpsilon &&
+            Mathf.Abs(a.z - b.z) < kEpsilon &&
+            Mathf.Abs(a.w - b.w) < kEpsilon;
 
         /// <summary>RFC-4180 CSV escaping: wrap in quotes if the value contains a comma, quote, or newline.</summary>
         private static string CsvEscape(string value)
