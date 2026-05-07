@@ -7,89 +7,107 @@ using DreamGuard.Player.UI;
 namespace DreamGuard.Experiment
 {
     /// <summary>
+    /// Passthrough techniques available in the study.
+    /// Matches the concrete class names on the Player prefab; resolved at runtime via
+    /// FindObjectsByType — no direct assembly reference to passthrough assemblies required.
+    /// </summary>
+    public enum PassthroughTechniqueType
+    {
+        /// <summary>No custom passthrough (Room 1 — Meta Quest default passthrough stays active).</summary>
+        None,
+        /// <summary>DreamGuardWindowedPassthrough — window in the centre of the FOV.</summary>
+        Windowed,
+        /// <summary>PassthroughSphere — depth-based sphere reveal.</summary>
+        Sphere,
+        /// <summary>DetectionBasedPassthrough — YOLO detection reveals only detected objects.</summary>
+        Detection,
+        /// <summary>DreamGuardGridPassthrough — grid overlay technique.</summary>
+        Grid,
+        /// <summary>DreamGuardVerticalFold — vertical fold technique.</summary>
+        VerticalFold,
+    }
+
+    /// <summary>
     /// Per-room experiment controller for the 4-room DreamGuard study design.
     ///
-    /// Place one instance on each Room GameObject (Room1 … Room4) in the Dungeon scene.
-    /// Wire the inspector fields for each room, then the script handles:
+    /// Place one instance on each Room&lt;n&gt; GameObject in the Dungeon scene.
+    /// The script creates and configures its own OrbManager at startup — no manual wiring needed.
     ///
-    ///   • Room entry detection via trigger collider (or on Start for Room 1).
-    ///   • Closing the entrance door behind the player to prevent backtracking.
-    ///   • Activating this room's OrbManager so UI components update automatically.
-    ///   • Firing the room's passthrough technique at the halfway point (2 orbs).
-    ///   • Opening the exit door and redirecting the HUD arrow once all orbs are collected.
-    ///   • Writing all required study log events via StudyLogger.
+    /// Inspector setup per room:
+    ///   • roomId / conditionName — logged to study.csv
+    ///   • enterOnStart — true for Room 1 only
+    ///   • entranceDoorBlocker — Collider that closes behind the player (null for Room 1)
+    ///   • exitDoorBlocker — Collider that unlocks when all orbs are collected (null for Room 4)
+    ///   • nextRoomTarget — Transform the HUD arrow points toward after room completes (null for Room 4)
+    ///   • passthroughType — which technique fires at the halfway point
     ///
-    /// Logged events (in study.csv):
-    ///   ROOM_ENTER, CONDITION_BLOCK_START, ROOM_HALFWAY, TRIGGER, ROOM_COMPLETE
-    /// Logged events (in rooms.csv):
-    ///   ENTER (on room entry), EXIT (on room complete)
+    /// Door setup:
+    ///   entranceDoorBlocker starts <b>disabled</b> (player can walk through); enabled on enter.
+    ///   exitDoorBlocker starts <b>enabled</b> (locked); disabled when room is complete.
     ///
-    /// Door wiring:
-    ///   Assign the Collider component of the physical door blocker — the collider that
-    ///   stops the player from passing through. The entrance blocker starts disabled
-    ///   (so the player can walk in) and is enabled when they enter. The exit blocker
-    ///   starts enabled (locked) and is disabled when the room is complete.
-    ///
-    /// Passthrough technique:
-    ///   Assign the MonoBehaviour that implements IDreamGuardPassthrough.
-    ///   Room 1 → leave null for Meta Quest default passthrough (full background);
-    ///   Room 2 → DreamGuardWindowedPassthrough; Room 3 → PassthroughSphere;
-    ///   Room 4 → DetectionBasedPassthrough.
-    ///   The technique is enabled at the halfway mark (after the 2nd orb).
+    /// Logged events (study.csv): ROOM_ENTER, CONDITION_BLOCK_START, ROOM_HALFWAY, TRIGGER, ROOM_COMPLETE
+    /// Logged events (rooms.csv): ENTER on room entry, EXIT on room complete
     /// </summary>
+    [AddComponentMenu("DreamGuard/Room Experiment")]
     public class RoomExperiment : MonoBehaviour
     {
         [Header("Room Identity")]
-        [Tooltip("Short identifier written to the log, e.g. 'Room1'.")]
+        [Tooltip("Short identifier written to the log (e.g. 'Room1').")]
         [SerializeField] private string roomId = "Room1";
 
-        [Tooltip("Human-readable condition name written to CONDITION_BLOCK_START, e.g. 'default'.")]
+        [Tooltip("Human-readable condition written to CONDITION_BLOCK_START (e.g. 'default', 'windowed').")]
         [SerializeField] private string conditionName = "default";
+
+        [Tooltip("Override the label shown in the HUD counter (e.g. 'Room 1'). " +
+                 "Defaults to roomId if left blank.")]
+        [SerializeField] private string roomDisplayName = "";
 
         [Header("Entry")]
         [Tooltip("Enable for Room 1 only. Triggers room entry automatically on Start " +
-                 "(one frame delayed) instead of waiting for a physics trigger.")]
+                 "(one frame delayed) rather than waiting for a physics trigger.")]
         [SerializeField] private bool enterOnStart = false;
 
-        [Header("References")]
-        [Tooltip("The OrbManager component on this room's GameObject (or its child).")]
-        [SerializeField] private OrbManager orbManager;
-
+        [Header("Doors")]
         [Tooltip("Collider that blocks the entrance after the player walks in. " +
-                 "Should be disabled by default so the player can enter. Leave null for Room 1.")]
+                 "Must be DISABLED by default so the player can enter. Leave null for Room 1.")]
         [SerializeField] private Collider entranceDoorBlocker;
 
         [Tooltip("Collider that blocks the exit until all orbs are collected. " +
-                 "Should be enabled by default (locked). Leave null for Room 4.")]
+                 "Must be ENABLED by default (locked). Leave null for Room 4.")]
         [SerializeField] private Collider exitDoorBlocker;
 
         [Tooltip("Transform the HUD arrow points toward after this room is complete, " +
-                 "guiding the player to the next room. Leave null for Room 4.")]
+                 "guiding the player to the next room's entrance. Leave null for Room 4.")]
         [SerializeField] private Transform nextRoomTarget;
 
         [Header("Passthrough Technique")]
-        [Tooltip("MonoBehaviour implementing IDreamGuardPassthrough. Activated at the halfway " +
-                 "point (after the 2nd orb). Leave null for Room 1 (default passthrough).")]
-        [SerializeField] private MonoBehaviour passthroughTechnique;
+        [Tooltip("Which passthrough technique fires at the halfway mark (after the 2nd orb). " +
+                 "The matching component is located on the Player prefab at runtime — " +
+                 "no scene cross-reference needed. Use None for Room 1 (default passthrough).")]
+        [SerializeField] private PassthroughTechniqueType passthroughType = PassthroughTechniqueType.None;
+
+        // ── Runtime state ──────────────────────────────────────────────────────
+
+        private OrbManager _orbManager;
+        private IDreamGuardPassthrough _resolvedTechnique;
+        private MonoBehaviour _resolvedTechniqueMB;
 
         private bool _entered;
         private bool _halfway;
         private bool _complete;
 
+        // ── Unity lifecycle ────────────────────────────────────────────────────
+
         private void Awake()
         {
-            DreamGuardLog.Log($"[RoomExperiment] Awake — roomId={roomId} conditionName={conditionName}");
+            DreamGuardLog.Log($"[RoomExperiment] Awake — roomId={roomId}");
+            CreateOrbManager();
         }
 
         private void Start()
         {
-            DreamGuardLog.Log($"[RoomExperiment] Start — roomId={roomId} enterOnStart={enterOnStart}");
-
-            if (orbManager == null)
-                DreamGuardLog.LogWarning($"[RoomExperiment] orbManager not assigned — roomId={roomId}");
-
-            if (passthroughTechnique != null && !(passthroughTechnique is IDreamGuardPassthrough))
-                DreamGuardLog.LogWarning($"[RoomExperiment] passthroughTechnique does not implement IDreamGuardPassthrough — roomId={roomId}");
+            DreamGuardLog.Log($"[RoomExperiment] Start — roomId={roomId} passthroughType={passthroughType}");
+            CachePassthroughTechnique();
 
             if (enterOnStart)
                 StartCoroutine(EnterRoomAfterStart());
@@ -97,15 +115,74 @@ namespace DreamGuard.Experiment
 
         private void OnDestroy()
         {
-            if (orbManager != null)
-                orbManager.OnOrbCountChanged -= OnOrbCountChanged;
+            if (_orbManager != null)
+                _orbManager.OnOrbCountChanged -= OnOrbCountChanged;
         }
 
-        // ── Entry ─────────────────────────────────────────────────────────────────
+        // ── OrbManager auto-creation ───────────────────────────────────────────
+
+        private void CreateOrbManager()
+        {
+            // Re-use an existing component (e.g. if the scene was saved with one already attached).
+            _orbManager = GetComponent<OrbManager>();
+            if (_orbManager == null)
+                _orbManager = gameObject.AddComponent<OrbManager>();
+
+            // Orbs live under a child named "Orbs"; fall back to this transform.
+            var orbsRoot = transform.Find("Orbs") ?? transform;
+            var label    = string.IsNullOrEmpty(roomDisplayName) ? roomId : roomDisplayName;
+            _orbManager.Initialize(orbsRoot, label);
+
+            DreamGuardLog.Log($"[RoomExperiment] OrbManager ready — root='{orbsRoot.name}' label='{label}'");
+        }
+
+        // ── Passthrough resolution ─────────────────────────────────────────────
+
+        /// <summary>
+        /// Finds the passthrough component on the Player prefab at startup.
+        /// Looks for a MonoBehaviour that implements IDreamGuardPassthrough and whose
+        /// class name matches the selected <see cref="passthroughType"/>.
+        /// Uses FindObjectsInactive.Include so disabled components are found too.
+        /// </summary>
+        private void CachePassthroughTechnique()
+        {
+            if (passthroughType == PassthroughTechniqueType.None)
+            {
+                DreamGuardLog.Log($"[RoomExperiment] PassthroughType.None — no technique will fire — roomId={roomId}");
+                return;
+            }
+
+            string targetTypeName = PassthroughTypeToClassName(passthroughType);
+
+            foreach (var mb in FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (mb is IDreamGuardPassthrough pt && mb.GetType().Name == targetTypeName)
+                {
+                    _resolvedTechnique   = pt;
+                    _resolvedTechniqueMB = mb;
+                    DreamGuardLog.Log($"[RoomExperiment] Resolved passthrough '{targetTypeName}' on '{mb.gameObject.name}' — roomId={roomId}");
+                    return;
+                }
+            }
+
+            DreamGuardLog.LogWarning($"[RoomExperiment] Could not find passthrough component '{targetTypeName}' in scene — roomId={roomId}");
+        }
+
+        private static string PassthroughTypeToClassName(PassthroughTechniqueType type) => type switch
+        {
+            PassthroughTechniqueType.Windowed    => "DreamGuardWindowedPassthrough",
+            PassthroughTechniqueType.Sphere      => "PassthroughSphere",
+            PassthroughTechniqueType.Detection   => "DetectionBasedPassthrough",
+            PassthroughTechniqueType.Grid        => "DreamGuardGridPassthrough",
+            PassthroughTechniqueType.VerticalFold => "DreamGuardVerticalFold",
+            _                                    => "",
+        };
+
+        // ── Entry ──────────────────────────────────────────────────────────────
 
         /// <summary>
         /// Waits one frame so StudyInputHandler.Start() has had a chance to call
-        /// StudyLogger.BeginSession() before we log ROOM_ENTER.
+        /// StudyLogger.BeginSession() before ROOM_ENTER is logged.
         /// </summary>
         private IEnumerator EnterRoomAfterStart()
         {
@@ -128,37 +205,31 @@ namespace DreamGuard.Experiment
 
             DreamGuardLog.Log($"[RoomExperiment] EnterRoom — roomId={roomId}");
 
-            // Close the entrance door so the player cannot go back.
             if (entranceDoorBlocker != null)
             {
                 entranceDoorBlocker.enabled = true;
                 DreamGuardLog.Log($"[RoomExperiment] Entrance door closed — roomId={roomId}");
             }
 
-            // Activate this room's orb manager as the global current room.
-            if (orbManager != null)
-            {
-                orbManager.ActivateAsCurrentRoom();
-                orbManager.OnOrbCountChanged += OnOrbCountChanged;
-            }
+            _orbManager.ActivateAsCurrentRoom();
+            _orbManager.OnOrbCountChanged += OnOrbCountChanged;
 
-            // Clear the arrow fallback — the arrow should now track this room's orbs.
+            // Arrow tracks this room's orbs now; clear any previous fallback.
             OrbArrowUI.Instance?.SetFallbackTarget(null);
 
-            // Log events.
             StudyLogger.LogRoomEnter(roomId);
             StudyLogger.LogConditionBlockStart(roomId, conditionName);
         }
 
-        // ── Orb progress ──────────────────────────────────────────────────────────
+        // ── Orb progress ───────────────────────────────────────────────────────
 
         private void OnOrbCountChanged(int collected, int total)
         {
-            // Halfway: ceil(total / 2) — for 4 orbs this fires at 2 collected.
+            // Halfway = ceil(total / 2): for 4 orbs this is 2.
             if (!_halfway && total > 0 && collected >= (total + 1) / 2)
             {
                 _halfway = true;
-                DreamGuardLog.Log($"[RoomExperiment] Halfway reached — roomId={roomId} {collected}/{total}");
+                DreamGuardLog.Log($"[RoomExperiment] Halfway — roomId={roomId} {collected}/{total}");
                 StudyLogger.LogRoomHalfway(roomId, collected, total);
                 TriggerPassthrough();
             }
@@ -166,49 +237,47 @@ namespace DreamGuard.Experiment
             if (!_complete && total > 0 && collected >= total)
             {
                 _complete = true;
-                DreamGuardLog.Log($"[RoomExperiment] Room complete — roomId={roomId} {collected}/{total}");
+                DreamGuardLog.Log($"[RoomExperiment] Complete — roomId={roomId} {collected}/{total}");
                 StudyLogger.LogRoomComplete(roomId);
 
-                // Open the exit door.
                 if (exitDoorBlocker != null)
                 {
                     exitDoorBlocker.enabled = false;
                     DreamGuardLog.Log($"[RoomExperiment] Exit door opened — roomId={roomId}");
                 }
 
-                // Redirect the HUD arrow toward the next room.
                 if (nextRoomTarget != null)
                 {
                     OrbArrowUI.Instance?.SetFallbackTarget(nextRoomTarget);
-                    DreamGuardLog.Log($"[RoomExperiment] Arrow fallback set to '{nextRoomTarget.name}' — roomId={roomId}");
+                    DreamGuardLog.Log($"[RoomExperiment] Arrow pointing to '{nextRoomTarget.name}' — roomId={roomId}");
                 }
             }
         }
 
-        // ── Passthrough ───────────────────────────────────────────────────────────
+        // ── Passthrough ────────────────────────────────────────────────────────
 
         private void TriggerPassthrough()
         {
-            if (passthroughTechnique == null)
+            if (passthroughType == PassthroughTechniqueType.None)
             {
-                DreamGuardLog.Log($"[RoomExperiment] No passthrough technique assigned — roomId={roomId} (default passthrough stays active)");
+                DreamGuardLog.Log($"[RoomExperiment] PassthroughType.None — skipping — roomId={roomId}");
                 return;
             }
 
-            if (passthroughTechnique is IDreamGuardPassthrough pt)
+            if (_resolvedTechnique == null)
             {
-                DreamGuardLog.Log($"[RoomExperiment] Triggering passthrough — roomId={roomId} technique={passthroughTechnique.GetType().Name}");
-                // Ensure the technique's GameObject is active before calling SetEnabled.
-                if (!passthroughTechnique.gameObject.activeSelf)
-                    passthroughTechnique.gameObject.SetActive(true);
-                pt.SetEnabled(true);
-                StudyLogger.LogTrigger(conditionName, $"room_id={roomId}");
+                DreamGuardLog.LogWarning($"[RoomExperiment] No passthrough resolved for '{passthroughType}' — roomId={roomId}");
+                return;
             }
-            else
-            {
-                DreamGuardLog.LogWarning($"[RoomExperiment] passthroughTechnique '{passthroughTechnique.GetType().Name}' " +
-                    $"does not implement IDreamGuardPassthrough — roomId={roomId}");
-            }
+
+            // Mirror DreamGuardMenu.ActivateTechnique: activate the GO once if needed,
+            // then call SetEnabled. This ensures OVRPassthroughLayer initialises correctly.
+            if (!_resolvedTechniqueMB.gameObject.activeSelf)
+                _resolvedTechniqueMB.gameObject.SetActive(true);
+
+            _resolvedTechnique.SetEnabled(true);
+            StudyLogger.LogTrigger(conditionName, $"room_id={roomId}");
+            DreamGuardLog.Log($"[RoomExperiment] Passthrough triggered — type={passthroughType} roomId={roomId}");
         }
     }
 }

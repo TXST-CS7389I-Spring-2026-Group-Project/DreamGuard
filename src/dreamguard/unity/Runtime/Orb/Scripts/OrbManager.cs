@@ -45,6 +45,17 @@ namespace DreamGuard.Orb
             DreamGuardLog.Log($"[OrbManager] Awake — room='{roomDisplayName}'");
         }
 
+        /// <summary>
+        /// Sets the orbs root and display name before Start fires.
+        /// Called by RoomExperiment immediately after adding this component in Awake.
+        /// </summary>
+        public void Initialize(Transform orbsRoot, string displayName)
+        {
+            orbsParent    = orbsRoot;
+            roomDisplayName = displayName;
+            DreamGuardLog.Log($"[OrbManager] Initialize — room='{roomDisplayName}'");
+        }
+
         private void Start()
         {
             var root = orbsParent != null ? orbsParent : transform;

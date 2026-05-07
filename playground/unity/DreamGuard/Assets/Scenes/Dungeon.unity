@@ -15638,14 +15638,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
-  roomId: Room_3
+  roomId: room_3
   conditionName: default
+  roomDisplayName: Room 3
   enterOnStart: 0
-  orbManager: {fileID: 0}
   entranceDoorBlocker: {fileID: 877259966}
   exitDoorBlocker: {fileID: 134859439}
   nextRoomTarget: {fileID: 2045275664}
-  passthroughTechnique: {fileID: 0}
+  passthroughType: 2
 --- !u!1001 &862289515
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17046,14 +17046,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
-  roomId: Room_1
+  roomId: room_1
   conditionName: default
+  roomDisplayName: Room 1
   enterOnStart: 1
-  orbManager: {fileID: 0}
   entranceDoorBlocker: {fileID: 0}
   exitDoorBlocker: {fileID: 1070756404}
   nextRoomTarget: {fileID: 1269300149}
-  passthroughTechnique: {fileID: 0}
+  passthroughType: 0
 --- !u!1 &928760542
 GameObject:
   m_ObjectHideFlags: 0
@@ -23010,14 +23010,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
-  roomId: Room_2
+  roomId: room_2
   conditionName: default
+  roomDisplayName: Room 2
   enterOnStart: 0
-  orbManager: {fileID: 0}
   entranceDoorBlocker: {fileID: 1070756404}
   exitDoorBlocker: {fileID: 877259966}
   nextRoomTarget: {fileID: 850088680}
-  passthroughTechnique: {fileID: 0}
+  passthroughType: 1
 --- !u!1 &1277488843
 GameObject:
   m_ObjectHideFlags: 0
@@ -37416,14 +37416,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
-  roomId: Room_4
+  roomId: room_4
   conditionName: default
+  roomDisplayName: Room 4
   enterOnStart: 0
-  orbManager: {fileID: 0}
   entranceDoorBlocker: {fileID: 134859439}
   exitDoorBlocker: {fileID: 0}
   nextRoomTarget: {fileID: 0}
-  passthroughTechnique: {fileID: 0}
+  passthroughType: 3
 --- !u!1 &2048817935
 GameObject:
   m_ObjectHideFlags: 0
