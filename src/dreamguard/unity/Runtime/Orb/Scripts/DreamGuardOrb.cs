@@ -42,7 +42,10 @@ namespace DreamGuard.Orb
 
         private void Collect()
         {
-            DreamGuardLog.Log("[DreamGuardOrb] Collected");
+            DreamGuardLog.Log($"[DreamGuardOrb] Collected — id={gameObject.name}");
+
+            StudyLogger.LogOrbCollected(gameObject.name);
+            OrbManager.Instance?.NotifyOrbCollected(this);
 
             if (collectEffect != null)
             {
