@@ -82,9 +82,9 @@ namespace DreamGuard
 
         // Max bboxes the shader array can hold. Must match MAX_DETECTIONS in the shader.
         private const int MaxDetections = 16;
-        private static readonly int PropWorldBL = Shader.PropertyToID("_DetectionWorldBL");
-        private static readonly int PropWorldTR  = Shader.PropertyToID("_DetectionWorldTR");
-        private static readonly int PropCount    = Shader.PropertyToID("_DetectionCount");
+        private static readonly int PropDirBL = Shader.PropertyToID("_DetectionDirBL");
+        private static readonly int PropDirTR  = Shader.PropertyToID("_DetectionDirTR");
+        private static readonly int PropCount  = Shader.PropertyToID("_DetectionCount");
 
         // ── Private state ──────────────────────────────────────────────────────
 
@@ -107,8 +107,8 @@ namespace DreamGuard
         // separate avoids the union-of-scattered-boxes problem where many small same-label
         // detections (e.g. 50+ "person" boxes spanning the whole frame) merge into one giant rect.
         private readonly List<Rect>  _frameModelBboxes = new();
-        private readonly Vector4[]   _worldBLBuffer     = new Vector4[MaxDetections];
-        private readonly Vector4[]   _worldTRBuffer     = new Vector4[MaxDetections];
+        private readonly Vector4[]   _dirBLBuffer       = new Vector4[MaxDetections];
+        private readonly Vector4[]   _dirTRBuffer       = new Vector4[MaxDetections];
 
         // ── Unity lifecycle ────────────────────────────────────────────────────
 
@@ -232,14 +232,14 @@ namespace DreamGuard
                         bbox.xMax + padX, bbox.yMax + padY);
                 }
 
-                if (!BboxToWorldCorners(expanded, out Vector4 bl, out Vector4 tr)) continue;
-                _worldBLBuffer[count] = bl;
-                _worldTRBuffer[count] = tr;
+                if (!BboxToViewDirections(expanded, out Vector4 bl, out Vector4 tr)) continue;
+                _dirBLBuffer[count] = bl;
+                _dirTRBuffer[count] = tr;
                 count++;
             }
 
-            _material.SetVectorArray(PropWorldBL, _worldBLBuffer);
-            _material.SetVectorArray(PropWorldTR, _worldTRBuffer);
+            _material.SetVectorArray(PropDirBL, _dirBLBuffer);
+            _material.SetVectorArray(PropDirTR, _dirTRBuffer);
             _material.SetInteger(PropCount, count);
             _bboxesActive = true;
             DreamGuardLog.Log($"[DetectionBasedPassthrough] Uploaded {count} bbox(s) to shader");
@@ -362,25 +362,29 @@ namespace DreamGuard
 
         /// <summary>
         /// Converts a YOLO bounding box from model-input pixel space into two world-space
-        /// corner positions (bottom-left and top-right) at <see cref="estimatedObjectDepth"/>
-        /// along the passthrough camera rays.
+        /// direction vectors (bottom-left and top-right corners of the detection).
         ///
-        /// The shader receives these world-space corners and projects them independently per
-        /// eye using <c>unity_StereoMatrixVP[unity_StereoEyeIndex]</c>, which is the correct
-        /// per-eye VP matrix supplied by the GPU during single-pass stereo instanced rendering.
-        /// This avoids the left/right split that occurred when bboxes were projected to viewport
-        /// space on the CPU using <c>Camera.WorldToViewportPoint</c> (left-eye only).
+        /// Directions are computed from the passthrough camera pose captured at inference
+        /// START (same frame as the texture), so they match the actual frame content even
+        /// when inference takes several seconds to complete.
         ///
-        /// Returns false (and leaves <paramref name="bl"/>/<paramref name="tr"/> zeroed) when
-        /// the passthrough camera is not yet playing.
+        /// The shader uses these directions each frame as:
+        ///   <c>_WorldSpaceCameraPos + dir * FAR</c>
+        /// This makes the passthrough hole angular-tracking: it follows the real-world
+        /// object's compass direction as the player rotates, with negligible parallax from
+        /// player translation (FAR = 1000 m). This is equivalent to how the windowed
+        /// passthrough technique stays locked to the player's field of view.
+        ///
+        /// Returns false (and leaves <paramref name="bl"/>/<paramref name="tr"/> zeroed)
+        /// when the passthrough camera is not yet playing.
         /// </summary>
-        private bool BboxToWorldCorners(Rect bbox, out Vector4 bl, out Vector4 tr)
+        private bool BboxToViewDirections(Rect bbox, out Vector4 bl, out Vector4 tr)
         {
             bl = tr = Vector4.zero;
 
             if (!cameraAccess.IsPlaying)
             {
-                DreamGuardLog.LogWarning("[DetectionBasedPassthrough] BboxToWorldCorners: " +
+                DreamGuardLog.LogWarning("[DetectionBasedPassthrough] BboxToViewDirections: " +
                     "passthrough camera not playing — skipping detection");
                 return false;
             }
@@ -391,23 +395,19 @@ namespace DreamGuard
             float camYMin = 1f - bbox.yMax / modelInputHeight;
             float camYMax = 1f - bbox.y    / modelInputHeight;
 
-            Vector3 wBL = Unproject(new Vector2(camXMin, camYMin));
-            Vector3 wTR = Unproject(new Vector2(camXMax, camYMax));
+            // Rays from the camera AT CAPTURE TIME — direction only, no depth estimate.
+            Vector3 dirBL = cameraAccess.ViewportPointToRay(new Vector2(camXMin, camYMin), _capturedCameraPose).direction;
+            Vector3 dirTR = cameraAccess.ViewportPointToRay(new Vector2(camXMax, camYMax), _capturedCameraPose).direction;
 
-            bl = new Vector4(wBL.x, wBL.y, wBL.z, 1f);
-            tr = new Vector4(wTR.x, wTR.y, wTR.z, 1f);
+            bl = new Vector4(dirBL.x, dirBL.y, dirBL.z, 0f);
+            tr = new Vector4(dirTR.x, dirTR.y, dirTR.z, 0f);
 
             DreamGuardLog.Log(
                 $"[DetectionBasedPassthrough] " +
                 $"model=({bbox.xMin:F0},{bbox.yMin:F0},{bbox.xMax:F0},{bbox.yMax:F0}) " +
-                $"→ worldBL={wBL:F2} worldTR={wTR:F2} depth={estimatedObjectDepth}m");
+                $"→ dirBL=({dirBL.x:F2},{dirBL.y:F2},{dirBL.z:F2}) " +
+                $"dirTR=({dirTR.x:F2},{dirTR.y:F2},{dirTR.z:F2})");
             return true;
-        }
-
-        private Vector3 Unproject(Vector2 camViewport)
-        {
-            Ray ray = cameraAccess.ViewportPointToRay(camViewport);
-            return ray.origin + ray.direction * estimatedObjectDepth;
         }
     }
 }

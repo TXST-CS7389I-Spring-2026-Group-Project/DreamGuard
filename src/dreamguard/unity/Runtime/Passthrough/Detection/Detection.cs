@@ -146,6 +146,14 @@ namespace DreamGuard
         // ── Camera — resolved automatically via RequireComponent ──────────────
         protected PassthroughCameraAccess cameraAccess;
 
+        /// <summary>
+        /// Camera pose captured at the start of each inference coroutine (same frame as
+        /// <see cref="PassthroughCameraAccess.GetTexture"/>). Subclasses should use this
+        /// pose — not the live camera pose — when unprojecting detection bounding boxes into
+        /// world space, so that the rays match the frame that was actually analysed.
+        /// </summary>
+        protected Pose _capturedCameraPose;
+
         [Header("Debug")]
         [Tooltip("Draw bounding boxes and labels for ALL post-NMS detections in the Game view, " +
                  "regardless of target filter or confidence threshold.")]
@@ -336,6 +344,15 @@ namespace DreamGuard
         /// </summary>
         private IEnumerator RunInferenceCoroutine(Texture sourceTexture)
         {
+            // Capture the camera pose right now — the same frame we capture the texture.
+            // The inference coroutine takes many seconds to complete (layer-by-layer
+            // scheduling), so by the time OnDetectionFrameComplete() runs the HMD may
+            // have moved significantly. Subclasses must use _capturedCameraPose — not the
+            // live camera transform — when converting detection bboxes to world-space rays,
+            // so that the rays match the frame that was actually analysed.
+            _capturedCameraPose = cameraAccess.GetCameraPose();
+            DreamGuardLog.Log($"[Detection] Captured camera pose: pos={_capturedCameraPose.position:F2} rot={_capturedCameraPose.rotation.eulerAngles:F1}");
+
             // Convert the camera frame to a Tensor<float> sized for the model.
             // TextureConverter handles resizing from the camera's native resolution.
             //
