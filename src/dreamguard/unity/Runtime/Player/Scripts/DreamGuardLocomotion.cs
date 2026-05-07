@@ -7,21 +7,20 @@ namespace DreamGuard
     /// Attach to the root GameObject that should physically move (e.g. OVRCameraRig).
     ///
     /// Left thumbstick  → forward/strafe relative to head direction
-    /// Right thumbstick → snap turn (default 45°)
+    /// Right thumbstick → smooth turn (hold to continue turning)
     /// </summary>
     public class DreamGuardLocomotion : MonoBehaviour
     {
         [Header("Movement")]
         [SerializeField] private float moveSpeed = 2f;
 
-        [Header("Snap Turn")]
-        [SerializeField] private float snapAngle = 5f;
-        [SerializeField] private float snapDeadzone = 0.5f;
+        [Header("Smooth Turn")]
+        [SerializeField] private float turnSpeed = 90f;
+        [SerializeField] private float turnDeadzone = 0.2f;
 
         private Transform _headTransform;
         private CharacterController _controller;
         private float _verticalVelocity;
-        private bool _snapReady = true;
 
         private void Start()
         {
@@ -39,7 +38,7 @@ namespace DreamGuard
         private void Update()
         {
             Move();
-            SnapTurn();
+            SmoothTurn();
         }
 
         private void Move()
@@ -78,22 +77,15 @@ namespace DreamGuard
             }
         }
 
-        private void SnapTurn()
+        private void SmoothTurn()
         {
-            // Right stick X → snap turn
+            // Right stick X → smooth turn
             float x = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch).x;
 
-            if (Mathf.Abs(x) < snapDeadzone)
-            {
-                _snapReady = true;
-                return;
-            }
+            if (Mathf.Abs(x) < turnDeadzone) return;
 
-            if (!_snapReady) return;
-            _snapReady = false;
-
-            // Rotate around the head so the player doesn't slide sideways on snap
-            float angle = x > 0f ? snapAngle : -snapAngle;
+            // Rotate around the head so the player doesn't slide sideways while turning
+            float angle = x * turnSpeed * Time.deltaTime;
             Vector3 pivot = _headTransform != null ? _headTransform.position : transform.position;
             transform.RotateAround(pivot, Vector3.up, angle);
         }
