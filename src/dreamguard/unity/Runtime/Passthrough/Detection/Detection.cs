@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.InferenceEngine;
 using Meta.XR;
+using Meta.XR.ImmersiveDebugger;
 
 namespace DreamGuard
 {
@@ -32,8 +33,8 @@ namespace DreamGuard
     /// ───────────────────
     ///   The defaults ("output_0" / "output_1" / "output_2") match the sample model:
     ///     output_0 — boxes  float[N, 4]  (x1, y1, x2, y2)
-    ///     output_1 — scores float[N]     (confidence 0–1)
-    ///     output_2 — labels int[N]       (COCO class ID)
+    ///     output_1 — labels int[N]       (COCO class ID)
+    ///     output_2 — scores float[N]     (confidence 0–1)
     ///   If you convert a different ONNX model the names may differ — inspect with
     ///   Netron (https://netron.app) and update the Inspector fields accordingly.
     ///
@@ -120,11 +121,27 @@ namespace DreamGuard
         [Tooltip("Name of the per-detection confidence score tensor (float[N]). " +
                  "Leave empty if the model does not output separate scores.")]
         [SerializeField]
-        private string outputScoresName = "output_1";
+        private string outputScoresName = "output_2";
 
         [Tooltip("Name of the class-ID output tensor in the .sentis model (int[N]).")]
         [SerializeField]
-        private string outputClassIdsName = "output_2";
+        private string outputClassIdsName = "output_1";
+
+        // ── Immersive Debugger ─────────────────────────────────────────────────
+
+        [DebugMember(Tweakable = true, Min = 0f, Max = 1f, Category = "Detection")]
+        private float ConfidenceThreshold
+        {
+            get => confidenceThreshold;
+            set => confidenceThreshold = value;
+        }
+
+        [DebugMember(Tweakable = true, Min = 0f, Max = 1f, Category = "Detection")]
+        private float NmsIoUThreshold
+        {
+            get => nmsIoUThreshold;
+            set => nmsIoUThreshold = value;
+        }
 
         // ── Camera — resolved automatically via RequireComponent ──────────────
         protected PassthroughCameraAccess cameraAccess;
@@ -317,7 +334,7 @@ namespace DreamGuard
             }
 
             // Inference is complete — peek the output tensors (still on GPU if GPUCompute backend).
-            // YOLOv9 NMS model outputs: output_0 = boxes[N,4], output_1 = scores[N], output_2 = labels[N]
+            // YOLOv9 NMS model outputs: output_0 = boxes[N,4], output_1 = classIds[N] (int), output_2 = scores[N] (float)
             var coordsRaw = _worker.PeekOutput(outputCoordsName);
             var classRaw  = _worker.PeekOutput(outputClassIdsName);
             // scoresGpu is either a worker-owned GPU tensor (don't dispose) or a CPU tensor
@@ -439,6 +456,26 @@ namespace DreamGuard
             int count = classIdsFloat.shape[0];
             DreamGuardLog.Log($"[Detection] Evaluating {count} raw detections (float class IDs)");
 
+            // Scan all anchors: unique class IDs and score range — tells us if output_2 is truly all-zero.
+            if (count > 0)
+            {
+                float scoreMin = float.MaxValue, scoreMax = float.MinValue;
+                var uniqueClasses = new System.Collections.Generic.HashSet<int>();
+                for (int i = 0; i < count; i++)
+                {
+                    uniqueClasses.Add(Mathf.RoundToInt(classIdsFloat[i]));
+                    if (scores != null && scores.shape[0] > i)
+                    {
+                        float s = scores[i];
+                        if (s < scoreMin) scoreMin = s;
+                        if (s > scoreMax) scoreMax = s;
+                    }
+                }
+                DreamGuardLog.Log(
+                    $"[Detection] Scan — unique classIds({uniqueClasses.Count}): [{string.Join(",", uniqueClasses)}] " +
+                    $"scoreRange: {scoreMin:F3}–{scoreMax:F3}");
+            }
+
             var detections = new List<DetectionResult>(count);
             for (int i = 0; i < count; i++)
             {
@@ -475,6 +512,19 @@ namespace DreamGuard
         /// </summary>
         private void DispatchDetections(List<DetectionResult> detections)
         {
+            // Log top-5 and unique class count PRE-NMS.
+            var preSorted = new List<int>(detections.Count);
+            var preClasses = new System.Collections.Generic.HashSet<string>();
+            for (int i = 0; i < detections.Count; i++) { preSorted.Add(i); preClasses.Add(detections[i].label); }
+            preSorted.Sort((a, b) => detections[b].confidence.CompareTo(detections[a].confidence));
+            var sbPre = new System.Text.StringBuilder($"[Detection] Pre-NMS  — {detections.Count} dets, {preClasses.Count} classes. Top-5: ");
+            for (int t = 0; t < Mathf.Min(5, preSorted.Count); t++)
+            {
+                var d = detections[preSorted[t]];
+                sbPre.Append($"{d.label} {d.confidence:F2}  ");
+            }
+            DreamGuardLog.Log(sbPre.ToString());
+
             IList<int> kept;
             if (applySoftwareNMS && detections.Count > 1)
             {
@@ -488,14 +538,16 @@ namespace DreamGuard
                 kept = all;
             }
 
-            // Log top-5 post-NMS detections by confidence (ApplyNMS already sorts descending).
-            var sb = new System.Text.StringBuilder("[Detection] Top-5: ");
+            // Log top-5 and unique class count POST-NMS.
+            var postClasses = new System.Collections.Generic.HashSet<string>();
+            foreach (int i in kept) postClasses.Add(detections[i].label);
+            var sbPost = new System.Text.StringBuilder($"[Detection] Post-NMS — {kept.Count} dets, {postClasses.Count} classes. Top-5: ");
             for (int t = 0; t < Mathf.Min(5, kept.Count); t++)
             {
                 var d = detections[kept[t]];
-                sb.Append($"{d.label} {d.confidence:F2}  ");
+                sbPost.Append($"{d.label} {d.confidence:F2}  ");
             }
-            DreamGuardLog.Log(sb.ToString());
+            DreamGuardLog.Log(sbPost.ToString());
 
             if (debugDrawBBoxes)
                 _debugDetections.Clear();
@@ -532,9 +584,11 @@ namespace DreamGuard
         // ── NMS helpers ────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Greedy (class-agnostic) non-maximum suppression. Sorts detections by confidence
-        /// descending and suppresses any box that overlaps a kept box by more than
-        /// <see cref="nmsIoUThreshold"/>. Returns the indices of kept detections.
+        /// Greedy class-aware non-maximum suppression. Sorts detections by confidence
+        /// descending and suppresses any box of the same class that overlaps a kept box
+        /// by more than <see cref="nmsIoUThreshold"/>. Boxes of different classes are never
+        /// suppressed against each other, matching standard YOLO NMS behaviour.
+        /// Returns the indices of kept detections.
         /// </summary>
         private List<int> ApplyNMS(IList<DetectionResult> detections)
         {
@@ -556,7 +610,9 @@ namespace DreamGuard
                 for (int oj = oi + 1; oj < order.Count; oj++)
                 {
                     int j = order[oj];
-                    if (!suppressed[j] && IoU(detections[i].bbox, detections[j].bbox) >= nmsIoUThreshold)
+                    if (!suppressed[j]
+                        && detections[i].label == detections[j].label
+                        && IoU(detections[i].bbox, detections[j].bbox) >= nmsIoUThreshold)
                         suppressed[j] = true;
                 }
             }

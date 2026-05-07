@@ -23,6 +23,7 @@ MonoBehaviour:
     - Meta.XR.MultiplayerBlocks.Shared.FriendsMatchmaking
   - AssemblyName: DreamGuard.Passthrough.Detection
     DebugTypes:
+    - DreamGuard.Detection
     - DreamGuard.DetectionBasedPassthrough
   immersiveDebuggerEnabled: 1
   immersiveDebuggerDisplayAtStartup: 0

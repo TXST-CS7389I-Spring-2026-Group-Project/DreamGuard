@@ -3,15 +3,23 @@ Shader "DreamGuard/DetectionPassthrough"
     // Detection-based partial-passthrough shader.
     //
     // Placed on a single large sphere that surrounds the camera (Cull Front renders the
-    // inward-facing surface from inside). The C# side uploads up to MAX_DETECTIONS bounding
-    // boxes in normalised viewport space each inference frame. For every pixel on the sphere
-    // the shader checks whether its viewport coordinate falls inside any detection bbox:
+    // inward-facing surface from inside). The C# side uploads up to MAX_DETECTIONS world-space
+    // bounding-box corners each inference frame. For every pixel on the sphere the shader
+    // checks whether it falls inside any detection region:
     //
-    //   Inside  a bbox → write alpha = 0 via RevSub blend → compositor shows passthrough.
+    //   Inside  a bbox → write alpha = 0 via ColorMask A → compositor shows passthrough.
     //   Outside all bboxes → discard → VR scene shows through the sphere.
     //
-    // No per-detection GameObjects are spawned; the single sphere covers the full FOV and
-    // the shader drives which regions reveal the real world.
+    // Stereo correctness
+    // ──────────────────
+    // Previous approach: bboxes were pre-projected to viewport space on the CPU using
+    // Camera.WorldToViewportPoint — which only produces left-eye coordinates, causing the
+    // left box to appear only in the left eye and the right box only in the right eye.
+    //
+    // Fix: upload the two world-space corner positions (_DetectionWorldBL / _DetectionWorldTR)
+    // and project them in the fragment shader using unity_StereoMatrixVP[unity_StereoEyeIndex].
+    // The GPU selects the correct per-eye VP matrix for each draw-call instance, so both eyes
+    // independently compute the right screen-space bbox without any CPU-side stereo logic.
     //
     // Requirements: camera clearFlags=SolidColor, backgroundColor=(0,0,0,1) and an
     // enabled OVRPassthroughLayer set to Underlay on the same GameObject.
@@ -34,11 +42,13 @@ Shader "DreamGuard/DetectionPassthrough"
 
             #include "UnityCG.cginc"
 
-            // Detection bounding boxes uploaded by DetectionBasedPassthrough.cs each frame.
-            // Each Vector4: (xMin, yMin, xMax, yMax) in normalised viewport coords [0, 1].
-            // Y=0 is the bottom of the screen (Unity convention).
+            // World-space bottom-left and top-right corners for each detection.
+            // Uploaded by DetectionBasedPassthrough.cs each inference frame.
+            // xyz = world position at estimatedObjectDepth along the passthrough-camera ray.
+            // w   = 1 (homogeneous).
             #define MAX_DETECTIONS 16
-            float4 _DetectionBboxes[MAX_DETECTIONS];
+            float4 _DetectionWorldBL[MAX_DETECTIONS];
+            float4 _DetectionWorldTR[MAX_DETECTIONS];
             int    _DetectionCount;
 
             struct appdata
@@ -74,12 +84,37 @@ Shader "DreamGuard/DetectionPassthrough"
                 // Normalised viewport coordinate [0,1] for this pixel.
                 float2 vp = i.screenPos.xy / i.screenPos.w;
 
+                // In single-pass stereo instanced mode (Quest standard), the combined render
+                // texture is twice as wide: eye 0 occupies x=[0,0.5], eye 1 x=[0.5,1.0].
+                // Normalise to per-eye [0,1] so it matches the projected corner coords below.
+                #if defined(UNITY_STEREO_INSTANCING_ENABLED) || defined(UNITY_SINGLE_PASS_STEREO)
+                    vp.x = vp.x * 2.0 - unity_StereoEyeIndex;
+                #endif
+
+                // Select this eye's VP matrix. unity_StereoMatrixVP[0] = left, [1] = right.
+                // On non-stereo platforms UNITY_MATRIX_VP is used directly.
+                #if defined(UNITY_STEREO_INSTANCING_ENABLED) || defined(UNITY_SINGLE_PASS_STEREO)
+                    float4x4 eyeVP = unity_StereoMatrixVP[unity_StereoEyeIndex];
+                #else
+                    float4x4 eyeVP = UNITY_MATRIX_VP;
+                #endif
+
                 // Test against every active detection bbox.
                 for (int d = 0; d < _DetectionCount; d++)
                 {
-                    float4 bb = _DetectionBboxes[d]; // xMin, yMin, xMax, yMax
-                    if (vp.x >= bb.x && vp.x <= bb.z &&
-                        vp.y >= bb.y && vp.y <= bb.w)
+                    // Project world-space corners into this eye's clip space, then to [0,1].
+                    float4 blClip = mul(eyeVP, _DetectionWorldBL[d]);
+                    float4 trClip = mul(eyeVP, _DetectionWorldTR[d]);
+                    float2 blVP   = blClip.xy / blClip.w * 0.5 + 0.5;
+                    float2 trVP   = trClip.xy / trClip.w * 0.5 + 0.5;
+
+                    float xMin = min(blVP.x, trVP.x);
+                    float xMax = max(blVP.x, trVP.x);
+                    float yMin = min(blVP.y, trVP.y);
+                    float yMax = max(blVP.y, trVP.y);
+
+                    if (vp.x >= xMin && vp.x <= xMax &&
+                        vp.y >= yMin && vp.y <= yMax)
                     {
                         // Inside a detection — ColorMask A writes alpha = 0.
                         // The Meta compositor shows the passthrough underlay here.

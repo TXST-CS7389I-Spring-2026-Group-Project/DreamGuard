@@ -180,6 +180,114 @@ PrefabInstance:
       propertyPath: viewportBias.y
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: nmsIoUThreshold
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: detectionTimeout
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: outputScoresName
+      value: output_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: detectionInterval
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: outputClassIdsName
+      value: output_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: confidenceThreshold
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: targetObjects.Array.size
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[1]'
+      value: bus
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[2]'
+      value: train
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[3]'
+      value: cat
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[4]'
+      value: dog
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[5]'
+      value: backpack
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[6]'
+      value: umbrella
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[7]'
+      value: handbag
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[8]'
+      value: bottle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[9]'
+      value: wine glass
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[10]'
+      value: cup
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[11]'
+      value: bowl
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[12]'
+      value: chair
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[13]'
+      value: sofa
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[14]'
+      value: bed
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[15]'
+      value: diningtable
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[16]'
+      value: toilet
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[17]'
+      value: tvmonitor
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[18]'
+      value: laptop
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[19]'
+      value: mouse
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: 'targetObjects.Array.data[20]'
+      value: keyboard
+      objectReference: {fileID: 0}
     - target: {fileID: 5944077451537994531, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
       propertyPath: m_ClearFlags
       value: 2

@@ -65,34 +65,26 @@ namespace DreamGuard
             set => estimatedObjectDepth = value;
         }
 
-        [Tooltip("Fine-tuning offset (viewport units) applied after reprojection. " +
-                 "Use this only to correct for residual misalignment after EstimatedObjectDepth is set correctly. " +
-                 "X = horizontal shift; Y = vertical shift.")]
-        [SerializeField]
-        private Vector2 viewportBias = Vector2.zero;
+        [Tooltip("Multiplier applied to each detection bbox before reprojection. " +
+                 "YOLO fits tight to content so values >1 expand the passthrough hole to cover " +
+                 "the full object boundary. 1.3 = 30% larger on each axis.")]
+        [SerializeField, Range(1f, 3f)]
+        private float bboxExpansion = 1.3f;
 
-        // Immersive Debugger — expose X and Y separately so they can be tweaked
-        // with sliders in the Custom Inspectors panel at runtime.
-        [DebugMember(Tweakable = true, Min = -0.5f, Max = 0.5f, Category = "Detection")]
-        private float ViewportBiasX
+        [DebugMember(Tweakable = true, Min = 1f, Max = 3f, Category = "Detection")]
+        private float BboxExpansion
         {
-            get => viewportBias.x;
-            set => viewportBias.x = value;
-        }
-
-        [DebugMember(Tweakable = true, Min = -0.5f, Max = 0.5f, Category = "Detection")]
-        private float ViewportBiasY
-        {
-            get => viewportBias.y;
-            set => viewportBias.y = value;
+            get => bboxExpansion;
+            set => bboxExpansion = value;
         }
 
         // ── Shader property IDs ────────────────────────────────────────────────
 
         // Max bboxes the shader array can hold. Must match MAX_DETECTIONS in the shader.
         private const int MaxDetections = 16;
-        private static readonly int PropBboxes = Shader.PropertyToID("_DetectionBboxes");
-        private static readonly int PropCount  = Shader.PropertyToID("_DetectionCount");
+        private static readonly int PropWorldBL = Shader.PropertyToID("_DetectionWorldBL");
+        private static readonly int PropWorldTR  = Shader.PropertyToID("_DetectionWorldTR");
+        private static readonly int PropCount    = Shader.PropertyToID("_DetectionCount");
 
         // ── Private state ──────────────────────────────────────────────────────
 
@@ -110,15 +102,13 @@ namespace DreamGuard
         private GameObject _sphere;
         private Material   _material;
 
-        // Suppress repeated fallback warnings in CamViewportToEyeViewport.
-        private bool _loggedCamNotReadyWarning;
-
         // Bounding boxes accumulated during an inference frame (model space), one per
         // NMS-surviving detection. NMS already suppresses true duplicates; keeping detections
         // separate avoids the union-of-scattered-boxes problem where many small same-label
         // detections (e.g. 50+ "person" boxes spanning the whole frame) merge into one giant rect.
         private readonly List<Rect>  _frameModelBboxes = new();
-        private readonly Vector4[]   _bboxBuffer        = new Vector4[MaxDetections];
+        private readonly Vector4[]   _worldBLBuffer     = new Vector4[MaxDetections];
+        private readonly Vector4[]   _worldTRBuffer     = new Vector4[MaxDetections];
 
         // ── Unity lifecycle ────────────────────────────────────────────────────
 
@@ -228,15 +218,28 @@ namespace DreamGuard
             foreach (var bbox in _frameModelBboxes)
             {
                 if (count >= MaxDetections) break;
-                Vector4 vp = BboxToViewport(bbox);
-                _bboxBuffer[count++] = vp;
-                DreamGuardLog.Log(
-                    $"[DetectionBasedPassthrough] " +
-                    $"model=({bbox.xMin:F0},{bbox.yMin:F0},{bbox.xMax:F0},{bbox.yMax:F0}) " +
-                    $"→ viewport=({vp.x:F3},{vp.y:F3},{vp.z:F3},{vp.w:F3})");
+
+                // Expand the bbox symmetrically in model space before unprojecting.
+                // YOLO fits tight to object content; expansion ensures the passthrough
+                // hole covers the full object boundary including bezel/border.
+                Rect expanded = bbox;
+                if (bboxExpansion > 1f)
+                {
+                    float padX = bbox.width  * (bboxExpansion - 1f) * 0.5f;
+                    float padY = bbox.height * (bboxExpansion - 1f) * 0.5f;
+                    expanded = Rect.MinMaxRect(
+                        bbox.xMin - padX, bbox.yMin - padY,
+                        bbox.xMax + padX, bbox.yMax + padY);
+                }
+
+                if (!BboxToWorldCorners(expanded, out Vector4 bl, out Vector4 tr)) continue;
+                _worldBLBuffer[count] = bl;
+                _worldTRBuffer[count] = tr;
+                count++;
             }
 
-            _material.SetVectorArray(PropBboxes, _bboxBuffer);
+            _material.SetVectorArray(PropWorldBL, _worldBLBuffer);
+            _material.SetVectorArray(PropWorldTR, _worldTRBuffer);
             _material.SetInteger(PropCount, count);
             _bboxesActive = true;
             DreamGuardLog.Log($"[DetectionBasedPassthrough] Uploaded {count} bbox(s) to shader");
@@ -358,67 +361,53 @@ namespace DreamGuard
         }
 
         /// <summary>
-        /// Converts a YOLO bounding box from model-input pixel space into eye-display viewport
-        /// coordinates [0,1] by reprojecting through world space.
+        /// Converts a YOLO bounding box from model-input pixel space into two world-space
+        /// corner positions (bottom-left and top-right) at <see cref="estimatedObjectDepth"/>
+        /// along the passthrough camera rays.
         ///
-        /// The passthrough camera has different intrinsics (FOV, principal point, physical
-        /// position) from the eye display cameras. A naive linear mapping — dividing by model
-        /// input size — ignores all of this and is why detection holes appear displaced and
-        /// wrong-sized. Instead we:
-        ///   1. Normalise the bbox corners to camera viewport [0,1] (flipping Y, YOLO Y=0 top).
-        ///   2. Call <see cref="PassthroughCameraAccess.ViewportPointToRay"/> for each corner,
-        ///      which uses the camera's real intrinsics and world-space pose.
-        ///   3. Walk <see cref="estimatedObjectDepth"/> metres along each ray to get a world position.
-        ///   4. Project that world position into the eye camera with <see cref="Camera.WorldToViewportPoint"/>.
-        ///   5. Apply <see cref="viewportBias"/> for any residual fine-tuning.
+        /// The shader receives these world-space corners and projects them independently per
+        /// eye using <c>unity_StereoMatrixVP[unity_StereoEyeIndex]</c>, which is the correct
+        /// per-eye VP matrix supplied by the GPU during single-pass stereo instanced rendering.
+        /// This avoids the left/right split that occurred when bboxes were projected to viewport
+        /// space on the CPU using <c>Camera.WorldToViewportPoint</c> (left-eye only).
         ///
-        /// Returns (xMin, yMin, xMax, yMax) in eye-display viewport space [0,1].
+        /// Returns false (and leaves <paramref name="bl"/>/<paramref name="tr"/> zeroed) when
+        /// the passthrough camera is not yet playing.
         /// </summary>
-        private Vector4 BboxToViewport(Rect bbox)
+        private bool BboxToWorldCorners(Rect bbox, out Vector4 bl, out Vector4 tr)
         {
+            bl = tr = Vector4.zero;
+
+            if (!cameraAccess.IsPlaying)
+            {
+                DreamGuardLog.LogWarning("[DetectionBasedPassthrough] BboxToWorldCorners: " +
+                    "passthrough camera not playing — skipping detection");
+                return false;
+            }
+
             // Camera viewport [0,1] — YOLO Y=0 is image top, Unity Y=0 is viewport bottom.
             float camXMin = bbox.x    / modelInputWidth;
             float camXMax = bbox.xMax / modelInputWidth;
             float camYMin = 1f - bbox.yMax / modelInputHeight;
             float camYMax = 1f - bbox.y    / modelInputHeight;
 
-            Vector2 eyeBL = CamViewportToEyeViewport(new Vector2(camXMin, camYMin));
-            Vector2 eyeTR = CamViewportToEyeViewport(new Vector2(camXMax, camYMax));
+            Vector3 wBL = Unproject(new Vector2(camXMin, camYMin));
+            Vector3 wTR = Unproject(new Vector2(camXMax, camYMax));
 
-            return new Vector4(
-                eyeBL.x + viewportBias.x, eyeBL.y + viewportBias.y,
-                eyeTR.x + viewportBias.x, eyeTR.y + viewportBias.y);
+            bl = new Vector4(wBL.x, wBL.y, wBL.z, 1f);
+            tr = new Vector4(wTR.x, wTR.y, wTR.z, 1f);
+
+            DreamGuardLog.Log(
+                $"[DetectionBasedPassthrough] " +
+                $"model=({bbox.xMin:F0},{bbox.yMin:F0},{bbox.xMax:F0},{bbox.yMax:F0}) " +
+                $"→ worldBL={wBL:F2} worldTR={wTR:F2} depth={estimatedObjectDepth}m");
+            return true;
         }
 
-        /// <summary>
-        /// Reprojects a single point from passthrough-camera viewport space [0,1] into
-        /// eye-display viewport space [0,1], using the passthrough camera's real intrinsics
-        /// and world pose, then projecting through <see cref="Camera.main"/>.
-        ///
-        /// Falls back to the identity mapping when the camera is not yet playing or
-        /// <see cref="Camera.main"/> is unavailable.
-        /// </summary>
-        private Vector2 CamViewportToEyeViewport(Vector2 camViewport)
+        private Vector3 Unproject(Vector2 camViewport)
         {
-            if (_camera == null || !cameraAccess.IsPlaying)
-            {
-                if (!_loggedCamNotReadyWarning)
-                {
-                    _loggedCamNotReadyWarning = true;
-                    DreamGuardLog.LogWarning("[DetectionBasedPassthrough] CamViewportToEyeViewport: " +
-                        "camera not ready — using identity mapping (results will be inaccurate)");
-                }
-                return camViewport;
-            }
-            _loggedCamNotReadyWarning = false;
-
-            // Unproject from camera image → world space using real camera intrinsics + pose.
-            Ray worldRay = cameraAccess.ViewportPointToRay(camViewport);
-            Vector3 worldPos = worldRay.origin + worldRay.direction * estimatedObjectDepth;
-
-            // Project world position → eye-display viewport.
-            Vector3 vp = _camera.WorldToViewportPoint(worldPos);
-            return new Vector2(vp.x, vp.y);
+            Ray ray = cameraAccess.ViewportPointToRay(camViewport);
+            return ray.origin + ray.direction * estimatedObjectDepth;
         }
     }
 }
