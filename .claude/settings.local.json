@@ -23,8 +23,7 @@
       "mcp__UnityMCP__refresh_unity",
       "mcp__UnityMCP__manage_components",
       "mcp__UnityMCP__execute_menu_item",
-      "mcp__UnityMCP__batch_execute",
-      "mcp__UnityMCP__execute_code",
+      "mcp__UnityMCP__create_script",
       "Skill(research-companion:research-companion)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
@@ -34,6 +33,11 @@
       "WebFetch(domain:developers.meta.com)",
       "WebFetch(domain:developer.oculus.com)",
       "WebFetch(domain:docs.unity3d.com)"
+    ],
+    "deny": [
+      "mcp__UnityMCP__batch_execute",
+      "mcp__UnityMCP__execute_code",
+      "mcp__UnityMCP__apply_text_edits"
     ]
   }
 }
