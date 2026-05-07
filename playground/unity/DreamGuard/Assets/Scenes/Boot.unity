@@ -177,6 +177,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: bboxExpansion
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
       propertyPath: viewportBias.y
       value: 0.25
       objectReference: {fileID: 0}

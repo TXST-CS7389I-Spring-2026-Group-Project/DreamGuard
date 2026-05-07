@@ -182,6 +182,18 @@ namespace DreamGuard
         // Diagnostic throttle — one log per second max
         private float _diagTimer;
 
+        // GPU memory management.
+        // Sentis GPUCompute workers accumulate compute buffer allocations between
+        // inference runs on Android — buffers are pooled but the pool high-water mark
+        // grows and is never released until the Worker is disposed. Recreating the
+        // Worker every N runs resets GPU state and prevents progressive lag.
+        private int _inferenceRunCount;
+        private const int WorkerRecreateInterval = 20;
+
+        // Input tensor tracked separately so StopInference() can dispose it even when
+        // StopCoroutine() kills the coroutine before the `using` block unwinds.
+        private Tensor<float> _activeInputTensor;
+
         // ── Unity lifecycle ────────────────────────────────────────────────────
 
         protected virtual void Start()
@@ -197,9 +209,13 @@ namespace DreamGuard
                 return;
             }
 
-            // Parse COCO class labels
+            // Parse COCO class labels — trim here once so the hot path in EvaluateDetections
+            // never calls Trim() on 8400 entries per inference run (Windows line endings
+            // leave a trailing \r on each label that would otherwise cause per-entry allocation).
             _labels = labelsAsset != null
-                ? labelsAsset.text.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                ? Array.ConvertAll(
+                    labelsAsset.text.Split('\n', StringSplitOptions.RemoveEmptyEntries),
+                    l => l.Trim())
                 : Array.Empty<string>();
             DreamGuardLog.Log($"[Detection] Loaded {_labels.Length} labels");
 
@@ -299,6 +315,11 @@ namespace DreamGuard
                 _inferenceCoroutine = null;
             }
             _inferenceRunning = false;
+
+            // StopCoroutine() kills the coroutine without unwinding `using` blocks,
+            // so the input tensor would leak. Dispose it explicitly here.
+            _activeInputTensor?.Dispose();
+            _activeInputTensor = null;
         }
 
         /// <summary>Makes inference fire on the very next eligible Update tick.</summary>
@@ -317,12 +338,18 @@ namespace DreamGuard
         {
             // Convert the camera frame to a Tensor<float> sized for the model.
             // TextureConverter handles resizing from the camera's native resolution.
-            using var inputTensor = TextureConverter.ToTensor(
+            //
+            // NOTE: do NOT use `using var` here. Unity's StopCoroutine() abandons the
+            // coroutine at a yield point without unwinding `using` blocks, so the GPU
+            // tensor would leak. We store the reference in _activeInputTensor instead
+            // and dispose it in StopInference() to cover both the normal and interrupted
+            // exit paths.
+            _activeInputTensor = TextureConverter.ToTensor(
                 sourceTexture, modelInputWidth, modelInputHeight, channels: 3);
 
             // Layer-by-layer execution: schedule inference incrementally across frames
             // to keep the main thread from stalling on the full forward pass.
-            var schedule = _worker.ScheduleIterable(inputTensor);
+            var schedule = _worker.ScheduleIterable(_activeInputTensor);
             int layersDone = 0;
             while (schedule.MoveNext())
             {
@@ -332,6 +359,10 @@ namespace DreamGuard
                     yield return null;
                 }
             }
+
+            // Inference complete — release the input tensor immediately.
+            _activeInputTensor.Dispose();
+            _activeInputTensor = null;
 
             // Inference is complete — peek the output tensors (still on GPU if GPUCompute backend).
             // YOLOv9 NMS model outputs: output_0 = boxes[N,4], output_1 = classIds[N] (int), output_2 = scores[N] (float)
@@ -405,6 +436,17 @@ namespace DreamGuard
                     "Inspect the model in Netron to verify tensor names.");
             }
 
+            // Periodically recreate the Worker to flush GPU compute buffer accumulation.
+            // Sentis GPUCompute pools compute buffers but never shrinks the pool, so GPU
+            // memory grows across runs. Recreating every N runs resets it cleanly.
+            if (++_inferenceRunCount >= WorkerRecreateInterval)
+            {
+                _inferenceRunCount = 0;
+                _worker.Dispose();
+                _worker = new Worker(_runtimeModel, backend);
+                DreamGuardLog.Log($"[Detection] Worker recreated (every {WorkerRecreateInterval} runs) to release GPU state");
+            }
+
             _inferenceRunning = false;
         }
 
@@ -439,7 +481,7 @@ namespace DreamGuard
                 detections.Add(new DetectionResult
                 {
                     bbox       = new Rect(x1, y1, x2 - x1, y2 - y1),
-                    label      = _labels[classId].Trim(),
+                    label      = _labels[classId],
                     confidence = confidence,
                 });
             }
@@ -498,7 +540,7 @@ namespace DreamGuard
                 detections.Add(new DetectionResult
                 {
                     bbox       = new Rect(x1, y1, x2 - x1, y2 - y1),
-                    label      = _labels[classId].Trim(),
+                    label      = _labels[classId],
                     confidence = confidence,
                 });
             }
