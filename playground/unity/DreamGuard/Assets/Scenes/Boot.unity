@@ -176,6 +176,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2369975299864142967, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 4019718231895639026, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
       propertyPath: bboxExpansion
       value: 1.6
@@ -371,7 +375,20 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2033234956083849900, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2015825623}
+    - targetCorrespondingSourceObject: {fileID: 2033234956083849900, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2015825624}
   m_SourcePrefab: {fileID: 100100000, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+--- !u!4 &1130847323 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 162730173387841742, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+  m_PrefabInstance: {fileID: 1130847322}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1130847324 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6774817207113759229, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+  m_PrefabInstance: {fileID: 1130847322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2015825614 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2033234956083849900, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
@@ -443,6 +460,24 @@ MonoBehaviour:
   edgeRenderingEnabled_: 0
   edgeColor_: {r: 1, g: 1, b: 1, a: 1}
   colorMapType: 0
+--- !u!114 &2015825624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015825614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a906b445f343e44da1ed6f08d4457c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Logging::DreamGuard.StudyInputHandler
+  participantId: P00
+  condition: baseline
+  intrusionController: 1
+  intrusionButton: 1
+  playerTransform: {fileID: 1130847324}
+  headsetTransform: {fileID: 1130847323}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

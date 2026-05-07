@@ -38,10 +38,36 @@ namespace DreamGuard.Player.UI
         private void Awake()
         {
             _arrowImage = GetComponent<Image>();
+            if (_arrowImage.sprite == null)
+                _arrowImage.sprite = CreateArrowSprite();
             if (Instance != null && Instance != this)
                 DreamGuardLog.LogWarning("[OrbArrowUI] Duplicate instance detected");
             Instance = this;
             DreamGuardLog.Log("[OrbArrowUI] Awake");
+        }
+
+        /// <summary>
+        /// Generates a simple upward-pointing triangle sprite at runtime so no external
+        /// sprite asset is required.
+        /// </summary>
+        private static Sprite CreateArrowSprite()
+        {
+            const int size = 64;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            int cx = size / 2;
+            for (int y = 0; y < size; y++)
+            {
+                // Triangle widens from a point at the top (y = size-1) to full width at the bottom (y = 0).
+                float halfWidth = ((size - 1 - y) / (float)(size - 1)) * (size / 2f);
+                for (int x = 0; x < size; x++)
+                    pixels[y * size + x] = Mathf.Abs(x - cx) <= halfWidth
+                        ? new Color32(255, 255, 255, 255)
+                        : new Color32(0, 0, 0, 0);
+            }
+            tex.SetPixels32(pixels);
+            tex.Apply();
+            return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
         }
 
         private void OnEnable()

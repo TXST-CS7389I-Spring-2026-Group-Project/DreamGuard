@@ -15,6 +15,7 @@ namespace DreamGuard.Orb
         [SerializeField] private ParticleSystem collectEffect;
 
         private Vector3 _originPosition;
+        private bool _collected;
 
         private void Awake()
         {
@@ -42,16 +43,21 @@ namespace DreamGuard.Orb
 
         private void Collect()
         {
-            DreamGuardLog.Log($"[DreamGuardOrb] Collected — id={gameObject.name}");
+            if (_collected) return;
+            _collected = true;
 
-            StudyLogger.LogOrbCollected(gameObject.name);
+            var manager = GetComponentInParent<OrbManager>();
+            var orbId   = manager != null ? $"{manager.RoomId}_{gameObject.name}" : gameObject.name;
+
+            DreamGuardLog.Log($"[DreamGuardOrb] Collected — id={orbId}");
+
+            StudyLogger.LogOrbCollected(orbId);
             // Notify the manager in this orb's own room hierarchy, not necessarily the
             // global Instance (which belongs to whichever room was most recently entered).
-            var manager = GetComponentInParent<OrbManager>();
             if (manager != null)
                 manager.NotifyOrbCollected(this);
             else
-                DreamGuardLog.LogWarning($"[DreamGuardOrb] No OrbManager found in parent hierarchy — id={gameObject.name}");
+                DreamGuardLog.LogWarning($"[DreamGuardOrb] No OrbManager found in parent hierarchy — id={orbId}");
 
             if (collectEffect != null)
             {

@@ -45,7 +45,7 @@ namespace DreamGuard.Experiment
     ///
     /// Door setup:
     ///   entranceDoorBlocker starts <b>disabled</b> (player can walk through); enabled on enter.
-    ///   exitDoorBlocker starts <b>enabled</b> (locked); disabled when room is complete.
+    ///   exitDoorBlocker starts <b>active</b> (locked); deactivated (disappears) when room is complete.
     ///
     /// Logged events (study.csv): ROOM_ENTER, CONDITION_BLOCK_START, ROOM_HALFWAY, TRIGGER, ROOM_COMPLETE
     /// Logged events (rooms.csv): ENTER on room entry, EXIT on room complete
@@ -75,7 +75,7 @@ namespace DreamGuard.Experiment
         [SerializeField] private Collider entranceDoorBlocker;
 
         [Tooltip("Collider that blocks the exit until all orbs are collected. " +
-                 "Must be ENABLED by default (locked). Leave null for Room 4.")]
+                 "Must be ENABLED/ACTIVE by default (locked). Deactivated (disappears) when room is complete. Leave null for Room 4.")]
         [SerializeField] private Collider exitDoorBlocker;
 
         [Tooltip("Transform the HUD arrow points toward after this room is complete, " +
@@ -133,7 +133,7 @@ namespace DreamGuard.Experiment
             // Orbs live under a child named "Orbs"; fall back to this transform.
             var orbsRoot = transform.Find("Orbs") ?? transform;
             var label    = string.IsNullOrEmpty(roomDisplayName) ? roomId : roomDisplayName;
-            _orbManager.Initialize(orbsRoot, label);
+            _orbManager.Initialize(orbsRoot, label, roomId);
 
             DreamGuardLog.Log($"[RoomExperiment] OrbManager ready — root='{orbsRoot.name}' label='{label}'");
         }
@@ -245,8 +245,8 @@ namespace DreamGuard.Experiment
 
                 if (exitDoorBlocker != null)
                 {
-                    exitDoorBlocker.enabled = false;
-                    DreamGuardLog.Log($"[RoomExperiment] Exit door opened — roomId={roomId}");
+                    exitDoorBlocker.gameObject.SetActive(false);
+                    DreamGuardLog.Log($"[RoomExperiment] Exit door disappeared — roomId={roomId}");
                 }
 
                 if (nextRoomTarget != null)

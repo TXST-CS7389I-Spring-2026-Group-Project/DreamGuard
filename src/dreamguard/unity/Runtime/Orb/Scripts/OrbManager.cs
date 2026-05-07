@@ -30,6 +30,7 @@ namespace DreamGuard.Orb
         [SerializeField] private string roomDisplayName = "Room";
 
         public string RoomDisplayName => roomDisplayName;
+        public string RoomId { get; private set; }
         public int TotalOrbs { get; private set; }
         public int CollectedOrbs { get; private set; }
 
@@ -49,11 +50,12 @@ namespace DreamGuard.Orb
         /// Sets the orbs root and display name before Start fires.
         /// Called by RoomExperiment immediately after adding this component in Awake.
         /// </summary>
-        public void Initialize(Transform orbsRoot, string displayName)
+        public void Initialize(Transform orbsRoot, string displayName, string roomId)
         {
-            orbsParent    = orbsRoot;
+            orbsParent      = orbsRoot;
             roomDisplayName = displayName;
-            DreamGuardLog.Log($"[OrbManager] Initialize — room='{roomDisplayName}'");
+            RoomId          = roomId;
+            DreamGuardLog.Log($"[OrbManager] Initialize — room='{roomDisplayName}' roomId='{RoomId}'");
         }
 
         private void Start()
