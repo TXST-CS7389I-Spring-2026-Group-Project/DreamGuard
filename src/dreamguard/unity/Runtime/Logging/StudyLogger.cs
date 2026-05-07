@@ -54,6 +54,18 @@ namespace DreamGuard
         public static bool IsActive => _active;
 
         /// <summary>
+        /// Registers Application.quitting so SESSION_END is always written even if
+        /// EndSession() is never called explicitly (e.g. app force-quit or crash after
+        /// the OS has already flushed the AutoFlush writers).
+        /// </summary>
+        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void RegisterQuitHandler()
+        {
+            Application.quitting -= EndSession;   // guard against double-registration on domain reload
+            Application.quitting += EndSession;
+        }
+
+        /// <summary>
         /// Opens a new numbered study folder and writes the CSV header.
         /// Safe to call multiple times — ends any previous session first.
         /// </summary>
