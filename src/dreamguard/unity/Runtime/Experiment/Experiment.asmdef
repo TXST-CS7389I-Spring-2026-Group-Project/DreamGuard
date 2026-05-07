@@ -1,0 +1,19 @@
+{
+    "name": "DreamGuard.Experiment",
+    "rootNamespace": "DreamGuard.Experiment",
+    "references": [
+        "DreamGuard.Logging",
+        "DreamGuard.Orb",
+        "DreamGuard.Passthrough.Interface",
+        "DreamGuard.Player"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

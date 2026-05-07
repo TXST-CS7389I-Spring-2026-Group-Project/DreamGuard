@@ -5,7 +5,9 @@ using DreamGuard.Orb;
 namespace DreamGuard.Player.UI
 {
     /// <summary>
-    /// HUD directional arrow that rotates to point toward the nearest uncollected orb.
+    /// HUD directional arrow that rotates to point toward the nearest uncollected orb
+    /// in the active room, or toward a fallback target (e.g. the next room's entrance)
+    /// when the current room is complete.
     ///
     /// Setup:
     ///   1. Place inside a WorldSpace Canvas parented to the Player camera rig.
@@ -14,26 +16,31 @@ namespace DreamGuard.Player.UI
     ///   4. Assign <see cref="playerCamera"/> to the center eye anchor camera, or leave
     ///      blank to fall back to Camera.main.
     ///
-    /// Rendering over world geometry:
-    ///   The Canvas should use a custom material with ZTest Always so the arrow is
-    ///   never occluded by dungeon geometry. Alternatively, set the Canvas Sort Order
-    ///   to a high value (e.g. 100) and ensure no other overlays outrank it.
+    /// RoomExperiment calls <see cref="SetFallbackTarget"/> after a room is completed so
+    /// the arrow guides the player toward the next door. The fallback is cleared when the
+    /// next room's OrbManager activates (RoomExperiment calls SetFallbackTarget(null)).
     ///
-    /// The arrow hides automatically when no orbs remain.
+    /// The arrow hides automatically when no orbs remain and no fallback target is set.
     /// </summary>
     [RequireComponent(typeof(Image))]
     public class OrbArrowUI : MonoBehaviour
     {
+        public static OrbArrowUI Instance { get; private set; }
+
         [SerializeField]
         [Tooltip("Camera used to project orb direction into view space. " +
                  "Assign the center eye anchor. Falls back to Camera.main if null.")]
         private Camera playerCamera;
 
         private Image _arrowImage;
+        private Transform _fallbackTarget;
 
         private void Awake()
         {
             _arrowImage = GetComponent<Image>();
+            if (Instance != null && Instance != this)
+                DreamGuardLog.LogWarning("[OrbArrowUI] Duplicate instance detected");
+            Instance = this;
             DreamGuardLog.Log("[OrbArrowUI] Awake");
         }
 
@@ -47,6 +54,11 @@ namespace DreamGuard.Player.UI
             DreamGuardLog.Log("[OrbArrowUI] OnDisable");
         }
 
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+
         private void Start()
         {
             if (playerCamera == null)
@@ -56,30 +68,50 @@ namespace DreamGuard.Player.UI
             }
         }
 
+        /// <summary>
+        /// Sets the fallback target the arrow points toward when no orbs remain in the
+        /// active room. Pass null to clear (arrow hides until the next room activates).
+        /// Called by RoomExperiment on room complete and on room enter.
+        /// </summary>
+        public void SetFallbackTarget(Transform target)
+        {
+            _fallbackTarget = target;
+            DreamGuardLog.Log($"[OrbArrowUI] SetFallbackTarget — {(target != null ? target.name : "null")}");
+        }
+
         private void Update()
         {
-            if (OrbManager.Instance == null || playerCamera == null)
+            if (playerCamera == null)
             {
                 SetVisible(false);
                 return;
             }
 
-            var remaining = OrbManager.Instance.RemainingOrbs;
-            if (remaining.Count == 0)
+            // Prefer pointing at remaining orbs in the active room.
+            if (OrbManager.Instance != null)
             {
-                SetVisible(false);
+                var remaining = OrbManager.Instance.RemainingOrbs;
+                if (remaining.Count > 0)
+                {
+                    Transform nearest = FindNearest(remaining);
+                    if (nearest != null)
+                    {
+                        SetVisible(true);
+                        PointToward(nearest.position);
+                        return;
+                    }
+                }
+            }
+
+            // Fallback: point toward the next room / door when the current room is done.
+            if (_fallbackTarget != null)
+            {
+                SetVisible(true);
+                PointToward(_fallbackTarget.position);
                 return;
             }
 
-            Transform nearest = FindNearest(remaining);
-            if (nearest == null)
-            {
-                SetVisible(false);
-                return;
-            }
-
-            SetVisible(true);
-            PointToward(nearest.position);
+            SetVisible(false);
         }
 
         private Transform FindNearest(System.Collections.Generic.IReadOnlyList<DreamGuardOrb> orbs)

@@ -5,19 +5,31 @@ using UnityEngine;
 namespace DreamGuard.Orb
 {
     /// <summary>
-    /// Scene-level singleton that tracks all DreamGuardOrb instances.
+    /// Per-room orb tracker. One instance lives on each Room GameObject.
     ///
-    /// Populated at Start via FindObjectsByType. Each DreamGuardOrb calls
-    /// <see cref="NotifyOrbCollected"/> when it is collected, keeping the
-    /// count and remaining list up to date.
+    /// On Start each manager scans its <see cref="orbsParent"/> subtree (or its own
+    /// transform if that field is null) for <see cref="DreamGuardOrb"/> children.
     ///
-    /// This component is NOT DontDestroyOnLoad — a new instance is expected
-    /// each time a scene containing orbs is loaded.
+    /// Call <see cref="ActivateAsCurrentRoom"/> (from <c>RoomExperiment</c>) to make
+    /// this the globally-visible instance. The static <see cref="Instance"/> and
+    /// <see cref="OnActiveManagerChanged"/> event let UI components (OrbCounterUI,
+    /// OrbArrowUI) react without hard references to individual rooms.
     /// </summary>
     public class OrbManager : MonoBehaviour
     {
         public static OrbManager Instance { get; private set; }
 
+        /// <summary>Fired when a new room becomes active. Arg: the new active manager.</summary>
+        public static event Action<OrbManager> OnActiveManagerChanged;
+
+        [Tooltip("Root transform to scan for DreamGuardOrb children. " +
+                 "Assign the 'Orbs' child of the room. Falls back to this transform if null.")]
+        [SerializeField] private Transform orbsParent;
+
+        [Tooltip("Display name shown in the HUD counter, e.g. 'Room 1'.")]
+        [SerializeField] private string roomDisplayName = "Room";
+
+        public string RoomDisplayName => roomDisplayName;
         public int TotalOrbs { get; private set; }
         public int CollectedOrbs { get; private set; }
 
@@ -28,25 +40,21 @@ namespace DreamGuard.Orb
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                DreamGuardLog.LogWarning("[OrbManager] Duplicate instance — destroying this one");
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
-            DreamGuardLog.Log("[OrbManager] Awake");
+            // Multiple OrbManagers coexist in the scene (one per room).
+            // Instance is set explicitly via ActivateAsCurrentRoom — not in Awake.
+            DreamGuardLog.Log($"[OrbManager] Awake — room='{roomDisplayName}'");
         }
 
         private void Start()
         {
-            var allOrbs = FindObjectsByType<DreamGuardOrb>(FindObjectsSortMode.None);
+            var root = orbsParent != null ? orbsParent : transform;
+            var allOrbs = root.GetComponentsInChildren<DreamGuardOrb>();
             TotalOrbs = allOrbs.Length;
             CollectedOrbs = 0;
             _remainingOrbs.Clear();
             _remainingOrbs.AddRange(allOrbs);
-            DreamGuardLog.Log($"[OrbManager] Start — found {TotalOrbs} orb(s) in scene");
-            OnOrbCountChanged?.Invoke(CollectedOrbs, TotalOrbs);
+            DreamGuardLog.Log($"[OrbManager] Start — room='{roomDisplayName}' found {TotalOrbs} orb(s)");
+            // Do NOT fire OnOrbCountChanged here — wait until ActivateAsCurrentRoom is called.
         }
 
         private void OnDestroy()
@@ -54,8 +62,21 @@ namespace DreamGuard.Orb
             if (Instance == this)
             {
                 Instance = null;
-                DreamGuardLog.Log("[OrbManager] OnDestroy");
+                DreamGuardLog.Log($"[OrbManager] OnDestroy — was active instance room='{roomDisplayName}'");
             }
+        }
+
+        /// <summary>
+        /// Makes this manager the active instance visible to UI components.
+        /// Call from RoomExperiment when the player enters this room.
+        /// Fires <see cref="OnActiveManagerChanged"/> and an initial <see cref="OnOrbCountChanged"/>.
+        /// </summary>
+        public void ActivateAsCurrentRoom()
+        {
+            Instance = this;
+            DreamGuardLog.Log($"[OrbManager] ActivateAsCurrentRoom — room='{roomDisplayName}' {CollectedOrbs}/{TotalOrbs}");
+            OnActiveManagerChanged?.Invoke(this);
+            OnOrbCountChanged?.Invoke(CollectedOrbs, TotalOrbs);
         }
 
         /// <summary>Called by DreamGuardOrb immediately before it destroys itself.</summary>
@@ -63,7 +84,7 @@ namespace DreamGuard.Orb
         {
             _remainingOrbs.Remove(orb);
             CollectedOrbs++;
-            DreamGuardLog.Log($"[OrbManager] Orb collected — {CollectedOrbs}/{TotalOrbs} remaining={_remainingOrbs.Count}");
+            DreamGuardLog.Log($"[OrbManager] Orb collected — room='{roomDisplayName}' {CollectedOrbs}/{TotalOrbs} remaining={_remainingOrbs.Count}");
             OnOrbCountChanged?.Invoke(CollectedOrbs, TotalOrbs);
         }
 

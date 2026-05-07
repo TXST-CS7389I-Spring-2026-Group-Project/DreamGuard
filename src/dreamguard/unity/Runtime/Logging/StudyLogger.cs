@@ -31,6 +31,7 @@ namespace DreamGuard
         private static StreamWriter _lControllerCsv;
         private static StreamWriter _headsetCsv;
         private static StreamWriter _collectionCsv;
+        private static StreamWriter _roomsCsv;
 
         private static string _participantId;
         private static string _condition;
@@ -79,6 +80,7 @@ namespace DreamGuard
                 _lControllerCsv = OpenTrackingCsv(sessionDir, "l_controller.csv", "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
                 _headsetCsv     = OpenTrackingCsv(sessionDir, "headset.csv",      "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
                 _collectionCsv  = OpenTrackingCsv(sessionDir, "collection.csv",   "timestamp_iso,orb_id");
+                _roomsCsv       = OpenTrackingCsv(sessionDir, "rooms.csv",         "timestamp_iso,event,room_id");
 
                 _lastPlayerPos = NaNVec3;
                 _lastRCtrlPos  = NaNVec3; _lastRCtrlRot = NaNQuat;
@@ -149,6 +151,58 @@ namespace DreamGuard
             _collectionCsv?.WriteLine($"{Ts()},{CsvEscape(orbId)}");
         }
 
+        // ── room / condition events ──────────────────────────────────────────────
+
+        /// <summary>
+        /// Logs a ROOM_ENTER event to study.csv and an ENTER row to rooms.csv.
+        /// Call when the participant enters a room (or at session start for Room 1).
+        /// </summary>
+        public static void LogRoomEnter(string roomId)
+        {
+            _roomsCsv?.WriteLine($"{Ts()},ENTER,{CsvEscape(roomId)}");
+            Log("ROOM_ENTER", $"room_id={roomId}");
+        }
+
+        /// <summary>
+        /// Logs a ROOM_HALFWAY event to study.csv — fired after the 2nd orb in a 4-orb room.
+        /// This is the ground-truth timestamp for trigger-latency analysis:
+        ///   latency = TRIGGER.timestamp − ROOM_HALFWAY.timestamp.
+        /// </summary>
+        public static void LogRoomHalfway(string roomId, int orbsCollected, int totalOrbs) =>
+            Log("ROOM_HALFWAY", $"room_id={roomId} orbs_collected={orbsCollected} total_orbs={totalOrbs}");
+
+        /// <summary>
+        /// Logs a ROOM_COMPLETE event to study.csv and an EXIT row to rooms.csv.
+        /// Call when the participant collects all orbs and the exit door opens.
+        /// room_duration = EXIT.timestamp − ENTER.timestamp in rooms.csv.
+        /// </summary>
+        public static void LogRoomComplete(string roomId)
+        {
+            _roomsCsv?.WriteLine($"{Ts()},EXIT,{CsvEscape(roomId)}");
+            Log("ROOM_COMPLETE", $"room_id={roomId}");
+        }
+
+        /// <summary>
+        /// Logs a CONDITION_BLOCK_START event — pairs a condition name with the room in the log.
+        /// Call immediately after ROOM_ENTER.
+        /// </summary>
+        public static void LogConditionBlockStart(string roomId, string condition) =>
+            Log("CONDITION_BLOCK_START", $"room_id={roomId} condition={condition}");
+
+        /// <summary>
+        /// Logs a FALSE_POSITIVE event — call when a passthrough technique fires with no
+        /// confederate present. Important for trust/disruption analysis.
+        /// </summary>
+        public static void LogFalsePositive(string technique, string detail = "") =>
+            Log("FALSE_POSITIVE", string.IsNullOrEmpty(detail) ? $"technique={technique}" : $"technique={technique} {detail}");
+
+        /// <summary>
+        /// Logs a CONFEDERATE_EXIT event — call when the confederate leaves the participant's
+        /// space after an intrusion. Bounds the intrusion episode duration.
+        /// </summary>
+        public static void LogConfederateExit(string roomId, string detail = "") =>
+            Log("CONFEDERATE_EXIT", string.IsNullOrEmpty(detail) ? $"room_id={roomId}" : $"room_id={roomId} {detail}");
+
         // ── per-frame tracking ───────────────────────────────────────────────────
 
         /// <summary>
@@ -213,7 +267,8 @@ namespace DreamGuard
             try { _lControllerCsv?.Close(); } catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close l_controller.csv failed: {e.Message}"); }
             try { _headsetCsv?.Close(); }     catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close headset.csv failed: {e.Message}"); }
             try { _collectionCsv?.Close(); }  catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close collection.csv failed: {e.Message}"); }
-            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = _collectionCsv = null;
+            try { _roomsCsv?.Close(); }       catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close rooms.csv failed: {e.Message}"); }
+            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = _collectionCsv = _roomsCsv = null;
 
             DreamGuardLog.Log("[StudyLogger] Session ended.");
         }

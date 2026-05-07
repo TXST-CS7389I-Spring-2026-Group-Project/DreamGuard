@@ -2679,6 +2679,7 @@ GameObject:
   - component: {fileID: 134859436}
   - component: {fileID: 134859438}
   - component: {fileID: 134859437}
+  - component: {fileID: 134859439}
   m_Layer: 0
   m_Name: Door3-4
   m_TagString: Untagged
@@ -2758,6 +2759,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134859435}
   m_Mesh: {fileID: -5326400611293709114, guid: a14c8f7c49948444d999888be655ac00, type: 3}
+--- !u!65 &134859439
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134859435}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2.75, z: 0.7735462}
+  m_Center: {x: -0.8200989, y: 1.375, z: 0}
 --- !u!1 &138330935
 GameObject:
   m_ObjectHideFlags: 0
@@ -15576,6 +15598,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 850088680}
+  - component: {fileID: 850088681}
   m_Layer: 0
   m_Name: Room3
   m_TagString: Untagged
@@ -15603,6 +15626,26 @@ Transform:
   - {fileID: 1488421034}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &850088681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850088679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
+  roomId: Room_3
+  conditionName: default
+  enterOnStart: 0
+  orbManager: {fileID: 0}
+  entranceDoorBlocker: {fileID: 877259966}
+  exitDoorBlocker: {fileID: 134859439}
+  nextRoomTarget: {fileID: 2045275664}
+  passthroughTechnique: {fileID: 0}
 --- !u!1001 &862289515
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15940,6 +15983,7 @@ GameObject:
   - component: {fileID: 877259963}
   - component: {fileID: 877259965}
   - component: {fileID: 877259964}
+  - component: {fileID: 877259966}
   m_Layer: 0
   m_Name: Door2-3
   m_TagString: Untagged
@@ -16019,6 +16063,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 877259962}
   m_Mesh: {fileID: -5326400611293709114, guid: a14c8f7c49948444d999888be655ac00, type: 3}
+--- !u!65 &877259966
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 877259962}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2.75, z: 0.7735462}
+  m_Center: {x: -0.8200989, y: 1.375, z: 0}
 --- !u!1 &880799240
 GameObject:
   m_ObjectHideFlags: 0
@@ -16940,6 +17005,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 914624217}
+  - component: {fileID: 914624218}
   m_Layer: 0
   m_Name: Room1
   m_TagString: Untagged
@@ -16968,6 +17034,26 @@ Transform:
   - {fileID: 100000002}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &914624218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914624216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
+  roomId: Room_1
+  conditionName: default
+  enterOnStart: 1
+  orbManager: {fileID: 0}
+  entranceDoorBlocker: {fileID: 0}
+  exitDoorBlocker: {fileID: 1070756404}
+  nextRoomTarget: {fileID: 1269300149}
+  passthroughTechnique: {fileID: 0}
 --- !u!1 &928760542
 GameObject:
   m_ObjectHideFlags: 0
@@ -19120,6 +19206,7 @@ GameObject:
   - component: {fileID: 1070756401}
   - component: {fileID: 1070756403}
   - component: {fileID: 1070756402}
+  - component: {fileID: 1070756404}
   m_Layer: 0
   m_Name: Door1-2
   m_TagString: Untagged
@@ -19199,6 +19286,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070756400}
   m_Mesh: {fileID: -5326400611293709114, guid: a14c8f7c49948444d999888be655ac00, type: 3}
+--- !u!65 &1070756404
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070756400}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2.75, z: 0.7735462}
+  m_Center: {x: -0.8200989, y: 1.375, z: 0}
 --- !u!1 &1071255320
 GameObject:
   m_ObjectHideFlags: 0
@@ -22862,6 +22970,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1269300149}
+  - component: {fileID: 1269300150}
   m_Layer: 0
   m_Name: Room2
   m_TagString: Untagged
@@ -22889,6 +22998,26 @@ Transform:
   - {fileID: 1329362235}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1269300150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269300148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
+  roomId: Room_2
+  conditionName: default
+  enterOnStart: 0
+  orbManager: {fileID: 0}
+  entranceDoorBlocker: {fileID: 1070756404}
+  exitDoorBlocker: {fileID: 877259966}
+  nextRoomTarget: {fileID: 850088680}
+  passthroughTechnique: {fileID: 0}
 --- !u!1 &1277488843
 GameObject:
   m_ObjectHideFlags: 0
@@ -37247,6 +37376,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2045275664}
+  - component: {fileID: 2045275665}
   m_Layer: 0
   m_Name: Room4
   m_TagString: Untagged
@@ -37274,6 +37404,26 @@ Transform:
   - {fileID: 247181206}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2045275665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045275663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab0416f94fc8fb44840cf666ba4678c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Experiment::DreamGuard.Experiment.RoomExperiment
+  roomId: Room_4
+  conditionName: default
+  enterOnStart: 0
+  orbManager: {fileID: 0}
+  entranceDoorBlocker: {fileID: 134859439}
+  exitDoorBlocker: {fileID: 0}
+  nextRoomTarget: {fileID: 0}
+  passthroughTechnique: {fileID: 0}
 --- !u!1 &2048817935
 GameObject:
   m_ObjectHideFlags: 0

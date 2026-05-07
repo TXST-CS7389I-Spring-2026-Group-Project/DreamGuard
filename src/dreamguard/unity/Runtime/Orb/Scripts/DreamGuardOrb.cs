@@ -45,7 +45,13 @@ namespace DreamGuard.Orb
             DreamGuardLog.Log($"[DreamGuardOrb] Collected — id={gameObject.name}");
 
             StudyLogger.LogOrbCollected(gameObject.name);
-            OrbManager.Instance?.NotifyOrbCollected(this);
+            // Notify the manager in this orb's own room hierarchy, not necessarily the
+            // global Instance (which belongs to whichever room was most recently entered).
+            var manager = GetComponentInParent<OrbManager>();
+            if (manager != null)
+                manager.NotifyOrbCollected(this);
+            else
+                DreamGuardLog.LogWarning($"[DreamGuardOrb] No OrbManager found in parent hierarchy — id={gameObject.name}");
 
             if (collectEffect != null)
             {
