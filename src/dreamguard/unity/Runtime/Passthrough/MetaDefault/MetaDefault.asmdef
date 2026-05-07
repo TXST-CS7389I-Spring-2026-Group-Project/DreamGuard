@@ -1,0 +1,18 @@
+{
+    "name": "DreamGuard.Passthrough.MetaDefault",
+    "rootNamespace": "DreamGuard.Passthrough.MetaDefault",
+    "references": [
+        "Oculus.VR",
+        "DreamGuard.Logging",
+        "DreamGuard.Passthrough.Interface"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -15645,7 +15645,7 @@ MonoBehaviour:
   entranceDoorBlocker: {fileID: 877259966}
   exitDoorBlocker: {fileID: 134859439}
   nextRoomTarget: {fileID: 2045275664}
-  passthroughType: 2
+  passthroughType: 3
 --- !u!1001 &862289515
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17053,7 +17053,7 @@ MonoBehaviour:
   entranceDoorBlocker: {fileID: 0}
   exitDoorBlocker: {fileID: 1070756404}
   nextRoomTarget: {fileID: 1269300149}
-  passthroughType: 0
+  passthroughType: 6
 --- !u!1 &928760542
 GameObject:
   m_ObjectHideFlags: 0
@@ -37423,7 +37423,7 @@ MonoBehaviour:
   entranceDoorBlocker: {fileID: 134859439}
   exitDoorBlocker: {fileID: 0}
   nextRoomTarget: {fileID: 0}
-  passthroughType: 3
+  passthroughType: 2
 --- !u!1 &2048817935
 GameObject:
   m_ObjectHideFlags: 0

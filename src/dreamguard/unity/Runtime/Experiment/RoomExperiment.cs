@@ -25,6 +25,8 @@ namespace DreamGuard.Experiment
         Grid,
         /// <summary>DreamGuardVerticalFold — vertical fold technique.</summary>
         VerticalFold,
+        /// <summary>DreamGuardMetaDefaultPassthrough — forces the OS Guardian boundary grid on command (best-effort; deprecated API).</summary>
+        MetaDefault,
     }
 
     /// <summary>
@@ -174,8 +176,9 @@ namespace DreamGuard.Experiment
             PassthroughTechniqueType.Sphere      => "PassthroughSphere",
             PassthroughTechniqueType.Detection   => "DetectionBasedPassthrough",
             PassthroughTechniqueType.Grid        => "DreamGuardGridPassthrough",
-            PassthroughTechniqueType.VerticalFold => "DreamGuardVerticalFold",
-            _                                    => "",
+            PassthroughTechniqueType.VerticalFold  => "DreamGuardVerticalFold",
+            PassthroughTechniqueType.MetaDefault   => "DreamGuardMetaDefaultPassthrough",
+            _                                      => "",
         };
 
         // ── Entry ──────────────────────────────────────────────────────────────
