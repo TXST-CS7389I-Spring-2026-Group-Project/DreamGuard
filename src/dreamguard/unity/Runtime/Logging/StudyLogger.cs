@@ -30,6 +30,7 @@ namespace DreamGuard
         private static StreamWriter _rControllerCsv;
         private static StreamWriter _lControllerCsv;
         private static StreamWriter _headsetCsv;
+        private static StreamWriter _collectionCsv;
 
         private static string _participantId;
         private static string _condition;
@@ -77,6 +78,7 @@ namespace DreamGuard
                 _rControllerCsv = OpenTrackingCsv(sessionDir, "r_controller.csv", "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
                 _lControllerCsv = OpenTrackingCsv(sessionDir, "l_controller.csv", "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
                 _headsetCsv     = OpenTrackingCsv(sessionDir, "headset.csv",      "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
+                _collectionCsv  = OpenTrackingCsv(sessionDir, "collection.csv",   "timestamp_iso,orb_id");
 
                 _lastPlayerPos = NaNVec3;
                 _lastRCtrlPos  = NaNVec3; _lastRCtrlRot = NaNQuat;
@@ -137,6 +139,15 @@ namespace DreamGuard
         /// </summary>
         public static void LogTechniqueChange(string technique) =>
             Log("TECHNIQUE_CHANGE", $"technique={technique}");
+
+        /// <summary>
+        /// Logs an orb collection event to collection.csv.
+        /// </summary>
+        public static void LogOrbCollected(string orbId)
+        {
+            if (!_active) return;
+            _collectionCsv?.WriteLine($"{Ts()},{CsvEscape(orbId)}");
+        }
 
         // ── per-frame tracking ───────────────────────────────────────────────────
 
@@ -201,7 +212,8 @@ namespace DreamGuard
             try { _rControllerCsv?.Close(); } catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close r_controller.csv failed: {e.Message}"); }
             try { _lControllerCsv?.Close(); } catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close l_controller.csv failed: {e.Message}"); }
             try { _headsetCsv?.Close(); }     catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close headset.csv failed: {e.Message}"); }
-            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = null;
+            try { _collectionCsv?.Close(); }  catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close collection.csv failed: {e.Message}"); }
+            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = _collectionCsv = null;
 
             DreamGuardLog.Log("[StudyLogger] Session ended.");
         }
