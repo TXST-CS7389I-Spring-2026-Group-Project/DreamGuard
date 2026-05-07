@@ -1,22 +1,18 @@
-# Third Party Assets
+# Third-Party Assets & References
 
-List the assets used below.
+## Assets
 
-## Dungeon
-
-- https://kaylousberg.itch.io/kaykit-dungeon-remastered
-
-## KayKit
-
-- [KayKit Forest Nature Pack 1.0 (FREE)](https://kaylousberg.com/game-assets/forest-nature-pack); CC0 Licensed
-- [kenney_platformer-kit](https://kenney.nl/assets/platformer-kit); CC0 Licensed
-- [kenney_ui-pack-pixel-adventure](https://kenney.nl/assets/ui-pack-pixel-adventure); CC0 Licensed
-
-https://kenney.nl/assets/nature-kit
+### KayKit — Dungeon Remastered
+3D dungeon tileset used for environment art.
 https://kaylousberg.itch.io/kaykit-dungeon-remastered
 
+---
 
-## Repos
+## Reference Repositories
 
-- https://github.com/oculus-samples/Unity-PassthroughCameraApiSamples/tree/main
-- github.com/samuelm2/OpenQuestCapture
+### Unity PassthroughCameraApi Samples
+Meta's official passthrough camera API sample project.
+https://github.com/oculus-samples/Unity-PassthroughCameraApiSamples
+
+<!-- Unused, but kept as an additional reference -->
+<!-- https://github.com/samuelm2/OpenQuestCapture -->
