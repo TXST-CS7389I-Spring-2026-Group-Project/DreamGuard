@@ -16241,6 +16241,7 @@ MonoBehaviour:
   exitDoorBlocker: {fileID: 134859439}
   nextRoomTarget: {fileID: 2045275664}
   passthroughType: 3
+  passthroughDuration: 16
 --- !u!1 &859454791 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -6305018873678817125, guid: f50104c98aa59314d957f20dc92af4ea, type: 3}
@@ -17752,7 +17753,8 @@ MonoBehaviour:
   entranceDoorBlocker: {fileID: 0}
   exitDoorBlocker: {fileID: 1070756404}
   nextRoomTarget: {fileID: 1269300149}
-  passthroughType: 1
+  passthroughType: 6
+  passthroughDuration: 4
 --- !u!1 &928760542
 GameObject:
   m_ObjectHideFlags: 0
@@ -24194,6 +24196,7 @@ MonoBehaviour:
   exitDoorBlocker: {fileID: 877259966}
   nextRoomTarget: {fileID: 850088680}
   passthroughType: 1
+  passthroughDuration: 4
 --- !u!1 &1277488843
 GameObject:
   m_ObjectHideFlags: 0
@@ -39622,6 +39625,7 @@ MonoBehaviour:
   exitDoorBlocker: {fileID: 0}
   nextRoomTarget: {fileID: 0}
   passthroughType: 2
+  passthroughDuration: 4
 --- !u!1 &2048817935
 GameObject:
   m_ObjectHideFlags: 0

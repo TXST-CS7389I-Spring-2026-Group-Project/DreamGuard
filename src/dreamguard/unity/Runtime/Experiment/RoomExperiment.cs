@@ -94,6 +94,11 @@ namespace DreamGuard.Experiment
                  "no scene cross-reference needed. Use None for Room 1 (default passthrough).")]
         [SerializeField] private PassthroughTechniqueType passthroughType = PassthroughTechniqueType.None;
 
+        [Tooltip("Seconds before the passthrough technique is automatically disabled after triggering. " +
+                 "Detection needs extra time (~3s) for GPU/camera warmup before inference runs — " +
+                 "use 10–12s for Detection, 4s for all other techniques.")]
+        [SerializeField] private float passthroughDuration = 4f;
+
         // ── Runtime state ──────────────────────────────────────────────────────
 
         private OrbManager _orbManager;
@@ -294,7 +299,7 @@ namespace DreamGuard.Experiment
             StudyLogger.LogTrigger(conditionName, $"room_id={roomId}");
             DreamGuardLog.Log($"[RoomExperiment] Passthrough triggered — type={passthroughType} roomId={roomId}");
 
-            StartCoroutine(DisablePassthroughAfterDelay(4f));
+            StartCoroutine(DisablePassthroughAfterDelay(passthroughDuration));
         }
 
         private IEnumerator DisablePassthroughAfterDelay(float delay)
