@@ -70,8 +70,14 @@ namespace DreamGuard.Experiment
         [SerializeField] private bool enterOnStart = false;
 
         [Header("Doors")]
+        [Tooltip("Trigger collider that fires when the player enters this room. " +
+                 "Place a BoxCollider (Is Trigger = true) on this GameObject, size it to cover " +
+                 "the entrance, and assign it here. Leave null for Room 1 (which uses enterOnStart). " +
+                 "Automatically disabled on entry so it cannot re-fire.")]
+        [SerializeField] private Collider entranceTrigger;
+
         [Tooltip("Collider that blocks the entrance after the player walks in. " +
-                 "Must be DISABLED by default so the player can enter. Leave null for Room 1.")]
+                 "Starts inactive (whole GameObject off). Reactivated on enter. Leave null for Room 1.")]
         [SerializeField] private Collider entranceDoorBlocker;
 
         [Tooltip("Collider that blocks the exit until all orbs are collected. " +
@@ -208,9 +214,15 @@ namespace DreamGuard.Experiment
 
             DreamGuardLog.Log($"[RoomExperiment] EnterRoom — roomId={roomId}");
 
+            if (entranceTrigger != null)
+            {
+                entranceTrigger.enabled = false;
+                DreamGuardLog.Log($"[RoomExperiment] Entrance trigger disabled — roomId={roomId}");
+            }
+
             if (entranceDoorBlocker != null)
             {
-                entranceDoorBlocker.enabled = true;
+                entranceDoorBlocker.gameObject.SetActive(true);
                 DreamGuardLog.Log($"[RoomExperiment] Entrance door closed — roomId={roomId}");
             }
 
@@ -249,10 +261,10 @@ namespace DreamGuard.Experiment
                     DreamGuardLog.Log($"[RoomExperiment] Exit door disappeared — roomId={roomId}");
                 }
 
-                if (nextRoomTarget != null)
+                if (exitDoorBlocker != null)
                 {
-                    OrbArrowUI.Instance?.SetFallbackTarget(nextRoomTarget);
-                    DreamGuardLog.Log($"[RoomExperiment] Arrow pointing to '{nextRoomTarget.name}' — roomId={roomId}");
+                    OrbArrowUI.Instance?.SetFallbackTarget(exitDoorBlocker.transform);
+                    DreamGuardLog.Log($"[RoomExperiment] Arrow pointing to exit door '{exitDoorBlocker.name}' — roomId={roomId}");
                 }
             }
         }
@@ -281,6 +293,18 @@ namespace DreamGuard.Experiment
             _resolvedTechnique.SetEnabled(true);
             StudyLogger.LogTrigger(conditionName, $"room_id={roomId}");
             DreamGuardLog.Log($"[RoomExperiment] Passthrough triggered — type={passthroughType} roomId={roomId}");
+
+            StartCoroutine(DisablePassthroughAfterDelay(4f));
+        }
+
+        private IEnumerator DisablePassthroughAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            if (_resolvedTechnique == null) yield break;
+
+            _resolvedTechnique.SetEnabled(false);
+            DreamGuardLog.Log($"[RoomExperiment] Passthrough disabled after {delay}s — type={passthroughType} roomId={roomId}");
         }
     }
 }

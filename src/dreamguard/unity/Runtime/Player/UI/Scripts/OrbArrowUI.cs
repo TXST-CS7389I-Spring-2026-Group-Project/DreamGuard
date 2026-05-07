@@ -47,24 +47,47 @@ namespace DreamGuard.Player.UI
         }
 
         /// <summary>
-        /// Generates a simple upward-pointing triangle sprite at runtime so no external
-        /// sprite asset is required.
+        /// Generates an upward-pointing arrow sprite (triangular head + rectangular shaft)
+        /// at runtime so no external sprite asset is required. The clear head/tail makes the
+        /// direction unambiguous in all four quadrants.
         /// </summary>
         private static Sprite CreateArrowSprite()
         {
-            const int size = 64;
+            const int size = 128;
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
             var pixels = new Color32[size * size];
             int cx = size / 2;
+
+            // Arrowhead occupies the top 55% of the texture (y = headBase..size-1).
+            // Shaft occupies the bottom 55% (overlapping slightly for a clean join).
+            const int headBase   = 52;   // y where the arrowhead's base sits
+            const int headHalf   = 44;   // half-width of arrowhead at its base
+            const int shaftHalf  = 16;   // half-width of the shaft
+
             for (int y = 0; y < size; y++)
             {
-                // Triangle widens from a point at the top (y = size-1) to full width at the bottom (y = 0).
-                float halfWidth = ((size - 1 - y) / (float)(size - 1)) * (size / 2f);
                 for (int x = 0; x < size; x++)
-                    pixels[y * size + x] = Mathf.Abs(x - cx) <= halfWidth
+                {
+                    bool inside;
+                    if (y >= headBase)
+                    {
+                        // Arrowhead: widens from a point at the top (y = size-1) down to headBase.
+                        float t = (y - headBase) / (float)(size - 1 - headBase);
+                        float hw = Mathf.Lerp(headHalf, 0f, t);
+                        inside = Mathf.Abs(x - cx) <= hw;
+                    }
+                    else
+                    {
+                        // Shaft: constant-width rectangle below the head.
+                        inside = Mathf.Abs(x - cx) <= shaftHalf;
+                    }
+
+                    pixels[y * size + x] = inside
                         ? new Color32(255, 255, 255, 255)
                         : new Color32(0, 0, 0, 0);
+                }
             }
+
             tex.SetPixels32(pixels);
             tex.Apply();
             return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
