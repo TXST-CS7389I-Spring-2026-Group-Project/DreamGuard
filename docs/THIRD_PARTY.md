@@ -14,3 +14,9 @@ List the assets used below.
 
 https://kenney.nl/assets/nature-kit
 https://kaylousberg.itch.io/kaykit-dungeon-remastered
+
+
+## Repos
+
+- https://github.com/oculus-samples/Unity-PassthroughCameraApiSamples/tree/main
+- github.com/samuelm2/OpenQuestCapture
