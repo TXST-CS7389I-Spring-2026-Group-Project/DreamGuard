@@ -110,6 +110,11 @@ namespace DreamGuard
         private readonly Vector4[]   _dirBLBuffer       = new Vector4[MaxDetections];
         private readonly Vector4[]   _dirTRBuffer       = new Vector4[MaxDetections];
 
+        // First detection label/confidence in the current inference frame — used for
+        // TRIGGER log detail without allocating a separate list.
+        private string _frameFirstLabel;
+        private float  _frameFirstConf;
+
         // ── Unity lifecycle ────────────────────────────────────────────────────
 
         private void Awake()
@@ -200,6 +205,13 @@ namespace DreamGuard
 
             if (_frameModelBboxes.Count >= MaxDetections) return;
 
+            // Capture the first detection in this frame for TRIGGER logging.
+            if (_frameModelBboxes.Count == 0)
+            {
+                _frameFirstLabel = label;
+                _frameFirstConf  = confidence;
+            }
+
             DreamGuardLog.Log(
                 $"[DetectionBasedPassthrough] '{label}' conf={confidence:F2} " +
                 $"model=({bboxModelSpace.xMin:F0},{bboxModelSpace.yMin:F0}," +
@@ -241,6 +253,16 @@ namespace DreamGuard
             _material.SetVectorArray(PropDirBL, _dirBLBuffer);
             _material.SetVectorArray(PropDirTR, _dirTRBuffer);
             _material.SetInteger(PropCount, count);
+
+            // Log TRIGGER only on the inactive→active transition (first detection of an
+            // episode). Subsequent frames while _bboxesActive is already true are part
+            // of the same detection event and should not produce additional TRIGGER rows.
+            if (!_bboxesActive)
+            {
+                StudyLogger.LogTrigger("detection",
+                    $"label={_frameFirstLabel} conf={_frameFirstConf:F2} count={count}");
+            }
+
             _bboxesActive = true;
             DreamGuardLog.Log($"[DetectionBasedPassthrough] Uploaded {count} bbox(s) to shader");
 

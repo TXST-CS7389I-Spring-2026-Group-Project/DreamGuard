@@ -93,6 +93,22 @@ namespace DreamGuard
         /// </summary>
         public static void LogIntrusionMark(string detail = "") => Log("INTRUSION_MARK", detail);
 
+        /// <summary>
+        /// Logs a TRIGGER event — call this when a passthrough technique first fires
+        /// in response to an intrusion or detection.  One event per detection
+        /// episode (not per frame); callers are responsible for debouncing.
+        /// detail: "technique=X label=Y conf=Z" or similar.
+        /// </summary>
+        public static void LogTrigger(string technique, string detail = "") =>
+            Log("TRIGGER", string.IsNullOrEmpty(detail) ? $"technique={technique}" : $"technique={technique} {detail}");
+
+        /// <summary>
+        /// Logs a TECHNIQUE_CHANGE event — call when the experimenter switches
+        /// the active passthrough condition via the menu.
+        /// </summary>
+        public static void LogTechniqueChange(string technique) =>
+            Log("TECHNIQUE_CHANGE", $"technique={technique}");
+
         /// <summary>Writes SESSION_END and closes the CSV file.</summary>
         public static void EndSession()
         {

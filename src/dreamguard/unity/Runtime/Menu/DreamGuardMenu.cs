@@ -29,6 +29,22 @@ namespace DreamGuard
         [SerializeField] private OVRInput.Button menuButton = OVRInput.Button.Two;
         [SerializeField] private float menuDistance = 0.65f;
 
+        [Header("Study")]
+        [Tooltip("When true, the menu button is disabled so participants cannot open the menu mid-session. " +
+                 "Toggle from the inspector or via StudyMode property before handing over the headset.")]
+        [SerializeField] private bool studyMode = false;
+
+        /// <summary>Enable/disable study lock mode at runtime (e.g. from the experimenter UI).</summary>
+        public bool StudyMode
+        {
+            get => studyMode;
+            set
+            {
+                studyMode = value;
+                DreamGuardLog.Log($"[DreamGuardMenu] StudyMode={value}");
+            }
+        }
+
         [Header("Laser")]
         [SerializeField] private float laserMaxLength = 5f;
         [SerializeField] private Color laserColor = new Color(0f, 0.5f, 1f);
@@ -133,7 +149,7 @@ namespace DreamGuard
 
         private void Update()
         {
-            if (OVRInput.GetDown(menuButton))
+            if (!studyMode && OVRInput.GetDown(menuButton))
                 SetOpen(!_open, false);
 
             if (!_open) return;
@@ -287,6 +303,9 @@ namespace DreamGuard
             DisableAllPassthroughs();
             if (_active != null && _buttonPassthrough.TryGetValue(_active, out var enable))
                 enable(true);
+
+            string techniqueName = _active?.ButtonLabel ?? "none";
+            StudyLogger.LogTechniqueChange(techniqueName);
         }
     }
 }

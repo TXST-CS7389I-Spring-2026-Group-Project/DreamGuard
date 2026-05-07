@@ -143,6 +143,17 @@ namespace DreamGuard
             _intendedEnabled = enabled;
             DreamGuardLog.Log($"[PassthroughSphere] SetEnabled({enabled})");
 
+            // Study logging: record when the technique is switched on/off.
+            // NOTE: The depth threshold is evaluated entirely on the GPU — there is no
+            // per-intrusion TRIGGER event available from CPU code.  For latency analysis
+            // of the Sphere condition, use the session's INTRUSION_MARK timestamps
+            // alongside video review, or add a SphereProximityTrigger component that
+            // polls EnvironmentDepthManager once that API supports CPU depth queries.
+            if (enabled)
+                StudyLogger.Log("SPHERE_ENABLED", $"radius={sphereRadius}");
+            else
+                StudyLogger.Log("SPHERE_DISABLED");
+
             if (_plane != null)
                 _plane.SetActive(false);
 
