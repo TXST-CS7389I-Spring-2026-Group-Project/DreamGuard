@@ -1,7 +1,3 @@
-# /// script
-# requires-python = ">=3.11"
-# dependencies = ["pandas", "tabulate"]
-# ///
 """
 DreamGuard Study — Session Summary
 ===================================

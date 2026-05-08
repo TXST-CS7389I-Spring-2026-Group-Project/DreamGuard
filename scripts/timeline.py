@@ -1,7 +1,3 @@
-# /// script
-# requires-python = ">=3.11"
-# dependencies = ["pandas", "matplotlib"]
-# ///
 """
 DreamGuard Study — Event Timeline
 ===================================

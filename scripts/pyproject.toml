@@ -1,0 +1,18 @@
+[project]
+name = "dreamguard"
+version = "0.1.0"
+description = "DreamGuard script dependencies."
+requires-python = ">=3.11"
+dependencies = [
+    "pandas",
+    "matplotlib",
+    "numpy",
+    "Pillow",
+    "tabulate",
+    "jupyterlab",
+    "ipykernel",
+]
+
+[tool.uv]
+# Run the notebook:  uv run jupyter lab
+# Run a script:      uv run summary.py ../data
