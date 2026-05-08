@@ -280,12 +280,14 @@ namespace DreamGuard
             if (!value)
             {
                 StopInference();
+                TeardownWorker();
                 ClearBboxes();
                 if (_sphere != null) _sphere.SetActive(false);
                 ApplyLayerAndCamera(false);
             }
             else
             {
+                RebuildWorker();
                 _timeSinceLastDetection = float.MaxValue;
                 _bboxesActive           = false;
                 ApplyLayerAndCamera(true);

@@ -196,7 +196,7 @@ namespace DreamGuard
         // grows and is never released until the Worker is disposed. Recreating the
         // Worker every N runs resets GPU state and prevents progressive lag.
         private int _inferenceRunCount;
-        private const int WorkerRecreateInterval = 20;
+        private const int WorkerRecreateInterval = 10;
 
         // Input tensor tracked separately so StopInference() can dispose it even when
         // StopCoroutine() kills the coroutine before the `using` block unwinds.
@@ -295,7 +295,15 @@ namespace DreamGuard
         protected virtual void OnDestroy()
         {
             DreamGuardLog.Log("[Detection] OnDestroy — disposing worker");
-            _worker?.Dispose();
+            if (_worker != null)
+            {
+                _worker.PeekOutput(outputCoordsName)?.CompleteAllPendingOperations();
+                _worker.PeekOutput(outputClassIdsName)?.CompleteAllPendingOperations();
+                if (!string.IsNullOrEmpty(outputScoresName))
+                    _worker.PeekOutput(outputScoresName)?.CompleteAllPendingOperations();
+                _worker.Dispose();
+                _worker = null;
+            }
         }
 
         // ── Subclass interface ─────────────────────────────────────────────────
@@ -328,6 +336,48 @@ namespace DreamGuard
             // so the input tensor would leak. Dispose it explicitly here.
             _activeInputTensor?.Dispose();
             _activeInputTensor = null;
+        }
+
+        /// <summary>
+        /// Disposes the inference worker and releases its GPU compute buffers.
+        /// Call when the technique is deactivated to free GPU memory immediately
+        /// rather than waiting for OnDestroy.
+        /// </summary>
+        protected void TeardownWorker()
+        {
+            if (_worker != null)
+            {
+                // StopCoroutine() may have killed the inference coroutine mid-ScheduleIterable,
+                // leaving GPU compute work in-flight. CompleteAllPendingOperations() flushes the
+                // GPU command queue before we release the buffers — without this, the Quest GPU
+                // driver retains the buffers until the dangling work finishes (if ever), causing
+                // the performance degradation that persists after detection is disabled.
+                _worker.PeekOutput(outputCoordsName)?.CompleteAllPendingOperations();
+                _worker.PeekOutput(outputClassIdsName)?.CompleteAllPendingOperations();
+                if (!string.IsNullOrEmpty(outputScoresName))
+                    _worker.PeekOutput(outputScoresName)?.CompleteAllPendingOperations();
+                _worker.Dispose();
+                _worker = null;
+            }
+            _inferenceRunCount = 0;
+            DreamGuardLog.Log("[Detection] Worker torn down — GPU buffers released");
+        }
+
+        /// <summary>
+        /// Recreates the inference worker from the already-loaded runtime model.
+        /// Call after <see cref="TeardownWorker"/> when reactivating the technique.
+        /// </summary>
+        protected void RebuildWorker()
+        {
+            if (_runtimeModel == null)
+            {
+                DreamGuardLog.LogWarning("[Detection] RebuildWorker: no runtime model loaded — cannot rebuild");
+                return;
+            }
+            _worker?.Dispose();
+            _worker = new Worker(_runtimeModel, backend);
+            _inferenceRunCount = 0;
+            DreamGuardLog.Log($"[Detection] Worker rebuilt — backend={backend}");
         }
 
         /// <summary>Makes inference fire on the very next eligible Update tick.</summary>
@@ -459,6 +509,10 @@ namespace DreamGuard
             if (++_inferenceRunCount >= WorkerRecreateInterval)
             {
                 _inferenceRunCount = 0;
+                _worker.PeekOutput(outputCoordsName)?.CompleteAllPendingOperations();
+                _worker.PeekOutput(outputClassIdsName)?.CompleteAllPendingOperations();
+                if (!string.IsNullOrEmpty(outputScoresName))
+                    _worker.PeekOutput(outputScoresName)?.CompleteAllPendingOperations();
                 _worker.Dispose();
                 _worker = new Worker(_runtimeModel, backend);
                 DreamGuardLog.Log($"[Detection] Worker recreated (every {WorkerRecreateInterval} runs) to release GPU state");
