@@ -84,9 +84,16 @@ namespace DreamGuard.Experiment
                  "Must be ENABLED/ACTIVE by default (locked). Deactivated (disappears) when room is complete. Leave null for Room 4.")]
         [SerializeField] private Collider exitDoorBlocker;
 
-        [Tooltip("Transform the HUD arrow points toward after this room is complete, " +
-                 "guiding the player to the next room's entrance. Leave null for Room 4.")]
+        [Tooltip("Transform the HUD arrow points toward after this room is complete " +
+                 "when no WaypointGraph end node is available. Leave null if using a WaypointGraph.")]
         [SerializeField] private Transform nextRoomTarget;
+
+        [Header("Navigation")]
+        [Tooltip("Waypoint graph for this room. The graph must be a child of this GameObject. " +
+                 "On room enter the graph is activated for arrow navigation. " +
+                 "On room complete the arrow points to the graph's end node (isEnd = true). " +
+                 "Leave null to disable waypoint navigation for this room.")]
+        [SerializeField] private WaypointGraph waypointGraph;
 
         [Header("Passthrough Technique")]
         [Tooltip("Which passthrough technique fires at the halfway mark (after the 2nd orb). " +
@@ -234,7 +241,8 @@ namespace DreamGuard.Experiment
             _orbManager.ActivateAsCurrentRoom();
             _orbManager.OnOrbCountChanged += OnOrbCountChanged;
 
-            // Arrow tracks this room's orbs now; clear any previous fallback.
+            // Switch to this room's waypoint graph; clear any previous fallback.
+            WaypointGraph.SetActive(waypointGraph);
             OrbArrowUI.Instance?.SetFallbackTarget(null);
 
             StudyLogger.LogRoomEnter(roomId);
@@ -266,10 +274,12 @@ namespace DreamGuard.Experiment
                     DreamGuardLog.Log($"[RoomExperiment] Exit door disappeared — roomId={roomId}");
                 }
 
-                if (exitDoorBlocker != null)
+                // Point the arrow toward the graph's end node, falling back to nextRoomTarget.
+                Transform exitTarget = waypointGraph?.EndNode?.transform ?? nextRoomTarget;
+                if (exitTarget != null)
                 {
-                    OrbArrowUI.Instance?.SetFallbackTarget(exitDoorBlocker.transform);
-                    DreamGuardLog.Log($"[RoomExperiment] Arrow pointing to exit door '{exitDoorBlocker.name}' — roomId={roomId}");
+                    OrbArrowUI.Instance?.SetFallbackTarget(exitTarget);
+                    DreamGuardLog.Log($"[RoomExperiment] Arrow pointing to exit '{exitTarget.name}' — roomId={roomId}");
                 }
             }
         }

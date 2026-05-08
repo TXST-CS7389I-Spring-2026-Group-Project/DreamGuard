@@ -146,7 +146,7 @@ namespace DreamGuard.Player.UI
                     if (nearest != null)
                     {
                         SetVisible(true);
-                        PointToward(nearest.position);
+                        PointToward(Navigate(nearest.position));
                         return;
                     }
                 }
@@ -156,11 +156,28 @@ namespace DreamGuard.Player.UI
             if (_fallbackTarget != null)
             {
                 SetVisible(true);
-                PointToward(_fallbackTarget.position);
+                PointToward(Navigate(_fallbackTarget.position));
                 return;
             }
 
             SetVisible(false);
+        }
+
+        /// <summary>
+        /// Returns the next waypoint position along the shortest graph path to
+        /// <paramref name="targetWorldPos"/>, or the target itself when no
+        /// <see cref="WaypointGraph"/> is present in the scene.
+        /// </summary>
+        private Vector3 Navigate(Vector3 targetWorldPos)
+        {
+            if (WaypointGraph.Instance != null)
+            {
+                Vector3? next = WaypointGraph.Instance.GetNextWaypointToward(
+                    playerCamera.transform.position, targetWorldPos);
+                if (next.HasValue)
+                    return next.Value;
+            }
+            return targetWorldPos;
         }
 
         private Transform FindNearest(System.Collections.Generic.IReadOnlyList<DreamGuardOrb> orbs)

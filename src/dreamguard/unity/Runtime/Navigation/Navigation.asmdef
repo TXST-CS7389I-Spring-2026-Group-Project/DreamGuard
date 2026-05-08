@@ -1,14 +1,9 @@
 {
-    "name": "DreamGuard.Player",
-    "rootNamespace": "DreamGuard.Player",
+    "name": "DreamGuard.Navigation",
+    "rootNamespace": "DreamGuard.Navigation",
     "references": [
         "Oculus.VR",
-        "Unity.RenderPipelines.Core.Runtime",
-        "Unity.RenderPipelines.Universal.Runtime",
-        "DreamGuard.Logging",
-        "DreamGuard.Navigation",
-        "DreamGuard.Orb",
-        "Unity.TextMeshPro"
+        "DreamGuard.Logging"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

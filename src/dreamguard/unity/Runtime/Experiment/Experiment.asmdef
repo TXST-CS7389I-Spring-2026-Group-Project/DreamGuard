@@ -5,6 +5,7 @@
         "DreamGuard.Logging",
         "DreamGuard.Orb",
         "DreamGuard.Passthrough.Interface",
+        "DreamGuard.Navigation",
         "DreamGuard.Player"
     ],
     "includePlatforms": [],

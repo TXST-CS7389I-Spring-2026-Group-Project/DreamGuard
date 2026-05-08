@@ -851,7 +851,6 @@ MonoBehaviour:
   sentisModel: {fileID: 5022602860645237092, guid: a4afe4d6b3c39604d84055daf11b698f, type: 3}
   labelsAsset: {fileID: 4900000, guid: dec3b46b17dc44843862a0ec7a293e71, type: 3}
   backend: 256
-  layersPerFrame: 5
   modelInputWidth: 640
   modelInputHeight: 640
   outputCoordsName: output_0
@@ -1956,7 +1955,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.25}
+  m_AnchoredPosition: {x: 0, y: -0.3}
   m_SizeDelta: {x: 400, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2369975299864142967
