@@ -82,9 +82,10 @@ namespace DreamGuard
 
         // Max bboxes the shader array can hold. Must match MAX_DETECTIONS in the shader.
         private const int MaxDetections = 16;
-        private static readonly int PropDirBL = Shader.PropertyToID("_DetectionDirBL");
-        private static readonly int PropDirTR  = Shader.PropertyToID("_DetectionDirTR");
-        private static readonly int PropCount  = Shader.PropertyToID("_DetectionCount");
+        private static readonly int PropDirBL           = Shader.PropertyToID("_DetectionDirBL");
+        private static readonly int PropDirTR            = Shader.PropertyToID("_DetectionDirTR");
+        private static readonly int PropCount            = Shader.PropertyToID("_DetectionCount");
+        private static readonly int PropCameraLocalToWorld = Shader.PropertyToID("_CameraLocalToWorld");
 
         // ── Private state ──────────────────────────────────────────────────────
 
@@ -107,6 +108,10 @@ namespace DreamGuard
         // separate avoids the union-of-scattered-boxes problem where many small same-label
         // detections (e.g. 50+ "person" boxes spanning the whole frame) merge into one giant rect.
         private readonly List<Rect>  _frameModelBboxes = new();
+        // Camera-local direction vectors for each bbox corner (bottom-left / top-right).
+        // Stored in render-camera-local space so they follow the camera rotation each frame
+        // (camera-locked). The shader transforms them to world space via unity_CameraToWorld
+        // then projects per-eye for correct stereo.
         private readonly Vector4[]   _dirBLBuffer       = new Vector4[MaxDetections];
         private readonly Vector4[]   _dirTRBuffer       = new Vector4[MaxDetections];
 
@@ -173,9 +178,13 @@ namespace DreamGuard
                 ClearBboxes();
             }
 
-            // Keep the sphere centred on the camera.
+            // Keep the sphere centred on the camera and upload the current camera rotation
+            // so the shader can rotate stored camera-local directions to world space each frame.
             if (_sphere != null && _sphere.activeSelf && _camera != null)
+            {
                 _sphere.transform.position = _camera.transform.position;
+                _material.SetMatrix(PropCameraLocalToWorld, _camera.transform.localToWorldMatrix);
+            }
 
             base.Update();
         }
@@ -244,7 +253,7 @@ namespace DreamGuard
                         bbox.xMax + padX, bbox.yMax + padY);
                 }
 
-                if (!BboxToViewDirections(expanded, out Vector4 bl, out Vector4 tr)) continue;
+                if (!BboxToCameraLocalDirections(expanded, out Vector4 bl, out Vector4 tr)) continue;
                 _dirBLBuffer[count] = bl;
                 _dirTRBuffer[count] = tr;
                 count++;
@@ -385,30 +394,27 @@ namespace DreamGuard
         }
 
         /// <summary>
-        /// Converts a YOLO bounding box from model-input pixel space into two world-space
-        /// direction vectors (bottom-left and top-right corners of the detection).
+        /// Converts a YOLO bounding box from model-input pixel space into two
+        /// <b>camera-local</b> direction vectors (bottom-left and top-right corners).
         ///
-        /// Directions are computed from the passthrough camera pose captured at inference
-        /// START (same frame as the texture), so they match the actual frame content even
-        /// when inference takes several seconds to complete.
-        ///
-        /// The shader uses these directions each frame as:
-        ///   <c>_WorldSpaceCameraPos + dir * FAR</c>
-        /// This makes the passthrough hole angular-tracking: it follows the real-world
-        /// object's compass direction as the player rotates, with negligible parallax from
-        /// player translation (FAR = 1000 m). This is equivalent to how the windowed
-        /// passthrough technique stays locked to the player's field of view.
+        /// Storing directions in camera-local space (rather than world space) makes the
+        /// passthrough hole camera-locked: the shader transforms them back to world space
+        /// each frame via <c>unity_CameraToWorld</c>, so the hole follows the player's
+        /// view regardless of movement or rotation. The shader then projects per-eye via
+        /// <c>unity_StereoMatrixVP[eye]</c> for correct stereo using the headset's actual
+        /// asymmetric per-eye frustums — avoiding the mismatch that occurs when
+        /// <c>Camera.main.WorldToViewportPoint</c> (symmetric mono projection) is used.
         ///
         /// Returns false (and leaves <paramref name="bl"/>/<paramref name="tr"/> zeroed)
         /// when the passthrough camera is not yet playing.
         /// </summary>
-        private bool BboxToViewDirections(Rect bbox, out Vector4 bl, out Vector4 tr)
+        private bool BboxToCameraLocalDirections(Rect bbox, out Vector4 bl, out Vector4 tr)
         {
             bl = tr = Vector4.zero;
 
             if (!cameraAccess.IsPlaying)
             {
-                DreamGuardLog.LogWarning("[DetectionBasedPassthrough] BboxToViewDirections: " +
+                DreamGuardLog.LogWarning("[DetectionBasedPassthrough] BboxToCameraLocalDirections: " +
                     "passthrough camera not playing — skipping detection");
                 return false;
             }
@@ -419,18 +425,26 @@ namespace DreamGuard
             float camYMin = 1f - bbox.yMax / modelInputHeight;
             float camYMax = 1f - bbox.y    / modelInputHeight;
 
-            // Rays from the camera AT CAPTURE TIME — direction only, no depth estimate.
-            Vector3 dirBL = cameraAccess.ViewportPointToRay(new Vector2(camXMin, camYMin), _capturedCameraPose).direction;
-            Vector3 dirTR = cameraAccess.ViewportPointToRay(new Vector2(camXMax, camYMax), _capturedCameraPose).direction;
+            // World-space ray directions from the passthrough camera AT CAPTURE TIME.
+            Vector3 worldDirBL = cameraAccess.ViewportPointToRay(new Vector2(camXMin, camYMin), _capturedCameraPose).direction;
+            Vector3 worldDirTR = cameraAccess.ViewportPointToRay(new Vector2(camXMax, camYMax), _capturedCameraPose).direction;
 
-            bl = new Vector4(dirBL.x, dirBL.y, dirBL.z, 0f);
-            tr = new Vector4(dirTR.x, dirTR.y, dirTR.z, 0f);
+            // Convert to render-camera-local space by applying the inverse of the camera's
+            // current rotation. The shader multiplies by unity_CameraToWorld (rotation only,
+            // w=0) to recover the world direction — equivalent to rotating a fixed local
+            // direction by the camera's current orientation each frame → camera-locked.
+            Quaternion invRot = Quaternion.Inverse(_camera.transform.rotation);
+            Vector3 localDirBL = invRot * worldDirBL;
+            Vector3 localDirTR = invRot * worldDirTR;
+
+            bl = new Vector4(localDirBL.x, localDirBL.y, localDirBL.z, 0f);
+            tr = new Vector4(localDirTR.x, localDirTR.y, localDirTR.z, 0f);
 
             DreamGuardLog.Log(
                 $"[DetectionBasedPassthrough] " +
                 $"model=({bbox.xMin:F0},{bbox.yMin:F0},{bbox.xMax:F0},{bbox.yMax:F0}) " +
-                $"→ dirBL=({dirBL.x:F2},{dirBL.y:F2},{dirBL.z:F2}) " +
-                $"dirTR=({dirTR.x:F2},{dirTR.y:F2},{dirTR.z:F2})");
+                $"→ localBL=({localDirBL.x:F2},{localDirBL.y:F2},{localDirBL.z:F2}) " +
+                $"localTR=({localDirTR.x:F2},{localDirTR.y:F2},{localDirTR.z:F2})");
             return true;
         }
     }

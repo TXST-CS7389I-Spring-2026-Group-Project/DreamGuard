@@ -4,28 +4,26 @@ Shader "DreamGuard/DetectionPassthrough"
     //
     // Placed on a single large sphere that surrounds the camera (Cull Front renders the
     // inward-facing surface from inside). The C# side uploads up to MAX_DETECTIONS
-    // world-space direction vectors each inference frame — one pair (BL/TR) per detection.
+    // viewport-space bounding boxes at detection time — one per NMS-surviving detection.
     // For every pixel on the sphere the shader checks whether it falls inside any detection:
     //
     //   Inside  a bbox → write alpha = 0 via ColorMask A → compositor shows passthrough.
     //   Outside all bboxes → discard → VR scene shows through the sphere.
     //
-    // Angular tracking (direction-based, not position-based)
-    // ───────────────────────────────────────────────────────
-    // Directions are captured at inference time (when the passthrough camera frame is
-    // grabbed). The shader reconstructs a world point each frame as:
-    //   camPos + dir * 1000 m
-    // Because camPos (_WorldSpaceCameraPos) updates every frame, the bbox hole follows
-    // the player's view. Because dir is a unit vector fixed at inference time, the hole
-    // stays on the real-world object's angular direction as the player rotates. The 1000 m
-    // FAR value reduces translation-induced parallax to < 0.06 deg — imperceptible.
-    //
-    // Stereo correctness
-    // ──────────────────
-    // Each detection corner is projected per-eye using unity_StereoMatrixVP[eye]. In
-    // single-pass stereo instanced mode (Quest/OpenXR default), unity_MatrixMVP and
-    // unity_StereoMatrixVP[eye] both produce per-eye [0,1] viewport coordinates — no
-    // x-axis stereo correction is applied to the fragment screen position.
+    // Camera-locked, stereo-correct bbox
+    // ────────────────────────────────────
+    // The C# side stores detection corners as camera-LOCAL direction vectors (converted
+    // from world-space passthrough rays by applying the inverse render-camera rotation at
+    // detection time). Each frame the shader:
+    //   1. Rotates local→world via _CameraLocalToWorld (Camera.transform.localToWorldMatrix,
+    //      uploaded from C# every Update) so the direction follows the current camera
+    //      orientation → camera-locked. Uses a C# upload instead of unity_CameraToWorld
+    //      because unity_CameraToWorld is unreliable in single-pass stereo instancing.
+    //   2. Reconstructs a far-plane world point:  _WorldSpaceCameraPos + worldDir * FAR
+    //   3. Projects per-eye via unity_StereoMatrixVP[eye] — uses the headset's actual
+    //      asymmetric per-eye frustums, matching how vp (from ComputeScreenPos) is
+    //      computed. This avoids the divergence caused by Camera.main.WorldToViewportPoint
+    //      which uses the symmetric mono projection matrix.
     //
     // Requirements: camera clearFlags=SolidColor, backgroundColor=(0,0,0,1) and an
     // enabled OVRPassthroughLayer set to Underlay on the same GameObject.
@@ -48,16 +46,15 @@ Shader "DreamGuard/DetectionPassthrough"
 
             #include "UnityCG.cginc"
 
-            // World-space direction vectors for each detection bbox corner.
-            // Uploaded by DetectionBasedPassthrough.cs each inference frame.
-            // xyz = unit direction from the passthrough camera (at capture time) toward
-            //       the bottom-left / top-right corner of the detection.
-            // w   = 0 (direction, not a homogeneous position).
-            // The shader reconstructs a far-plane world point per eye as:
-            //   camPos + dir * FAR  (FAR = 1000 m)
-            // This makes the passthrough hole follow the angular direction of the detected
-            // object regardless of player translation, with negligible parallax.
+            // Camera-local direction vectors for each detection bbox corner.
+            // xyz = direction in render-camera transform-local space (+Z = forward).
+            // w   = 0 (direction, not position).
+            // The shader rotates them to world space each frame via _CameraLocalToWorld
+            // (uploaded from C# as Camera.transform.localToWorldMatrix every Update).
+            // Using a C#-uploaded matrix avoids relying on unity_CameraToWorld, which is
+            // unreliable in single-pass stereo instancing (only valid for eye 0).
             #define MAX_DETECTIONS 16
+            float4x4 _CameraLocalToWorld;
             float4 _DetectionDirBL[MAX_DETECTIONS];
             float4 _DetectionDirTR[MAX_DETECTIONS];
             int    _DetectionCount;
@@ -95,10 +92,6 @@ Shader "DreamGuard/DetectionPassthrough"
                 // Normalised viewport coordinate [0,1] for this pixel.
                 // ComputeScreenPos(UnityObjectToClipPos(v)) uses unity_MatrixMVP which is
                 // already the per-eye matrix in single-pass instanced stereo (Quest/OpenXR).
-                // Both vp and the projected bbox corners below come out in the same per-eye
-                // [0,1] space — no x-axis stereo correction is needed or correct here.
-                // (The old vp.x * 2 - eye correction assumed a double-wide side-by-side
-                // render target, which Quest does NOT use in instanced stereo mode.)
                 float2 vp = i.screenPos.xy / i.screenPos.w;
 
                 // Select this eye's VP matrix. unity_StereoMatrixVP[0] = left, [1] = right.
@@ -109,22 +102,31 @@ Shader "DreamGuard/DetectionPassthrough"
                     float4x4 eyeVP = UNITY_MATRIX_VP;
                 #endif
 
-                // Reconstruct a far-plane world point for each corner direction so that
-                // the bbox tracks the angular direction of the detected object (not a
-                // fixed 3-D position). Using FAR = 1000 m makes player translation cause
-                // < 0.06 deg of parallax, which is imperceptible.
+                // Camera-locked, stereo-correct bbox projection.
+                //
+                // _DetectionDirBL/TR are stored in camera-LOCAL space. Multiplying by
+                // unity_CameraToWorld (rotation only, w=0) rotates them to world space using
+                // the CURRENT camera orientation each frame — making the bbox follow the
+                // camera (camera-locked). The far-plane point is then projected through the
+                // per-eye VP matrix, which uses the headset's actual asymmetric frustums and
+                // matches the vp computation above — no stereo divergence.
                 float3 camPos = _WorldSpaceCameraPos;
                 const float FAR = 1000.0;
 
-                // Test against every active detection bbox.
                 for (int d = 0; d < _DetectionCount; d++)
                 {
-                    float4 blWorld = float4(camPos + _DetectionDirBL[d].xyz * FAR, 1.0);
-                    float4 trWorld = float4(camPos + _DetectionDirTR[d].xyz * FAR, 1.0);
-                    float4 blClip  = mul(eyeVP, blWorld);
-                    float4 trClip  = mul(eyeVP, trWorld);
-                    float2 blVP    = blClip.xy / blClip.w * 0.5 + 0.5;
-                    float2 trVP    = trClip.xy / trClip.w * 0.5 + 0.5;
+                    // Rotate camera-local direction to world space via the C#-uploaded matrix.
+                    float3 worldDirBL = mul((float3x3)_CameraLocalToWorld, _DetectionDirBL[d].xyz);
+                    float3 worldDirTR = mul((float3x3)_CameraLocalToWorld, _DetectionDirTR[d].xyz);
+
+                    float4 blClip = mul(eyeVP, float4(camPos + worldDirBL * FAR, 1.0));
+                    float4 trClip = mul(eyeVP, float4(camPos + worldDirTR * FAR, 1.0));
+
+                    // Skip if either corner is behind the camera.
+                    if (blClip.w <= 0.0 || trClip.w <= 0.0) continue;
+
+                    float2 blVP = blClip.xy / blClip.w * 0.5 + 0.5;
+                    float2 trVP = trClip.xy / trClip.w * 0.5 + 0.5;
 
                     float xMin = min(blVP.x, trVP.x);
                     float xMax = max(blVP.x, trVP.x);
