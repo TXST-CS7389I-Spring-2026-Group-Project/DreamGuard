@@ -99,11 +99,6 @@ namespace DreamGuard
         [SerializeField]
         private BackendType backend = BackendType.GPUCompute;
 
-        [Tooltip("Model layers executed per Update tick (layer-by-layer technique). " +
-                 "Higher = faster inference; lower = smoother frame pacing.")]
-        [SerializeField, Range(1, 20)]
-        private int layersPerFrame = 5;
-
         [Tooltip("Model input width in pixels. YOLOv9t expects 640.")]
         [SerializeField]
         protected int modelInputWidth = 640;
@@ -198,9 +193,10 @@ namespace DreamGuard
         private int _inferenceRunCount;
         private const int WorkerRecreateInterval = 10;
 
-        // Input tensor tracked separately so StopInference() can dispose it even when
-        // StopCoroutine() kills the coroutine before the `using` block unwinds.
-        private Tensor<float> _activeInputTensor;
+        // When SetEnabled(false) is called while inference is in progress, we can't
+        // safely dispose the Worker until the current ReadbackAndCloneAsync completes.
+        // This flag tells FinishInference() to tear down after the readback is done.
+        private bool _teardownPending;
 
         // ── Unity lifecycle ────────────────────────────────────────────────────
 
@@ -240,7 +236,6 @@ namespace DreamGuard
             DreamGuardLog.Log($"[Detection] Model outputs: [{outputNames}]");
             _worker = new Worker(_runtimeModel, backend);
             DreamGuardLog.Log($"[Detection] Worker created — backend={backend}, " +
-                              $"layersPerFrame={layersPerFrame}, " +
                               $"inputSize={modelInputWidth}x{modelInputHeight}");
 
             _timeSinceLastInference = 0f;
@@ -294,10 +289,8 @@ namespace DreamGuard
 
         protected virtual void OnDestroy()
         {
-            DreamGuardLog.Log("[Detection] OnDestroy — disposing worker and model");
+            DreamGuardLog.Log("[Detection] OnDestroy — disposing worker");
             DisposeWorker();
-            _runtimeModel?.Dispose();
-            _runtimeModel = null;
         }
 
         // ── Subclass interface ─────────────────────────────────────────────────
@@ -316,62 +309,68 @@ namespace DreamGuard
         /// </summary>
         protected virtual void OnDetectionFrameComplete() { }
 
-        /// <summary>Stops any running inference coroutine.</summary>
+        /// <summary>
+        /// Signals that no new inference runs should start.
+        /// Does NOT stop a running coroutine — the coroutine exits on its own after the
+        /// current ReadbackAndCloneAsync completes, ensuring all GPU work is finished
+        /// before any buffers are released.
+        /// </summary>
         protected void StopInference()
         {
-            if (_inferenceCoroutine != null)
-            {
-                StopCoroutine(_inferenceCoroutine);
-                _inferenceCoroutine = null;
-            }
-            _inferenceRunning = false;
-
-            // StopCoroutine() kills the coroutine without unwinding `using` blocks,
-            // so the input tensor would leak. Dispose it explicitly here.
-            _activeInputTensor?.Dispose();
-            _activeInputTensor = null;
+            // Do not call StopCoroutine here. Killing the coroutine mid-readback
+            // leaves GPU work in-flight against buffers we are about to free, which
+            // causes the driver stall (lag) that persists after detection is disabled.
+            // _detectionActive is already false by the time callers reach here, so no
+            // new inference will start; the running coroutine will exit after its readback.
+            _inferenceCoroutine = null;
         }
 
         /// <summary>
         /// Disposes the inference worker and releases its GPU compute buffers.
-        /// Call when the technique is deactivated to free GPU memory immediately
-        /// rather than waiting for OnDestroy.
+        /// If inference is currently running, the teardown is deferred — the coroutine
+        /// will dispose the worker after its ReadbackAndCloneAsync completes so that
+        /// GPU work is never abandoned against freed buffers.
         /// </summary>
         protected void TeardownWorker()
         {
-            DisposeWorker();
-            _inferenceRunCount = 0;
-            DreamGuardLog.Log("[Detection] Worker torn down — GPU buffers released");
+            if (_inferenceRunning)
+            {
+                // Inference is mid-readback. Let it finish, then FinishInference()
+                // will call DisposeWorker() when it exits.
+                _teardownPending = true;
+                DreamGuardLog.Log("[Detection] Worker teardown deferred — waiting for readback to complete");
+            }
+            else
+            {
+                DisposeWorker();
+                _inferenceRunCount = 0;
+                DreamGuardLog.Log("[Detection] Worker torn down — GPU buffers released");
+            }
         }
 
-        /// <summary>
-        /// Shared implementation for flushing and disposing the Worker.
-        /// Iterates ALL model outputs by index (not name) so no output is missed,
-        /// then forces a CPU-GPU sync via ReadbackAndClone before calling Dispose —
-        /// ensuring in-flight GPU kernels from a stopped ScheduleIterable have
-        /// fully completed and the driver has reclaimed their compute buffers.
-        /// </summary>
         private void DisposeWorker()
         {
             if (_worker == null) return;
-
-            if (_runtimeModel != null)
-            {
-                for (int i = 0; i < _runtimeModel.outputs.Count; i++)
-                {
-                    var t = _worker.PeekOutput(i);
-                    if (t == null) continue;
-                    t.CompleteAllPendingOperations();
-                    // Force a CPU readback so the GPU has fully retired the compute work
-                    // before we release the buffers. Without this, StopCoroutine()-killed
-                    // ScheduleIterable runs leave GPU kernels in-flight against freed memory,
-                    // causing the driver stall that manifests as lag after disabling detection.
-                    t.ReadbackAndClone()?.Dispose();
-                }
-            }
-
             _worker.Dispose();
             _worker = null;
+        }
+
+        /// <summary>
+        /// Called at the end of every inference coroutine run.
+        /// Clears the running flag and, if a teardown was requested while we were
+        /// mid-readback, disposes the worker now that the GPU is done.
+        /// </summary>
+        private void FinishInference()
+        {
+            _inferenceRunning = false;
+            _inferenceCoroutine = null;
+            if (_teardownPending)
+            {
+                _teardownPending = false;
+                DisposeWorker();
+                _inferenceRunCount = 0;
+                DreamGuardLog.Log("[Detection] Worker torn down (deferred) — GPU buffers released");
+            }
         }
 
         /// <summary>
@@ -385,6 +384,7 @@ namespace DreamGuard
                 DreamGuardLog.LogWarning("[Detection] RebuildWorker: no runtime model loaded — cannot rebuild");
                 return;
             }
+            _teardownPending = false;
             _worker?.Dispose();
             _worker = new Worker(_runtimeModel, backend);
             _inferenceRunCount = 0;
@@ -400,119 +400,126 @@ namespace DreamGuard
         // ── Inference pipeline ─────────────────────────────────────────────────
 
         /// <summary>
-        /// Runs the YOLO inference across multiple frames (layer-by-layer technique)
-        /// to avoid a single-frame spike on the main thread.
+        /// Schedules the full YOLO forward pass on the GPU then asynchronously waits
+        /// for the output readback, yielding each frame so the main thread stays free.
+        ///
+        /// Unlike the previous ScheduleIterable approach, Schedule() dispatches all
+        /// GPU kernels upfront before the first yield. ReadbackAndCloneAsync() then
+        /// polls for GPU completion each frame. This means:
+        ///   • No GPU work is ever left in-flight when the coroutine exits — the GPU
+        ///     is always done by the time we reach FinishInference() / TeardownWorker().
+        ///   • StopCoroutine() is never called, so `using var` blocks unwind cleanly.
         /// </summary>
         private IEnumerator RunInferenceCoroutine(Texture sourceTexture)
         {
-            // Capture the camera pose right now — the same frame we capture the texture.
-            // The inference coroutine takes many seconds to complete (layer-by-layer
-            // scheduling), so by the time OnDetectionFrameComplete() runs the HMD may
-            // have moved significantly. Subclasses must use _capturedCameraPose — not the
-            // live camera transform — when converting detection bboxes to world-space rays,
-            // so that the rays match the frame that was actually analysed.
+            // Capture the camera pose on the same frame as the texture grab.
             _capturedCameraPose = cameraAccess.GetCameraPose();
             DreamGuardLog.Log($"[Detection] Captured camera pose: pos={_capturedCameraPose.position:F2} rot={_capturedCameraPose.rotation.eulerAngles:F1}");
 
-            // Convert the camera frame to a Tensor<float> sized for the model.
-            // TextureConverter handles resizing from the camera's native resolution.
-            //
-            // NOTE: do NOT use `using var` here. Unity's StopCoroutine() abandons the
-            // coroutine at a yield point without unwinding `using` blocks, so the GPU
-            // tensor would leak. We store the reference in _activeInputTensor instead
-            // and dispose it in StopInference() to cover both the normal and interrupted
-            // exit paths.
-            _activeInputTensor = TextureConverter.ToTensor(
+            // Schedule the full forward pass. With GPUCompute backend all kernels are
+            // dispatched to the command queue immediately and this call returns at once —
+            // no main-thread frame spike. The GPU executes them asynchronously.
+            // `using var` is safe here because we no longer call StopCoroutine().
+            using var input = TextureConverter.ToTensor(
                 sourceTexture, modelInputWidth, modelInputHeight, channels: 3);
+            _worker.Schedule(input);
 
-            // Layer-by-layer execution: schedule inference incrementally across frames
-            // to keep the main thread from stalling on the full forward pass.
-            var schedule = _worker.ScheduleIterable(_activeInputTensor);
-            int layersDone = 0;
-            while (schedule.MoveNext())
-            {
-                if (++layersDone >= layersPerFrame)
-                {
-                    layersDone = 0;
-                    yield return null;
-                }
-            }
-
-            // Inference complete — release the input tensor immediately.
-            _activeInputTensor.Dispose();
-            _activeInputTensor = null;
-
-            // Inference is complete — peek the output tensors (still on GPU if GPUCompute backend).
-            // YOLOv9 NMS model outputs: output_0 = boxes[N,4], output_1 = classIds[N] (int), output_2 = scores[N] (float)
+            // ── Coordinates ───────────────────────────────────────────────────────
             var coordsRaw = _worker.PeekOutput(outputCoordsName);
-            var classRaw  = _worker.PeekOutput(outputClassIdsName);
-            // scoresGpu is either a worker-owned GPU tensor (don't dispose) or a CPU tensor
-            // we allocated ourselves from the int→float conversion (must dispose after use).
-            Tensor<float> scoresGpu      = null;
-            Tensor<float> ownedScoresGpu = null; // non-null only when we allocated it
-            if (!string.IsNullOrEmpty(outputScoresName))
-            {
-                var scoresRaw = _worker.PeekOutput(outputScoresName);
-                scoresGpu = scoresRaw as Tensor<float>;
-
-                // Fallback: quantised models (e.g. UInt8 YOLOv9) emit scores as Tensor<int> (0–255).
-                // Convert to float [0,1] here so the confidence threshold works correctly.
-                if (scoresGpu == null && scoresRaw is Tensor<int> scoresInt)
-                {
-                    using var scoresCpu = scoresInt.ReadbackAndClone() as Tensor<int>;
-                    if (scoresCpu != null)
-                    {
-                        int n = scoresCpu.shape[0];
-                        var arr = new float[n];
-                        for (int s = 0; s < n; s++) arr[s] = scoresCpu[s] / 255f;
-                        ownedScoresGpu = new Tensor<float>(scoresInt.shape, arr);
-                        scoresGpu = ownedScoresGpu;
-                    }
-                }
-            }
-
-            if (coordsRaw is Tensor<float> coordsGpu)
-            {
-                // ReadbackAndClone() copies the tensor to CPU memory so we can index it.
-                using var coords = coordsGpu.ReadbackAndClone() as Tensor<float>;
-                using var scores = scoresGpu?.ReadbackAndClone() as Tensor<float>;
-                ownedScoresGpu?.Dispose(); // safe to free our copy now that scores has its own clone
-
-                if (classRaw is Tensor<int> classGpuInt)
-                {
-                    using var classIds = classGpuInt.ReadbackAndClone() as Tensor<int>;
-                    if (coords != null && classIds != null)
-                        EvaluateDetections(coords, classIds, scores);
-                    else
-                        DreamGuardLog.LogWarning("[Detection] ReadbackAndClone returned null — skipping evaluation");
-                }
-                else if (classRaw is Tensor<float> classGpuFloat)
-                {
-                    // Some model exports emit class IDs as float — cast to int at read time.
-                    DreamGuardLog.LogWarning(
-                        $"[Detection] '{outputClassIdsName}' is Tensor<float>, not Tensor<int> — " +
-                        "reading class IDs as float and rounding. Consider re-exporting with int output.");
-                    using var classIdsFloat = classGpuFloat.ReadbackAndClone() as Tensor<float>;
-                    if (coords != null && classIdsFloat != null)
-                        EvaluateDetectionsFloatClass(coords, classIdsFloat, scores);
-                    else
-                        DreamGuardLog.LogWarning("[Detection] ReadbackAndClone returned null — skipping evaluation");
-                }
-                else
-                {
-                    DreamGuardLog.LogWarning(
-                        $"[Detection] '{outputClassIdsName}' has unexpected type " +
-                        $"'{classRaw?.GetType().Name ?? "null"}' — expected Tensor<int> or Tensor<float>. " +
-                        "Inspect the model in Netron to verify tensor names.");
-                }
-            }
-            else
+            if (coordsRaw is not Tensor<float> coordsGpu)
             {
                 DreamGuardLog.LogWarning(
                     $"[Detection] '{outputCoordsName}' has unexpected type " +
                     $"'{coordsRaw?.GetType().Name ?? "null"}' — expected Tensor<float>. " +
                     "Inspect the model in Netron to verify tensor names.");
+                FinishInference();
+                yield break;
             }
+
+            // ReadbackAndCloneAsync waits for the GPU to finish the forward pass and
+            // copies the result to CPU, yielding each frame until complete.
+            var coordsAwaiter = coordsGpu.ReadbackAndCloneAsync().GetAwaiter();
+            while (!coordsAwaiter.IsCompleted) yield return null;
+            using var coords = coordsAwaiter.GetResult();
+
+            if (coords == null || !_detectionActive)
+            {
+                FinishInference();
+                yield break;
+            }
+
+            // ── Scores (optional) ─────────────────────────────────────────────────
+            // Scores are read before class IDs so that the int→float conversion path
+            // (quantised UInt8 models) can be handled here without a separate readback.
+            Tensor<float> scores      = null;
+            Tensor<float> ownedScores = null; // non-null only when we built it ourselves
+
+            if (!string.IsNullOrEmpty(outputScoresName))
+            {
+                var scoresRaw = _worker.PeekOutput(outputScoresName);
+                if (scoresRaw is Tensor<float> scoresFloatGpu)
+                {
+                    var a = scoresFloatGpu.ReadbackAndCloneAsync().GetAwaiter();
+                    while (!a.IsCompleted) yield return null;
+                    ownedScores = scores = a.GetResult();
+                }
+                else if (scoresRaw is Tensor<int> scoresIntGpu)
+                {
+                    // Quantised models (e.g. UInt8 YOLOv9) emit scores as int (0–255).
+                    var a = scoresIntGpu.ReadbackAndCloneAsync().GetAwaiter();
+                    while (!a.IsCompleted) yield return null;
+                    using var scoresIntCpu = a.GetResult();
+                    if (scoresIntCpu != null)
+                    {
+                        int n = scoresIntCpu.shape[0];
+                        var arr = new float[n];
+                        for (int s = 0; s < n; s++) arr[s] = scoresIntCpu[s] / 255f;
+                        ownedScores = scores = new Tensor<float>(scoresIntCpu.shape, arr);
+                    }
+                }
+            }
+
+            if (!_detectionActive)
+            {
+                ownedScores?.Dispose();
+                FinishInference();
+                yield break;
+            }
+
+            // ── Class IDs ─────────────────────────────────────────────────────────
+            var classRaw = _worker.PeekOutput(outputClassIdsName);
+            if (classRaw is Tensor<int> classIntGpu)
+            {
+                var a = classIntGpu.ReadbackAndCloneAsync().GetAwaiter();
+                while (!a.IsCompleted) yield return null;
+                using var classIds = a.GetResult();
+                if (classIds != null)
+                    EvaluateDetections(coords, classIds, scores);
+                else
+                    DreamGuardLog.LogWarning("[Detection] ReadbackAndCloneAsync returned null — skipping evaluation");
+            }
+            else if (classRaw is Tensor<float> classFloatGpu)
+            {
+                DreamGuardLog.LogWarning(
+                    $"[Detection] '{outputClassIdsName}' is Tensor<float>, not Tensor<int> — " +
+                    "reading class IDs as float and rounding. Consider re-exporting with int output.");
+                var a = classFloatGpu.ReadbackAndCloneAsync().GetAwaiter();
+                while (!a.IsCompleted) yield return null;
+                using var classIdsFloat = a.GetResult();
+                if (classIdsFloat != null)
+                    EvaluateDetectionsFloatClass(coords, classIdsFloat, scores);
+                else
+                    DreamGuardLog.LogWarning("[Detection] ReadbackAndCloneAsync returned null — skipping evaluation");
+            }
+            else
+            {
+                DreamGuardLog.LogWarning(
+                    $"[Detection] '{outputClassIdsName}' has unexpected type " +
+                    $"'{classRaw?.GetType().Name ?? "null"}' — expected Tensor<int> or Tensor<float>. " +
+                    "Inspect the model in Netron to verify tensor names.");
+            }
+
+            ownedScores?.Dispose();
 
             // Periodically recreate the Worker to flush GPU compute buffer accumulation.
             // Sentis GPUCompute pools compute buffers but never shrinks the pool, so GPU
@@ -525,7 +532,7 @@ namespace DreamGuard
                 DreamGuardLog.Log($"[Detection] Worker recreated (every {WorkerRecreateInterval} runs) to release GPU state");
             }
 
-            _inferenceRunning = false;
+            FinishInference();
         }
 
         /// <summary>

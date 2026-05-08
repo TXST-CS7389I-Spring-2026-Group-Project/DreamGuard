@@ -93,11 +93,13 @@ namespace DreamGuard
         private bool  _intendedEnabled;
         private bool  _bboxesActive;         // true while detection holes are showing
         private float _timeSinceLastDetection;
+        private Coroutine _cameraDisableCoroutine;
 
-        // Saved camera state so SetEnabled(false) can restore it.
+        // Saved camera/compositor state so SetEnabled(false) can restore it.
         private Camera           _camera;
         private CameraClearFlags _origClearFlags;
         private Color            _origBgColor;
+        private bool             _origEyeFovPremultipliedAlpha;
 
         // Single large sphere that covers the full FOV.
         private GameObject _sphere;
@@ -150,7 +152,9 @@ namespace DreamGuard
             }
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
+            _origEyeFovPremultipliedAlpha = OVRManager.eyeFovPremultipliedAlphaModeEnabled;
             OVRManager.eyeFovPremultipliedAlphaModeEnabled = false;
+            DreamGuardLog.Log($"[DetectionBasedPassthrough] eyeFovPremultipliedAlpha: {_origEyeFovPremultipliedAlpha} → false");
 #endif
 
             InitSphere();
@@ -293,9 +297,27 @@ namespace DreamGuard
                 ClearBboxes();
                 if (_sphere != null) _sphere.SetActive(false);
                 ApplyLayerAndCamera(false);
+                // Stop camera capture deferred to the next frame. PassthroughCameraAccess
+                // does ~16ms of synchronous camera-hardware teardown in OnDisable(), which
+                // would drop a frame if done inline here. Deferring it is safe because
+                // _detectionActive is already false so no new inference will start.
+                if (_cameraDisableCoroutine != null)
+                    StopCoroutine(_cameraDisableCoroutine);
+                _cameraDisableCoroutine = StartCoroutine(DisableCameraNextFrame());
             }
             else
             {
+                // Cancel any pending deferred disable, then re-enable camera access now.
+                if (_cameraDisableCoroutine != null)
+                {
+                    StopCoroutine(_cameraDisableCoroutine);
+                    _cameraDisableCoroutine = null;
+                }
+                if (cameraAccess != null)
+                {
+                    cameraAccess.enabled = true;
+                    DreamGuardLog.Log("[DetectionBasedPassthrough] Camera access enabled");
+                }
                 RebuildWorker();
                 _timeSinceLastDetection = float.MaxValue;
                 _bboxesActive           = false;
@@ -323,6 +345,19 @@ namespace DreamGuard
             {
                 _sphere.SetActive(true);
                 DreamGuardLog.Log("[DetectionBasedPassthrough] Sphere activated after layer resumed");
+            }
+        }
+
+        // ── Camera access deferred disable ────────────────────────────────────
+
+        private System.Collections.IEnumerator DisableCameraNextFrame()
+        {
+            yield return null; // wait one frame so the toggle frame is not stalled
+            _cameraDisableCoroutine = null;
+            if (cameraAccess != null)
+            {
+                cameraAccess.enabled = false;
+                DreamGuardLog.Log("[DetectionBasedPassthrough] Camera access disabled (deferred)");
             }
         }
 
@@ -382,6 +417,14 @@ namespace DreamGuard
                 DreamGuardLog.Log($"[DetectionBasedPassthrough] Camera/layer: " +
                                   $"enabled={active} clearFlags={_camera.clearFlags} bgAlpha={_camera.backgroundColor.a:F2}");
             }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
+            if (!active)
+            {
+                OVRManager.eyeFovPremultipliedAlphaModeEnabled = _origEyeFovPremultipliedAlpha;
+                DreamGuardLog.Log($"[DetectionBasedPassthrough] eyeFovPremultipliedAlpha restored → {_origEyeFovPremultipliedAlpha}");
+            }
+#endif
         }
 
         private void ClearBboxes()
