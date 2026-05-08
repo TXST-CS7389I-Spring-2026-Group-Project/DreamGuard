@@ -1,4 +1,0 @@
-timestamp_iso,event_type,condition,participant_id,detail
-2026-05-07T13:35:45.913,SESSION_START,baseline,P00,unity=6000.4.5f1 device=Oculus Quest 3
-2026-05-07T13:35:46.273,ROOM_ENTER,baseline,P00,room_id=room_1
-2026-05-07T13:35:46.273,CONDITION_BLOCK_START,baseline,P00,room_id=room_1 condition=default
