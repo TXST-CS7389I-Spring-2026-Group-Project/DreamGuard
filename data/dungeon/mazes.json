@@ -1,0 +1,1185 @@
+{
+  "wall_segment": {
+    "width": 4.000002,
+    "height": 4,
+    "thickness": 1.000005
+  },
+  "mazes": [
+    {
+      "room_id": "room_1",
+      "seed": 11,
+      "grid_nx": 6,
+      "grid_nz": 6,
+      "cell_width": 4.0,
+      "cell_length": 4.0,
+      "entrance_col": 3,
+      "exit_col": 1,
+      "walls": [
+        {
+          "x": -10.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        }
+      ]
+    },
+    {
+      "room_id": "room_2",
+      "seed": 22,
+      "grid_nx": 6,
+      "grid_nz": 6,
+      "cell_width": 4.0,
+      "cell_length": 4.0,
+      "entrance_col": 0,
+      "exit_col": 4,
+      "walls": [
+        {
+          "x": -6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        }
+      ]
+    },
+    {
+      "room_id": "room_3",
+      "seed": 33,
+      "grid_nx": 6,
+      "grid_nz": 6,
+      "cell_width": 4.0,
+      "cell_length": 4.0,
+      "entrance_col": 4,
+      "exit_col": 5,
+      "walls": [
+        {
+          "x": -10.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 10.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 0.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        }
+      ]
+    },
+    {
+      "room_id": "room_4",
+      "seed": 44,
+      "grid_nx": 6,
+      "grid_nz": 6,
+      "cell_width": 4.0,
+      "cell_length": 4.0,
+      "entrance_col": 5,
+      "exit_col": 5,
+      "walls": [
+        {
+          "x": -10.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": -4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 0.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 4.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 8.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -10.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -6.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 2.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": 6.0,
+          "z": 12.0,
+          "rotation_y": 0,
+          "axis": "h"
+        },
+        {
+          "x": -12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 4.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -8.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": -2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 2.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 8.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 6.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": -4.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        },
+        {
+          "x": 12.0,
+          "z": 10.0,
+          "rotation_y": 90,
+          "axis": "v"
+        }
+      ]
+    }
+  ]
+}
