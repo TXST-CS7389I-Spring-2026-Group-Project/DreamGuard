@@ -142,11 +142,11 @@ namespace DreamGuard.Player.UI
                 var remaining = OrbManager.Instance.RemainingOrbs;
                 if (remaining.Count > 0)
                 {
-                    Transform nearest = FindNearest(remaining);
-                    if (nearest != null)
+                    Transform next = FindNext(remaining);
+                    if (next != null)
                     {
                         SetVisible(true);
-                        PointToward(Navigate(nearest.position));
+                        PointToward(Navigate(next.position));
                         return;
                     }
                 }
@@ -180,37 +180,36 @@ namespace DreamGuard.Player.UI
             return targetWorldPos;
         }
 
-        private Transform FindNearest(System.Collections.Generic.IReadOnlyList<DreamGuardOrb> orbs)
+        /// <summary>
+        /// Returns the transform of the first remaining orb when sorted by name,
+        /// so the arrow guides the player through orbs in scene order (orb_1 → orb_2 → …).
+        /// </summary>
+        private static Transform FindNext(System.Collections.Generic.IReadOnlyList<DreamGuardOrb> orbs)
         {
-            Transform nearest = null;
-            float nearestSqDist = float.MaxValue;
-            Vector3 camPos = playerCamera.transform.position;
-
+            Transform next = null;
             foreach (var orb in orbs)
             {
                 if (orb == null) continue;
-                float sqDist = (orb.transform.position - camPos).sqrMagnitude;
-                if (sqDist < nearestSqDist)
-                {
-                    nearestSqDist = sqDist;
-                    nearest = orb.transform;
-                }
+                if (next == null || string.Compare(orb.name, next.name, System.StringComparison.OrdinalIgnoreCase) < 0)
+                    next = orb.transform;
             }
-
-            return nearest;
+            return next;
         }
 
         private void PointToward(Vector3 worldTarget)
         {
             // Project the world-space direction into camera-local space.
             // localDir.x = right (+) / left (−) in the camera frame.
-            // localDir.y = up   (+) / down (−) in the camera frame.
+            // localDir.z = forward (+) / behind (−) in the camera frame.
+            // We use x and z (not y) so the arrow acts as a horizontal compass —
+            // ignoring elevation differences (e.g. waypoints on the floor vs. eye-level camera).
             Vector3 toTarget = worldTarget - playerCamera.transform.position;
             Vector3 localDir = playerCamera.transform.InverseTransformDirection(toTarget);
 
-            // Atan2(x, y): angle from the "up" axis, increasing clockwise.
-            // Unity UI rotates CCW for positive Z values, so negate to get CW (matching screen space).
-            float angleDeg = Mathf.Atan2(localDir.x, localDir.y) * Mathf.Rad2Deg;
+            // Atan2(x, z): angle from the forward axis, increasing clockwise.
+            // Arrow points UP when target is ahead, RIGHT when right, DOWN when behind, LEFT when left.
+            // Unity UI rotates CCW for positive Z values, so negate to get CW.
+            float angleDeg = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
             _arrowImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -angleDeg);
         }
 
