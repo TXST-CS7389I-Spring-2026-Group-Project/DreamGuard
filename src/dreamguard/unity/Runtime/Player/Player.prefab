@@ -1190,7 +1190,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 9}
+  m_AnchoredPosition: {x: 0, y: 80}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &7147838357155495151
@@ -1244,6 +1244,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DreamGuard.Player::DreamGuard.Player.UI.OrbArrowUI
   playerCamera: {fileID: 5944077451537994531}
+  waypointBlendRadius: 1.5
+  arrowRotationSpeed: 360
 --- !u!1 &5424853741831084742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1955,7 +1957,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.3}
+  m_AnchoredPosition: {x: 0, y: -0.4}
   m_SizeDelta: {x: 400, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2369975299864142967
