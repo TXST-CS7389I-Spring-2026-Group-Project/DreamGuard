@@ -1,0 +1,26 @@
+timestamp_iso,event_type,condition,participant_id,detail
+2026-05-09T13:03:30.101,SESSION_START,baseline,P00,unity=6000.4.5f1 device=Oculus Quest 3
+2026-05-09T13:03:30.478,ROOM_ENTER,baseline,P00,room_id=room_1
+2026-05-09T13:03:30.478,CONDITION_BLOCK_START,baseline,P00,room_id=room_1 condition=default
+2026-05-09T13:04:08.506,ROOM_HALFWAY,baseline,P00,room_id=room_1 orbs_collected=2 total_orbs=4
+2026-05-09T13:04:08.508,TRIGGER,baseline,P00,technique=default room_id=room_1
+2026-05-09T13:04:47.536,ROOM_COMPLETE,baseline,P00,room_id=room_1
+2026-05-09T13:04:58.746,ROOM_ENTER,baseline,P00,room_id=room_2
+2026-05-09T13:04:58.746,CONDITION_BLOCK_START,baseline,P00,room_id=room_2 condition=default
+2026-05-09T13:05:37.562,ROOM_HALFWAY,baseline,P00,room_id=room_2 orbs_collected=2 total_orbs=4
+2026-05-09T13:05:37.564,TRIGGER,baseline,P00,technique=default room_id=room_2
+2026-05-09T13:06:08.739,ROOM_COMPLETE,baseline,P00,room_id=room_2
+2026-05-09T13:06:21.122,ROOM_ENTER,baseline,P00,room_id=room_3
+2026-05-09T13:06:21.122,CONDITION_BLOCK_START,baseline,P00,room_id=room_3 condition=default
+2026-05-09T13:06:53.520,ROOM_HALFWAY,baseline,P00,room_id=room_3 orbs_collected=2 total_orbs=4
+2026-05-09T13:06:53.547,TRIGGER,baseline,P00,technique=default room_id=room_3
+2026-05-09T13:07:02.884,TRIGGER,baseline,P00,technique=detection label=bottle conf=0.17 count=1
+2026-05-09T13:07:33.891,ROOM_COMPLETE,baseline,P00,room_id=room_3
+2026-05-09T13:07:39.890,ROOM_ENTER,baseline,P00,room_id=room_4
+2026-05-09T13:07:39.890,CONDITION_BLOCK_START,baseline,P00,room_id=room_4 condition=default
+2026-05-09T13:07:53.576,ROOM_HALFWAY,baseline,P00,room_id=room_4 orbs_collected=2 total_orbs=4
+2026-05-09T13:07:53.580,SPHERE_ENABLED,baseline,P00,radius=50
+2026-05-09T13:07:53.581,TRIGGER,baseline,P00,technique=default room_id=room_4
+2026-05-09T13:08:13.589,SPHERE_DISABLED,baseline,P00,
+2026-05-09T13:08:46.240,ROOM_COMPLETE,baseline,P00,room_id=room_4
+2026-05-09T13:09:15.596,SESSION_END,baseline,P00,
