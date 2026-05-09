@@ -1,30 +1,84 @@
-# DreamGuard: Immersion-Preserving Passthrough Safety Transitions in VR
+# DreamGuard: Comparing Mixed Reality Safety Systems in VR
+
+**CS 7389I · Texas State University**
+Andrew Scouten · Avery R Vanausdal
+
+![Unity](https://img.shields.io/badge/Unity-6000.4.5f1-black?logo=unity) ![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)
+
+---
 
 ## Overview
 
-DreamGuard is a proximity-triggered safety system for consumer VR headsets that replaces the standard guardian grid overlay with gradual, aesthetically-matched visual transitions. Instead of jarring grid interruptions, DreamGuard blends the passthrough camera feed into the virtual scene using soft fog, light bloom, or environment-themed effects when a user approaches a physical boundary or nearby person.
+DreamGuard is a within-subjects study platform comparing four passthrough safety techniques on Meta Quest. The core question is whether camera-aware or depth-aware passthrough systems can maintain safety awareness while disrupting immersion less than Meta's default Guardian grid.
 
-The core research question: does a seamless aesthetic blend produce fewer cybersickness symptoms and less presence disruption than the standard guardian grid, while maintaining equivalent safety outcomes?
+The study runs on a dungeon maze task across four rooms, each using a different passthrough technique triggered at a fixed point in gameplay.
 
-## Motivation
+## Research Motivation
 
-Current VR safety systems (e.g., Meta Quest Guardian) interrupt the virtual experience with a hard grid overlay that has no aesthetic relationship to the virtual world. This abrupt transition can cause disorientation and contribute to cybersickness. DreamGuard treats the safety transition itself as a designable interaction artifact, operationalizing Milgram and Kishino's Reality-Virtuality Continuum dynamically rather than as a binary mode switch.
+Current VR safety systems (e.g., Meta Guardian) are boundary-aware: they respond to where the user is relative to a predefined play area, not to what is actually in the physical space. DreamGuard treats this as a design space question: can object-aware or depth-aware passthrough techniques improve on the boundary-aware grid — preserving more immersion without sacrificing safety?
 
-## Proposed System
+## Study Conditions
 
-- Depth estimation or person detection via headset cameras triggers the transition before collision is imminent
-- Passthrough is gradually blended into the virtual scene using visually coherent effects
-- The system fades back to full VR once the user returns to safety
+| Room | Condition | Trigger | Aware of |
+|------|-----------|---------|----------|
+| 1 | Guardian Grid (Meta default) | Proximity to play-area boundary | Boundary only |
+| 2 | Window | Always-on, forward-facing | What's directly in front |
+| 3 | Window + Detection | YOLO object recognition | Anything in camera view |
+| 4 | Depth Bubble | Meta Depth API threshold | Anything in depth sensor range |
 
-## Proposed Study
+Passthrough implementations: `src/dreamguard/unity/Runtime/Passthrough/`
 
-A within-subjects lab study comparing three conditions:
-1. Standard Meta Quest guardian grid
-2. DreamGuard aesthetic passthrough blend
-3. No-warning control
+## Study Design
 
-Participants complete an immersive exploration task while scripted proximity events occur at fixed intervals. Measures include presence (IPQ), cybersickness (SSQ), and safety outcomes via motion-capture logging.
+Four dungeon rooms, each with 4 collectible orbs. Collecting the 2nd orb activates the room's passthrough technique for 20 seconds, then deactivates. A HUD arrow guides the player to the next orb; a counter displays progress. The player cannot advance to the next room until all 4 orbs are collected.
 
-## Status
+**Conditions 3 and 4** use reactive sub-triggers (YOLO detection; depth threshold) within the 20-second window to determine when to show passthrough. **Condition 2** (Window) is always-on for the full window.
 
-Early-stage research project. Design and implementation in progress.
+**Design note:** Conditions are presented in fixed order — not counterbalanced. Order effects (fatigue, practice, contrast) are the study pilot's primary internal validity limitation. Counterbalancing is identified as future work.
+
+### Dependent Variables
+
+- Safety awareness, system confidence — perceived protection
+- Presence, disruption — immersion cost
+- Trust, false alarm perception — reliability
+- Trigger comprehension — whether the system's activation logic is intelligible
+- Perceived trigger timing — correlates with objective `TRIGGER.ts − ROOM_HALFWAY.ts`
+- Forced rankings and stated preference
+- Qualitative (post-session interview)
+
+## Platform
+
+- **Device**: Meta Quest (USB, via Meta Quest Link for development)
+- **SDK**: Meta XR/MR SDK, OpenXR, Unity OpenXR Meta
+- **Rendering**: Passthrough via Meta's Passthrough API
+- **Depth**: Meta's Depth API (active)
+- **Engine**: Unity
+
+## Study Logging
+
+Session data is written to device storage by `StudyLogger` (`Runtime/Logging/StudyLogger.cs`):
+
+```
+/sdcard/Android/data/com.DefaultCompany.DreamGuard/files/experiments/study_N/
+```
+
+Pull after a session:
+
+```bash
+adb pull /sdcard/Android/data/com.DefaultCompany.DreamGuard/files/experiments
+```
+
+See [`docs/LOGGING.md`](docs/LOGGING.md) for the full schema (event types, CSV columns, key timestamp formulas).
+
+## Known Issues
+
+See [`docs/KNOWN_ISSUES.md`](docs/KNOWN_ISSUES.md).
+
+**"DreamGuard Not Responding" on launch:** The app requires the headset to be worn to initialize. If the Quest is on a desk when the app launches, it may show a not-responding dialog. Workaround: wear the headset before initiating Build and Run, or relaunch from the library.
+
+## Third-Party Assets
+
+See [`docs/THIRD_PARTY.md`](docs/THIRD_PARTY.md).
+
+- **KayKit — Dungeon Remastered**: 3D dungeon tileset used for environment art
+- **Unity PassthroughCameraApi Samples**: Meta's official passthrough camera API reference
