@@ -1,0 +1,1009 @@
+% $Id: template.tex 11 2007-04-03 22:25:53Z jpeltier $
+
+\documentclass{styling/vgtc} % final (conference style)
+
+\usepackage{mathptmx}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{url}
+
+%% Likert scale helper — call immediately after the question text
+\newcommand{\likert}{%
+  \par\smallskip
+  \begin{center}\small
+  \begin{tabular}{@{}ccccccc@{}}
+    1 & 2 & 3 & 4 & 5 & 6 & 7 \\[-2pt]
+    \multicolumn{2}{l}{\scriptsize Strongly Disagree} &
+    & {\scriptsize Neutral} &
+    & \multicolumn{2}{r}{\scriptsize Strongly Agree}
+  \end{tabular}
+  \end{center}\smallskip\noindent}
+
+%% Three blank answer lines
+\newcommand{\answerlines}{%
+  \par\vspace{4pt}%
+  \noindent\rule{\linewidth}{0.3pt}\par\vspace{10pt}%
+  \noindent\rule{\linewidth}{0.3pt}\par\vspace{10pt}%
+  \noindent\rule{\linewidth}{0.3pt}\par\vspace{6pt}}
+
+\onlineid{0}
+\vgtccategory{Research}
+\vgtcinsertpkg
+
+\title{DreamGuard: Comparing Mixed Reality Safety Systems}
+
+\author{Andrew Scouten\\ %
+        \scriptsize{yzb2@txstate.edu}\\ %
+        \scriptsize Texas State University
+\and Avery R Vanausdal\\ %
+        \scriptsize{arv107@txstate.edu}\\ %
+        \scriptsize Texas State University}
+
+%% ─────────────────────────────────────────────────────────────
+\abstract{
+%% ─────────────────────────────────────────────────────────────
+Consumer virtual reality (VR) headsets expose users to physical hazards
+by occluding their real environment. Current safety systems, including
+Meta's Guardian Grid, rely exclusively on \emph{boundary-aware} triggers:
+passthrough is activated when the user approaches a pre-defined play-area
+boundary, providing no protection against objects that enter the play
+space during a session. We introduce DreamGuard, a mixed reality safety
+platform that extends the design space to include \emph{object-aware}
+triggers using the device's external cameras and depth sensors. We
+implement four passthrough techniques on a consumer Meta Quest headset---
+(1)~the Meta Guardian Grid as a boundary-aware baseline, (2)~a
+forward-facing Window providing always-on directional awareness,
+(3)~a Window augmented with YOLOv9 object detection that reveals
+passthrough only at detected hazard locations, and (4)~a Depth Bubble
+that exposes the real world wherever the Meta Depth API measures
+geometry within a threshold distance. We contribute a five-dimensional
+design space that positions these techniques along axes of spatial
+awareness model, trigger mechanism, aesthetic integration, information
+granularity, and temporal behavior. A within-subjects user study ($N$
+participants; data collection ongoing) evaluates the four techniques on
+perceived safety awareness, presence, disruption, trust, and trigger
+comprehension in a controlled VR dungeon environment. Preliminary
+instrumentation confirms that all four conditions are deployable and
+that objective trigger-latency logging is operational.
+} % end of abstract
+
+\CCScatlist{
+  \CCScat{H.5.1}{Information Interfaces and Presentation}{Multimedia Information Systems}%
+    {Artificial, augmented, and virtual realities};
+  \CCScat{H.5.2}{Information Interfaces and Presentation}{User Interfaces}%
+    {Evaluation/methodology};
+  \CCScat{H.1.2}{Models and Principles}{User/Machine Systems}%
+    {Human factors};
+  \CCScat{I.3.7}{Computer Graphics}{Three-Dimensional Graphics and Realism}%
+    {Virtual reality};
+  \CCScat{I.4.8}{Image Processing and Computer Vision}{Scene Analysis}%
+    {Object recognition}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% START OF THE PAPER %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+%% ─────────────────────────────────────────────────────────────
+\section{Introduction}
+%% ─────────────────────────────────────────────────────────────
+
+The growth of consumer room-scale VR has made physical collisions a
+routine safety concern. Headsets occlude the user's entire field of view,
+eliminating awareness of walls, furniture, and other people sharing the
+physical space. Meta's response---the Guardian Grid---draws a glowing
+boundary grid on top of the virtual scene when the user's head
+approaches the edge of the configured play area. While effective for
+boundary proximity, the Guardian Grid is fundamentally reactive to
+\emph{where the user is} relative to a static boundary, not to
+\emph{what objects are present} in the play space. A chair pushed into
+the centre of the room, a pet crossing the floor, or a person entering
+the space are invisible to the Guardian until the user walks within its
+fixed perimeter.
+
+Modern mixed reality (MR) headsets provide two sensor modalities that
+make richer awareness possible: (i)~outward-facing colour cameras used
+for passthrough video, and (ii)~stereo depth sensors that produce a
+per-pixel depth map of the real environment. Neither modality is
+exploited by existing consumer safety systems. Prior research has
+explored decorative boundary transformations~\cite{qin2024brokenwall},
+visual metaphors for guardian proximity~\cite{wu2023guardian}, and
+AI-assisted depth-based techniques in constrained laboratory
+settings~\cite{sobo2024}, but no published work has examined the
+\emph{trigger source}---boundary geometry versus detected objects---as
+the primary independent design variable on a shipping consumer platform.
+
+This paper makes three contributions:
+
+\begin{enumerate}
+
+  \item A \textbf{five-dimensional design space} (Section~\ref{sec:designspace})
+    that positions existing and novel VR safety transitions along axes of
+    spatial awareness model, trigger mechanism, aesthetic integration,
+    information granularity, and temporal behavior.
+
+  \item \textbf{DreamGuard}, an open-source MR safety platform (Section~\ref{sec:system})
+    implementing four passthrough techniques on Meta Quest, including the
+    first depth-driven, object-aware passthrough safety technique on a
+    consumer headset.\footnote{\url{https://github.com/TXST-CS7389I-Spring-2026-Group-Project/DreamGuard}}
+
+  \item A \textbf{within-subjects user study protocol} (Section~\ref{sec:study})
+    and preliminary instrumentation results comparing the four techniques
+    on safety awareness, immersion disruption, trust, and trigger
+    comprehension.
+
+\end{enumerate}
+
+The study is in progress. This report presents the system design, study
+methodology, and initial pilot data. Full results will be reported upon
+completion of data collection.
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{Related Work}
+%% ─────────────────────────────────────────────────────────────
+
+\subsection{VR Safety and Guardian Systems}
+
+Meta's Guardian Grid is the de facto consumer safety mechanism for
+room-scale VR. It renders a perspective-correct grid overlay in the
+user's field of view when the head or controllers approach a
+pre-configured boundary. The grid is activated entirely by player
+position relative to a static perimeter; no real-time sensing of
+in-room objects occurs.
+
+Wu et al.~\cite{wu2023guardian} studied how different visual cues for
+boundary proximity affect user awareness and presence, establishing that
+the aesthetic \emph{form} of boundary visualisation influences perceived
+safety without necessarily improving objective hazard detection. Their
+work focuses on the \emph{appearance} of boundary-aware systems and does
+not vary the trigger mechanism.
+
+Qin et al.~\cite{qin2024brokenwall} introduced BrokenWall, a system
+that replaces the guardian grid with metaphorical ``broken'' virtual
+geometry at the boundary, making the safety transition feel diegetic
+rather than a superimposed HUD. Again, the trigger is boundary proximity;
+the contribution is aesthetic integration.
+
+\subsection{AI- and Depth-Assisted Safety}
+
+SOBO~\cite{sobo2024} is the closest prior work to DreamGuard. It
+demonstrated depth- and AI-assisted passthrough triggers on a desktop VR
+platform (non-standalone), using a depth camera mounted externally to
+detect obstacles. SOBO's key finding---that reactive, object-aware
+triggers can be more informative than boundary triggers---motivates the
+present work. DreamGuard differs in three ways: (1)~it runs on a
+standalone consumer headset using only built-in sensors; (2)~the
+object-aware detection uses the headset's forward-facing colour cameras
+with an on-device neural network; (3)~the depth-based technique uses
+the Meta Depth API's per-pixel environment depth map, which provides
+360$^\circ$ coverage without additional hardware.
+
+\subsection{Diminished Virtuality and the Reality--Virtuality Continuum}
+
+Milgram et al.'s Reality--Virtuality (RV) Continuum~\cite{milgram1994} frames
+mixed reality as a spectrum between fully real and fully virtual
+environments. VR safety transitions are, in this framing,
+\emph{involuntary movements along the continuum}: the system forces a
+partial reveal of physical reality in response to a hazard signal.
+
+The concept of \emph{Diminished Virtuality} (DV) formalises deliberate
+reduction of virtual content to reveal the real world. A recent
+taxonomy~\cite{jmir2024dv} distinguishes DV techniques by the spatial
+extent of the reveal (full, partial, localised), the trigger modality,
+and the temporal profile. DreamGuard's design space builds on this
+taxonomy by adding trigger \emph{source} as an explicit axis and
+grounding each axis in concrete, implemented examples.
+
+\subsection{Diegetic vs. Non-Diegetic Safety Cues}
+
+Film theory distinguishes diegetic elements (those that exist within the
+narrative world) from non-diegetic overlays (those visible to the
+audience but not to characters). The Guardian Grid is strictly
+non-diegetic: it is a heads-up overlay that has no counterpart in the
+virtual world the user inhabits. Diegetic safety cues, where the virtual
+environment itself \emph{responds} to proximity or object detection,
+represent an open design direction. The techniques in this work vary
+along this axis: the Window is non-diegetic, the Depth Bubble is
+semi-diegetic (it reveals the real world in depth-shaped regions), and
+purely diegetic approaches (virtual objects reacting to real hazards)
+are discussed as future work.
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{Design Space}
+\label{sec:designspace}
+%% ─────────────────────────────────────────────────────────────
+
+We characterise VR safety transitions along five dimensions. Table~\ref{tab:designspace}
+positions the four DreamGuard techniques and representative prior work.
+
+\begin{table*}[t]
+\centering
+\caption{Design space of VR passthrough safety transitions. DG = DreamGuard.}
+\label{tab:designspace}
+\renewcommand{\arraystretch}{1.25}
+\small
+\begin{tabular}{@{} p{2.2cm} p{2.0cm} p{2.3cm} p{2.2cm} p{2.3cm} p{2.8cm} @{}}
+\toprule
+\textbf{Technique} &
+\textbf{Spatial Awareness} &
+\textbf{Trigger Mechanism} &
+\textbf{Aesthetic Integration} &
+\textbf{Information Granularity} &
+\textbf{Temporal Behavior} \\
+\midrule
+Guardian Grid (Meta)
+  & Boundary-aware
+  & Play-area proximity
+  & Non-diegetic overlay
+  & Boundary only (binary)
+  & Persistent while near boundary \\
+
+BrokenWall~\cite{qin2024brokenwall}
+  & Boundary-aware
+  & Play-area proximity
+  & Diegetic metaphor
+  & Boundary only
+  & Persistent while near boundary \\
+
+SOBO~\cite{sobo2024}
+  & Object-aware
+  & Depth sensor (external)
+  & Partial reveal
+  & Per-object depth region
+  & Reactive with hysteresis \\
+\midrule
+DG Window
+  & Direction-aware
+  & Manual / task-trigger
+  & Non-diegetic overlay
+  & Forward hemisphere
+  & Fixed-duration window \\
+
+DG Window + Detection
+  & Object-aware
+  & YOLO object detection
+  & Non-diegetic, localised
+  & Per-detection bounding box
+  & Reactive (detection timeout) \\
+
+DG Depth Bubble
+  & Object-aware
+  & Depth threshold (on-device)
+  & Semi-diegetic reveal
+  & Per-pixel depth
+  & Reactive with GPU threshold \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Dimension 1 — Spatial Awareness Model.}
+\textit{Boundary-aware} systems know only the static play-area perimeter.
+\textit{Object-aware} systems sense in-play objects using active perception.
+\textit{Direction-aware} systems provide partial awareness of one
+hemisphere without object-level sensing. The Guardian Grid and
+BrokenWall are boundary-aware. DreamGuard's Window is direction-aware.
+Detection and Depth Bubble are object-aware.
+
+\paragraph{Dimension 2 — Trigger Mechanism.}
+Triggers vary from static geometry (boundary proximity), through reactive
+sensing (camera detection, depth threshold), to manual activation.
+The trigger determines \emph{what events} the system can detect: a cat
+entering the play space during a session is invisible to any
+boundary-aware trigger but detectable by both the YOLO detector (as
+``cat'') and the Depth Bubble (as any object closer than the threshold).
+
+\paragraph{Dimension 3 — Aesthetic Integration.}
+The Guardian Grid is purely non-diegetic: the grid exists outside the
+virtual world. BrokenWall integrates the safety cue into the virtual
+environment's geometry. DreamGuard's Depth Bubble is semi-diegetic: it
+reveals real geometry in the shape of the depth field, which aligns
+spatially with the virtual scene.
+
+\paragraph{Dimension 4 — Information Granularity.}
+Coarse systems (Guardian Grid) communicate only ``you are near the
+boundary.'' Fine-grained systems (Depth Bubble) provide a
+continuous per-pixel depth signal. Detection-based systems provide
+intermediate granularity: object class and bounding box.
+
+\paragraph{Dimension 5 — Temporal Behavior.}
+Persistent techniques remain active while the triggering condition
+holds (Guardian Grid). Fixed-duration techniques activate for a
+pre-set interval (DreamGuard Window in study conditions). Reactive
+techniques activate, sustain briefly, and clear after a timeout
+(Detection: 3-second timeout; Depth Bubble: continuous while depth
+threshold is exceeded).
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{System}
+\label{sec:system}
+%% ─────────────────────────────────────────────────────────────
+
+\subsection{Platform and Architecture}
+
+DreamGuard runs on Meta Quest (tested on Quest 3) using Unity with the
+Meta XR SDK, OpenXR, and Unity's Universal Render Pipeline (URP). The
+system is implemented as a Unity package
+(\texttt{src/dreamguard/unity/}) consumed by a standalone Unity project
+(\texttt{playground/unity/DreamGuard/}). All four passthrough techniques
+share a common \texttt{IDreamGuardPassthrough} interface and are managed
+by a \texttt{DreamGuardPlayer} component that activates and deactivates
+technique GameObjects on demand. The full source is available at
+\url{https://github.com/TXST-CS7389I-Spring-2026-Group-Project/DreamGuard}.
+
+\subsection{Guardian Grid (Condition~1)}
+
+Meta's default passthrough behaviour is used unmodified: the system
+activates a boundary grid when the user's head or a controller
+approaches the configured play-area boundary. No DreamGuard code
+intervenes in this condition. The Guardian condition establishes the
+boundary-aware baseline against which the other techniques are compared.
+
+\subsection{Windowed Passthrough (Condition~2)}
+
+\texttt{DreamGuardWindowedPassthrough} renders a 0.9\,m $\times$ 0.65\,m
+passthrough rectangle positioned 1.5\,m ahead of the user's head using
+an \texttt{OVRPassthroughLayer} (UserDefined projection,
+\texttt{AddSurfaceGeometry} with a tracked quad). The window is always-on
+for the 20-second exposure window triggered by the second orb collection.
+Surface geometry registration is deferred to the first \texttt{SetEnabled(true)}
+call to prevent a full-screen red/green compositor artefact caused by an
+active \texttt{UserDefined/Overlay} layer with unpositioned geometry.
+
+\subsection{Detection-Based Passthrough (Condition~3)}
+
+\texttt{DetectionBasedPassthrough} inherits from a base
+\texttt{Detection} class that manages the Meta Passthrough Camera Access
+API and a YOLOv9 inference worker running via Unity Sentis (on-device
+neural network inference). When the YOLO model detects an object, the
+detection callback converts the bounding box from model pixel space to
+camera-local ray directions, which are uploaded to the
+\texttt{DreamGuard/DetectionPassthrough} shader as per-detection
+direction vectors. The shader renders a large world-space sphere
+surrounding the camera and punches \texttt{alpha\,=\,0} into the
+framebuffer within bounding-box regions, revealing the
+\texttt{OVRPassthroughLayer} underlay only at those locations. Up to 16
+simultaneous detections are supported; a 3-second timeout clears the
+reveal window if no detection fires. The bounding box is expanded by a
+configurable factor (default 1.3$\times$) to account for YOLO's tight
+fitting to object content.
+
+Direction vectors are stored in render-camera-local space and
+transformed to world space per frame via \texttt{unity\_CameraToWorld}
+in the shader, making the passthrough hole camera-locked and avoiding
+the stereo projection mismatch that arises when \texttt{Camera.main\allowbreak{}.WorldToViewportPoint}
+(symmetric mono frustum) is used with a headset's asymmetric per-eye
+frustums.
+
+\subsection{Depth Bubble (Condition~4)}
+
+\texttt{PassthroughSphere} uses the Meta Depth API
+(\texttt{EnvironmentDepthManager}) to access per-pixel environment depth
+in real time. The \texttt{Custom/PassthroughSphere} shader renders a
+50-metre world-space sphere centred on the camera. For each fragment,
+the shader samples the depth texture; fragments where the real-world
+surface is closer than the configured threshold receive
+\texttt{alpha\,=\,0} (via \texttt{BlendOp RevSub / Blend One Zero}),
+revealing the \texttt{OVRPassthroughLayer} underlay. Fragments where
+real geometry is farther than the threshold, or absent, remain opaque
+virtual. The sphere is kept centred on the camera in \texttt{Update()}.
+\texttt{OVRManager.eyeFovPremultipliedAlphaModeEnabled\,=\,false} is
+required so the compositor treats the alpha channel as coverage rather
+than premultiplied transparency.
+
+The Depth Bubble provides 360$^\circ$ spatial awareness (bounded only by
+depth sensor coverage) and requires no explicit object model---any
+real-world geometry within the threshold is revealed, including people,
+furniture, and pets.
+
+\subsection{Study Instrumentation}
+
+\texttt{StudyLogger} writes a timestamped CSV (\texttt{study.csv}) to
+device persistent storage for each session. Logged event types include
+\textsc{session\_start/end}, \textsc{room\_enter/complete},
+\textsc{room\_halfway} (triggered on second-orb collection),
+\textsc{trigger} (passthrough activation, with technique name and
+optional metadata), \textsc{intrusion\_mark} (experimenter-logged),
+and \textsc{false\_positive}. Companion files record per-frame player
+position, headset pose, and controller pose (delta-filtered at
+$\epsilon = 10^{-4}$). Logs are retrieved via \texttt{adb pull} after
+each session. Trigger latency is computed as
+$\Delta t = t_{\textsc{trigger}} - t_{\textsc{room\_halfway}}$.
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{User Study}
+\label{sec:study}
+%% ─────────────────────────────────────────────────────────────
+
+\subsection{Study Design}
+
+We conduct a within-subjects study comparing the four passthrough
+techniques on a Meta Quest 3 headset. Each participant navigates a
+virtual dungeon consisting of four sequential rooms, one per condition,
+in a fixed order. The fixed order is an acknowledged limitation; see
+Section~\ref{sec:limitations}.
+
+\paragraph{Task.}
+Each room contains four collectible orbs. The participant must collect
+all four orbs to advance to the next room; an arrow UI at the bottom of
+the screen indicates the direction of the next uncollected orb. A counter
+displays orbs collected and remaining. Collecting the second orb
+activates the room's passthrough technique for 20 seconds before
+automatically deactivating.
+
+\paragraph{Conditions.}
+\begin{enumerate}
+  \item \textbf{Room 1 — Guardian Grid}: Meta's default boundary system.
+    Unlike the other three rooms, the Guardian is not activated by orb
+    collection; it activates automatically if the participant approaches
+    the physical play-area boundary. It may not appear at all if the
+    participant remains centred in the space.
+  \item \textbf{Room 2 — Window}: A forward-facing passthrough rectangle
+    (0.9\,m $\times$ 0.65\,m) is displayed for 20 seconds after the second
+    orb is collected.
+  \item \textbf{Room 3 — Window + Detection}: For 20 seconds after the
+    second orb, YOLO object detection activates. Passthrough is revealed
+    only at the bounding boxes of detected objects; no detection means no
+    passthrough.
+  \item \textbf{Room 4 — Depth Bubble}: For 20 seconds after the second
+    orb, the Depth Bubble reveals real-world geometry wherever the depth
+    threshold is exceeded.
+\end{enumerate}
+
+\paragraph{Apparatus.}
+Meta Quest 3 headset. Meta Quest Link (USB) is used during development
+and pilot testing; deployed builds are sideloaded for participant sessions.
+
+
+\subsection{Participants}
+
+Participants are recruited from the Texas State University graduate and
+undergraduate student population. Inclusion criteria: age 18 or older,
+no photosensitive epilepsy, no prior knowledge of the study hypotheses.
+Data collection is ongoing. A pilot session (P00) was conducted by a
+member of the research team to validate the logging pipeline and task
+flow.
+
+\subsection{Measures}
+
+\paragraph{Subjective (per-room Likert, 7-point scale).}
+\begin{itemize}
+  \item \textbf{A1} Safety awareness: ``I was aware of physical hazards
+    in my real environment while using this system.''
+  \item \textbf{A3} Presence: ``I felt present and immersed in the
+    virtual environment during this condition.''
+  \item \textbf{A4} Disruption: ``The safety system disrupted my
+    experience of the virtual world.''
+  \item \textbf{A5} Trust: ``I would trust this system to show me the
+    real world when I actually needed it.''
+  \item \textbf{A8b} Novelty: ``This passthrough technique felt new or
+    unfamiliar to me.''
+\end{itemize}
+
+\paragraph{Comparative (post-session forced ranking).}
+Participants rank the four systems on perceived safety (B1), immersion
+disruption (B2), and trust (B3), and indicate their overall preference (B4).
+
+\paragraph{Objective.}
+Trigger latency $\Delta t = t_{\textsc{trigger}} - t_{\textsc{room\_halfway}}$,
+computed per room from \texttt{study.csv}. Room completion time from
+\texttt{rooms.csv}.
+
+\paragraph{Qualitative.}
+Open-response items (A9) per room, a post-session verbal interview (C1--C5),
+and experimenter observation notes.
+
+\subsection{Procedure}
+
+On arrival, participants complete a demographics and VR experience
+questionnaire (age, gender, VR frequency, prior Meta Quest use,
+prior VR hazard experience, self-reported interruption sensitivity).
+The experimenter reads a standardised briefing script (``you will explore
+a dungeon with four rooms; each room uses a different safety system'').
+Participants then complete the four-room session without pausing between
+rooms. After completing all rooms, participants fill out the per-room
+questionnaire from memory, complete the post-session rankings, and
+participate in a brief verbal interview. Total session time is
+approximately 20--30 minutes.
+
+\subsection{Analysis Plan}
+
+For Likert items with $N \geq 6$ participants, we will apply Friedman's
+test across the four conditions followed by Wilcoxon signed-rank pairwise
+comparisons (Bonferroni-corrected, $\alpha = 0.05$). For forced rankings,
+Kendall's $W$ will assess within-sample agreement. Trigger latency will
+be compared across rooms using a repeated-measures design. Qualitative
+responses will be analysed using thematic analysis.
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{Preliminary Results}
+\label{sec:results}
+%% ─────────────────────────────────────────────────────────────
+
+\textbf{Data collection is ongoing.} The following results are from a
+single pilot session (P00) conducted by a team member to validate the
+study apparatus. No inferential analysis is performed on a single
+observation; these data confirm that the logging and analysis pipeline
+is operational and characterise the system's objective behaviour.
+
+\subsection{Session Overview}
+
+The pilot participant completed all four rooms in 4.6 minutes, collecting
+all 16 orbs and generating 5 trigger events. No intrusion marks and no
+false positives were logged.
+
+\subsection{Trigger Latency}
+
+\begin{table}[h]
+\centering
+\caption{Trigger latency for the pilot session (P00). Latency is
+  $t_{\textsc{trigger}} - t_{\textsc{room\_halfway}}$. Room~1 latency
+  reflects the Guardian's boundary-proximity trigger; rooms~2--4 use
+  the orb-collection trigger.}
+\label{tab:latency}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Room} & \textbf{Technique} & \textbf{Latency (s)} \\
+\midrule
+1 & Guardian Grid  & 0.002 \\
+2 & Window         & 0.002 \\
+3 & Window + Det.  & 0.052 \\
+4 & Depth Bubble   & 0.004 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:latency} shows sub-100\,ms latency for all techniques.
+The slightly higher latency in Room~3 (Window + Detection) is consistent
+with the Detection system requiring at least one inference frame to
+fire the first \textsc{trigger} event after technique activation. Rooms~1,
+2, and~4 trigger within 4\,ms, reflecting near-instantaneous response.
+
+
+\subsection{Subjective Responses (Pilot)}
+
+The pilot participant reported: safety awareness (A1) of 5 for Window
+and 6 for Depth Bubble; presence (A3) of 4 (Window), 4 (Detection), and
+6 (Depth Bubble); disruption (A4) of 5 (Window), 5 (Detection), and 4
+(Depth Bubble); trust (A5) of 4 (Window), 5 (Detection), and 6 (Depth
+Bubble). Guardian Grid items were marked optional and not completed.
+The participant ranked the Guardian Grid first (most safe) and the
+Window last; ranked the Depth Bubble first for least immersion
+disruption; and ranked the Guardian Grid first for trust. Preferred
+system for everyday use: Guardian Grid.
+
+The participant noted the Depth Bubble as particularly novel and
+surprising: ``The depth bubble because it was new to me and cool to see!''
+
+These single-participant observations are not generalisable. They
+suggest the instrumentation is collecting data as intended.
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{Discussion}
+\label{sec:discussion}
+%% ─────────────────────────────────────────────────────────────
+
+\subsection{Object-Aware vs.\ Boundary-Aware Coverage}
+
+The Guardian Grid cannot detect a chair pushed into the centre of the
+room, a pet crossing the floor, or a person entering the space without
+approaching the configured boundary. The Detection and Depth Bubble
+conditions are, in principle, capable of detecting all of these
+scenarios. Whether this broader coverage translates to perceived safety
+benefit is an open empirical question that the full study is designed to
+answer.
+
+\subsection{The Presence--Safety Trade-off}
+
+Every passthrough technique intrudes on the virtual experience to some
+degree. The Window intrudes continuously and visually dominates the
+forward field of view, but its spatial extent is predictable. The
+Detection window fires reactively and at unexpected screen locations,
+which may feel more disruptive even if the intrusion is smaller in area.
+The Depth Bubble is spatially contiguous with the real environment's
+depth structure, which may feel more natural but could also intrude on
+large regions if a table or wall is within the depth threshold.
+
+\subsection{Trigger Comprehension}
+
+The five-dimension design space predicts that object-aware triggers
+should produce higher trigger comprehension scores than boundary-aware
+ones: when a system shows passthrough at the location of a detected
+object, the causal relationship between real-world stimulus and
+visual response is more transparent. The Guardian Grid's trigger
+mechanism (boundary proximity) is invisible when the boundary is not
+reached, which may leave users uncertain about when and why it is absent.
+We will test this prediction with items A7 (not yet collected) and the
+C3 interview question.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+\paragraph{Fixed condition order.}
+The four conditions are experienced in the same sequence by all
+participants. Order effects, practice effects, and carryover from prior
+conditions are confounded with condition effects. Differences between
+rooms cannot be claimed as order-independent without counterbalancing.
+We report this as a pilot/sequential within-subjects design and note
+counterbalancing as future work.
+
+\paragraph{No true intrusion events.}
+The study does not introduce scripted physical hazards (e.g., a
+confederate entering the space). The second-orb trigger is a
+task-defined activation point, not a response to a real hazard. This
+limits ecological validity. The \textsc{intrusion\_mark} log event is
+available for experimenter-triggered manual logging of any incidental
+real-world intrusions.
+
+\paragraph{Detection reliability.}
+YOLOv9 inference on Meta Quest 3 introduces latency (one inference
+frame, $\approx$50\,ms in the pilot) and is subject to detection failure.
+In the pilot session, the detection-based condition triggered correctly.
+Systematic evaluation of false negative rate is deferred to the full
+study analysis.
+
+\paragraph{Sample size.}
+Data collection is ongoing. Results reported here are from a single
+pilot participant and do not support inferential claims.
+
+
+%% ─────────────────────────────────────────────────────────────
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+%% ─────────────────────────────────────────────────────────────
+
+We have introduced DreamGuard, a mixed reality safety platform that
+extends the design space of VR passthrough transitions from
+boundary-aware to object-aware triggering. The platform runs on a
+consumer Meta Quest headset, implements four qualitatively distinct
+passthrough techniques, and is instrumented for a within-subjects user
+study. A five-dimensional design space organises the techniques along
+axes of spatial awareness model, trigger mechanism, aesthetic
+integration, information granularity, and temporal behavior.
+
+Pilot results confirm sub-100\,ms trigger latency across all four
+conditions and validate the logging pipeline. Full participant data
+are being collected. Upon completion, we will test whether object-aware
+techniques provide measurably higher safety awareness and trigger
+comprehension than the boundary-aware Guardian baseline, and whether
+those benefits come at an acceptable cost to presence.
+
+\paragraph{Future Work.}
+Counterbalanced condition ordering to control order effects.
+Adaptive depth-threshold calibration based on play-area size.
+Diegetic integration: virtual scene elements that \emph{react} to
+detected hazards rather than revealing passthrough. Extension to
+multi-person social VR scenarios where other users are a primary hazard.
+
+
+%% ─────────────────────────────────────────────────────────────
+%% Figures
+%% ─────────────────────────────────────────────────────────────
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/trajectory_per_session.png}
+  \caption{Player trajectory for the pilot session (P00), overlaid on a
+    top-down dungeon map. Path colour encodes time (purple = early,
+    yellow = late). Symbols mark key logged events (room enter, halfway,
+    complete, triggers). TODO: describe observable movement patterns
+    and any notable deviations.}
+  \label{fig:trajectory}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/latency.png}
+  \caption{Trigger latency by condition and per room (pilot session,
+    $N=1$). TODO: describe trends across conditions when full data are
+    available.}
+  \label{fig:latency}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/room_durations.png}
+  \caption{Room completion time per condition (pilot session, $N=1$).
+    TODO: describe whether technique activation appears to affect
+    task completion time.}
+  \label{fig:roomdurations}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/timeline.png}
+  \caption{Event timeline for the pilot session. Each row represents
+    a logged event type; vertical position encodes time. TODO: describe
+    the pacing of the session and any notable clustering of events.}
+  \label{fig:timeline}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/heatmap_by_condition.png}
+  \caption{Position heatmap by condition (pilot session, $N=1$). Warmer
+    colours indicate longer dwell time. TODO: describe whether spatial
+    coverage differs between conditions once full data are available.}
+  \label{fig:heatmapbycondition}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/heatmap_combined.png}
+  \caption{Combined position heatmap across all sessions. TODO: describe
+    overall traversal patterns and any spatial clustering.}
+  \label{fig:heatmapcombined}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/minimap_intrusion_triggers.png}
+  \caption{World-space positions of intrusion marks and technique
+    triggers (pilot session). Arrows connect intrusion to the subsequent
+    trigger event. TODO: describe spatial relationship between where
+    hazards occurred and where triggers fired.}
+  \label{fig:intrusiontriggers}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \includegraphics[width=\textwidth]{images/final_paper/minimap_headset_gaze.png}
+  \caption{Headset gaze direction (XZ projection) for the pilot session,
+    sampled every 30 frames. Arrow direction indicates where the
+    participant was looking. TODO: describe whether gaze aligns with
+    expected navigation paths and technique activation regions.}
+  \label{fig:gaze}
+\end{figure*}
+
+%% ─────────────────────────────────────────────────────────────
+\clearpage\onecolumn
+\appendix
+\section{Study Questionnaire}
+\label{app:survey}
+%% ─────────────────────────────────────────────────────────────
+
+\begin{center}
+  {\large\textbf{DreamGuard: Comparing Mixed Reality Safety Systems}}\\[4pt]
+  \textit{CS 7389I\,·\,Texas State University}\\[6pt]
+  Participant ID:\;\underline{\hspace{3cm}}\qquad Session Date:\;\underline{\hspace{3cm}}
+\end{center}
+
+\bigskip
+
+\subsection*{Before You Begin \textnormal{\small(Experimenter reads aloud)}}
+
+\begin{quote}
+``You are going to explore a dungeon with four rooms. Each room uses a different safety system that can show you your real physical environment. Once you have finished all four rooms, I will ask you to fill out a questionnaire reflecting on each room. There are no right or wrong answers---we are interested in your honest experience.''
+\end{quote}
+
+\subsection*{Demographics / VR Experience \textnormal{\small(Complete once---before session starts)}}
+
+\begin{enumerate}
+  \item Age:\;\underline{\hspace{3cm}}
+  \item Gender:\;\underline{\hspace{3cm}}
+  \item How often do you use VR headsets?\\[4pt]
+        $\square$~None\qquad
+        $\square$~A few times total\qquad
+        $\square$~Monthly\qquad
+        $\square$~Weekly or more frequently
+  \item Have you ever used a Meta Quest headset before?\quad $\square$~Yes\quad $\square$~No
+  \item Have you ever encountered a real physical hazard (bumped a wall, knocked an object) while using VR?\quad $\square$~Yes\quad $\square$~No
+  \item I am generally sensitive to interruptions when I am focused on a task.\likert
+\end{enumerate}
+
+\bigskip
+\subsection*{Part A --- Per-Room Questionnaire \textnormal{\small(Complete after all four rooms; circle one number per item)}}
+
+\subsubsection*{General Task Questions \textnormal{\small(Complete once before the per-room sections)}}
+
+\noindent\textbf{G1.} The maze task felt cognitively demanding.\likert
+
+\noindent\textbf{G2.} I found the virtual environments in the dungeon engaging.\likert
+
+\bigskip
+\subsubsection*{Room 1 --- Meta Guardian Grid}
+
+\noindent\textit{Please answer the following questions related to the first room using the Meta Guardian Grid system.}
+
+\smallskip
+\noindent\textit{\textbf{Note:} Unlike the other rooms, the Guardian Grid activates automatically and \textbf{may not have appeared at all}.}
+
+\smallskip
+\noindent\textbf{A0.} Did the Guardian Grid appear at any point?\quad $\square$~Yes\quad $\square$~No
+
+\paragraph{Safety Awareness}
+\noindent\textbf{A1.} I was aware of physical hazards in my real environment while using this system (optional).\likert
+
+\paragraph{Presence \& Disruption}
+\noindent\textbf{A3.} I felt present and immersed in the virtual environment during this condition (optional).\likert
+
+\noindent\textbf{A4.} The safety system disrupted my experience of the virtual world (optional).\likert
+
+\paragraph{Trust}
+\noindent\textbf{A5.} I would trust this system to show me the real world when I actually needed it (optional).\likert
+
+\paragraph{Novelty}
+\noindent\textbf{A8b.} This passthrough technique felt new or unfamiliar to me (optional).\likert
+
+\paragraph{Open Response}
+\noindent\textbf{A9.} Describe what you noticed about this safety system. Did anything surprise you?\answerlines
+
+\subsubsection*{Room 2 --- Window}
+
+\noindent\textit{Please answer the following questions related to the second room using the Window passthrough system.}
+
+\paragraph{Safety Awareness}
+\noindent\textbf{A1.} I was aware of physical hazards in my real environment while using this system.\likert
+
+\paragraph{Presence \& Disruption}
+\noindent\textbf{A3.} I felt present and immersed in the virtual environment during this condition.\likert
+
+\noindent\textbf{A4.} The safety system disrupted my experience of the virtual world.\likert
+
+\paragraph{Trust}
+\noindent\textbf{A5.} I would trust this system to show me the real world when I actually needed it.\likert
+
+\paragraph{Novelty}
+\noindent\textbf{A8b.} This passthrough technique felt new or unfamiliar to me.\likert
+
+\paragraph{Open Response}
+\noindent\textbf{A9.} Describe what you noticed about this safety system. Did anything surprise you?\answerlines
+
+\subsubsection*{Room 3 --- Window + Detection}
+
+\noindent\textit{Please answer the following questions related to the third room using the Window + Detection passthrough system.}
+
+\paragraph{Safety Awareness}
+\noindent\textbf{A1.} I was aware of physical hazards in my real environment while using this system.\likert
+
+\paragraph{Presence \& Disruption}
+\noindent\textbf{A3.} I felt present and immersed in the virtual environment during this condition.\likert
+
+\noindent\textbf{A4.} The safety system disrupted my experience of the virtual world.\likert
+
+\paragraph{Trust}
+\noindent\textbf{A5.} I would trust this system to show me the real world when I actually needed it.\likert
+
+\paragraph{Novelty}
+\noindent\textbf{A8b.} This passthrough technique felt new or unfamiliar to me.\likert
+
+\paragraph{Open Response}
+\noindent\textbf{A9.} Describe what you noticed about this safety system. Did anything surprise you?\answerlines
+
+\subsubsection*{Room 4 --- Depth Bubble}
+
+\noindent\textit{Please answer the following questions related to the fourth room using the Depth Bubble passthrough system.}
+
+\paragraph{Safety Awareness}
+\noindent\textbf{A1.} I was aware of physical hazards in my real environment while using this system.\likert
+
+\paragraph{Presence \& Disruption}
+\noindent\textbf{A3.} I felt present and immersed in the virtual environment during this condition.\likert
+
+\noindent\textbf{A4.} The safety system disrupted my experience of the virtual world.\likert
+
+\paragraph{Trust}
+\noindent\textbf{A5.} I would trust this system to show me the real world when I actually needed it.\likert
+
+\paragraph{Novelty}
+\noindent\textbf{A8b.} This passthrough technique felt new or unfamiliar to me.\likert
+
+\paragraph{Open Response}
+\noindent\textbf{A9.} Describe what you noticed about this safety system. Did anything surprise you?\answerlines
+
+\bigskip
+\subsection*{Part B --- Post-Session Comparative Ranking \textnormal{\small(Complete after all four rooms)}}
+
+\subsubsection*{Forced Rankings}
+
+\noindent\textbf{B1.} Rank the four systems by how \textbf{safe} they made you feel (1\,=\,safest):
+
+\smallskip
+\begin{center}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{1st (most safe)} & \textbf{2nd} & \textbf{3rd} & \textbf{4th (least safe)} \\
+\midrule
+Meta Guardian Grid & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Window             & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Window + Detection & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Depth Bubble       & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{B2.} Rank the four systems by how much they \textbf{disrupted your immersion} (1\,=\,least disruptive):
+
+\smallskip
+\begin{center}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{1st (least disruptive)} & \textbf{2nd} & \textbf{3rd} & \textbf{4th (most disruptive)} \\
+\midrule
+Meta Guardian Grid & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Window             & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Window + Detection & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Depth Bubble       & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{B3.} Rank the four systems by how much you \textbf{trusted} them (1\,=\,most trusted):
+
+\smallskip
+\begin{center}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{1st (most trusted)} & \textbf{2nd} & \textbf{3rd} & \textbf{4th (least trusted)} \\
+\midrule
+Meta Guardian Grid & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Window             & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Window + Detection & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+Depth Bubble       & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ & $\bigcirc$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\subsubsection*{Overall Preference}
+
+\noindent\textbf{B4.} Which system would you \textbf{most want to use} for everyday VR sessions?\\[6pt]
+$\square$~Room 1: Meta Guardian Grid\quad
+$\square$~Room 2: Window\quad
+$\square$~Room 3: Window + Detection\quad
+$\square$~Room 4: Depth Bubble\quad
+$\square$~None
+
+\smallskip
+\noindent Why?\enspace\rule{0.85\linewidth}{0.3pt}
+
+\subsubsection*{Trigger Moments}
+
+\noindent\textbf{B6.} In which room did the safety system feel most \textbf{surprising} or \textbf{unexpected} when it appeared? What made it feel that way?\answerlines
+
+\subsubsection*{Optional Feedback}
+
+\noindent Any other thoughts or comments?\answerlines
+
+\bigskip
+\subsection*{Part C --- Verbal Interview \textnormal{\small(Experimenter asks, takes notes below)}}
+
+\noindent\textit{Read each question aloud. Record key phrases verbatim where possible.}
+
+\medskip
+\noindent\textbf{C1.} ``Walk me through how each room's system felt different from the others.''\answerlines
+
+\noindent\textbf{C2.} ``Was there any moment where you felt unsafe during a room? What happened?''\answerlines
+
+\noindent\textbf{C3.} ``Did any system feel like it understood what was happening in your real room? What gave you that impression?''\answerlines
+
+\noindent\textbf{C4.} ``The first room used the Guardian Grid---Meta's default boundary system. How did the other three rooms compare to it?''\answerlines
+
+\noindent\textbf{C5.} ``If you could design the ideal VR safety system, what would it do?''\answerlines
+
+\bigskip
+\subsection*{Experimenter Notes}
+
+\noindent Session duration:\;\underline{\hspace{2cm}}~min\qquad
+Any technical issues:\;\rule{0.6\linewidth}{0.3pt}
+
+\smallskip
+\noindent Notable observations during session:\answerlines
+
+\bigskip
+\begin{center}\textit{Thank you for participating.}\end{center}
+
+\end{document}
