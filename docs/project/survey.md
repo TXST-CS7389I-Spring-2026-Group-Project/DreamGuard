@@ -37,15 +37,9 @@ Strongly                   Neutral                   Strongly
 Disagree                                               Agree
 ```
 
----
+## Part 0 - General Task Questions
 
-## Part A — Per-Room Questionnaire
-
-*Complete this after finishing all four rooms. Reflect on each room in turn. Circle one number per item.*
-
----
-
-### General Task Questions *(Complete once before the per-room sections)*
+*(Complete once before the per-room sections)*
 
 **G1.** The maze task felt cognitively demanding.
 
@@ -65,13 +59,19 @@ Disagree                                               Agree
 
 ---
 
+## Part A — Per-Room Questionnaire
+
+*Complete this after finishing all four rooms. Reflect on each room in turn. Circle one number per item.*
+
+---
+
 ### Room 1 — Meta Guardian Grid
 
 *Please answer the following questions related to the first room using the Meta Guardian Grid system.*
 
 > **Note:** Unlike the other rooms, the Guardian Grid activates automatically and **may not have appeared at all**.
 
-**A0.** Did the Guardian Grid appear at any point?
+**A0.** Did the Guardian Grid appear at any point? If not, you can skip the rest of this section.
 
 - [ ] Yes &nbsp;&nbsp; [ ] No
 
@@ -125,7 +125,7 @@ Disagree                                               Agree
 
 #### Open Response
 
-**A9.** Describe what you noticed about this safety system. Did anything surprise you?
+**A9.** Describe what you noticed about this safety system. Did anything surprise you (optional)?
 
 > ________________________________________________________________________
 > ________________________________________________________________________
@@ -187,7 +187,7 @@ Disagree                                               Agree
 
 #### Open Response
 
-**A9.** Describe what you noticed about this safety system. Did anything surprise you?
+**A9.** Describe what you noticed about this safety system. Did anything surprise you (optional)?
 
 > ________________________________________________________________________
 > ________________________________________________________________________
@@ -249,7 +249,7 @@ Disagree                                               Agree
 
 #### Open Response
 
-**A9.** Describe what you noticed about this safety system. Did anything surprise you?
+**A9.** Describe what you noticed about this safety system. Did anything surprise you (optional)?
 
 > ________________________________________________________________________
 > ________________________________________________________________________
@@ -311,7 +311,7 @@ Disagree                                               Agree
 
 #### Open Response
 
-**A9.** Describe what you noticed about this safety system. Did anything surprise you?
+**A9.** Describe what you noticed about this safety system. Did anything surprise you  (optional)?
 
 > ________________________________________________________________________
 > ________________________________________________________________________
@@ -399,11 +399,6 @@ Any other thoughts or comments?
 > ________________________________________________________________________
 
 **C3.** "Did any system feel like it understood what was happening in your real room? What gave you that impression?"
-
-> Notes: ___________________________________________________________________
-> ________________________________________________________________________
-
-**C4.** "The first room used the Guardian Grid — Meta's default boundary system. How did the other three rooms compare to it?"
 
 > Notes: ___________________________________________________________________
 > ________________________________________________________________________
