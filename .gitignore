@@ -1,5 +1,8 @@
 **/**/.DS_Store
 
+**/Assets/Resources/PerformanceTest*
+**/Assets/StreamingAssets/Runtime*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
