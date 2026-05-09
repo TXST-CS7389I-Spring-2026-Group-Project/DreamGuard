@@ -190,13 +190,28 @@ namespace DreamGuard
         // inference runs on Android — buffers are pooled but the pool high-water mark
         // grows and is never released until the Worker is disposed. Recreating the
         // Worker every N runs resets GPU state and prevents progressive lag.
+        // Keep this high (50) — each recreation extends the global GPU buffer pool's
+        // high-water mark, contributing to the persistent baseline frame-time increase
+        // that persists after detection is disabled.
         private int _inferenceRunCount;
-        private const int WorkerRecreateInterval = 10;
+        private const int WorkerRecreateInterval = 50;
 
         // When SetEnabled(false) is called while inference is in progress, we can't
         // safely dispose the Worker until the current ReadbackAndCloneAsync completes.
         // This flag tells FinishInference() to tear down after the readback is done.
         private bool _teardownPending;
+
+        // Pre-allocated buffers reused every inference run to avoid per-frame GC pressure.
+        // The model returns ~8400 raw detections; allocating fresh List/array objects each
+        // run causes them to accumulate as garbage and triggers a GC collection the moment
+        // detection is disabled — producing the stutter spike after switching techniques.
+        private readonly List<DetectionResult> _detectionBuffer  = new(512);
+        private readonly List<int>             _sortBuffer        = new(512);
+        private readonly HashSet<string>       _classBuffer       = new();
+        private readonly List<int>             _nmsOrder          = new(512);
+        private readonly List<int>             _nmsKept           = new(512);
+        private bool[]                         _nmsSuppressed     = new bool[512];
+        private readonly System.Text.StringBuilder _logSb         = new(256);
 
         // ── Unity lifecycle ────────────────────────────────────────────────────
 
@@ -442,7 +457,7 @@ namespace DreamGuard
             while (!coordsAwaiter.IsCompleted) yield return null;
             using var coords = coordsAwaiter.GetResult();
 
-            if (coords == null || !_detectionActive)
+            if (coords == null)
             {
                 FinishInference();
                 yield break;
@@ -451,6 +466,15 @@ namespace DreamGuard
             // ── Scores (optional) ─────────────────────────────────────────────────
             // Scores are read before class IDs so that the int→float conversion path
             // (quantised UInt8 models) can be handled here without a separate readback.
+            //
+            // IMPORTANT: Do NOT early-exit here on !_detectionActive. Schedule() dispatched
+            // GPU kernels for all three outputs simultaneously. The three output tensors may
+            // be written by separate kernel dispatches executed in sequence on the GPU.
+            // Waiting only for the coords readback does not guarantee the scores/class IDs
+            // kernels have finished. Disposing the worker before they complete causes the GPU
+            // driver to stall while it drains in-flight writes — the persistent lag that
+            // manifests after detection is disabled. Complete all readbacks first; skip
+            // evaluation below if _detectionActive went false in the meantime.
             Tensor<float> scores      = null;
             Tensor<float> ownedScores = null; // non-null only when we built it ourselves
 
@@ -479,13 +503,6 @@ namespace DreamGuard
                 }
             }
 
-            if (!_detectionActive)
-            {
-                ownedScores?.Dispose();
-                FinishInference();
-                yield break;
-            }
-
             // ── Class IDs ─────────────────────────────────────────────────────────
             var classRaw = _worker.PeekOutput(outputClassIdsName);
             if (classRaw is Tensor<int> classIntGpu)
@@ -493,9 +510,9 @@ namespace DreamGuard
                 var a = classIntGpu.ReadbackAndCloneAsync().GetAwaiter();
                 while (!a.IsCompleted) yield return null;
                 using var classIds = a.GetResult();
-                if (classIds != null)
+                if (classIds != null && _detectionActive)
                     EvaluateDetections(coords, classIds, scores);
-                else
+                else if (classIds == null)
                     DreamGuardLog.LogWarning("[Detection] ReadbackAndCloneAsync returned null — skipping evaluation");
             }
             else if (classRaw is Tensor<float> classFloatGpu)
@@ -506,9 +523,9 @@ namespace DreamGuard
                 var a = classFloatGpu.ReadbackAndCloneAsync().GetAwaiter();
                 while (!a.IsCompleted) yield return null;
                 using var classIdsFloat = a.GetResult();
-                if (classIdsFloat != null)
+                if (classIdsFloat != null && _detectionActive)
                     EvaluateDetectionsFloatClass(coords, classIdsFloat, scores);
-                else
+                else if (classIdsFloat == null)
                     DreamGuardLog.LogWarning("[Detection] ReadbackAndCloneAsync returned null — skipping evaluation");
             }
             else
@@ -544,7 +561,15 @@ namespace DreamGuard
             int count = classIds.shape[0];
             DreamGuardLog.Log($"[Detection] Evaluating {count} raw detections");
 
-            var detections = new List<DetectionResult>(count);
+            // Pre-NMS confidence gate: discard anchors whose score is below 30% of the
+            // final threshold before touching bbox coords or building the buffer.
+            // The model outputs ~8400 raw anchors; most are near-zero confidence.
+            // Filtering here cuts NMS input from ~8400 to a few hundred, shrinking the
+            // O(n²) NMS work by ~100–200x with negligible effect on recall.
+            float preFilterThreshold = confidenceThreshold * 0.3f;
+
+            _detectionBuffer.Clear();
+            var detections = _detectionBuffer;
             for (int i = 0; i < count; i++)
             {
                 int classId = classIds[i];
@@ -557,6 +582,8 @@ namespace DreamGuard
                     confidence = coords[i, 4];
                 else
                     confidence = 1f;
+
+                if (confidence < preFilterThreshold) continue;
 
                 float x1 = coords.shape.rank >= 2 ? coords[i, 0] : 0f;
                 float y1 = coords.shape.rank >= 2 ? coords[i, 1] : 0f;
@@ -583,14 +610,14 @@ namespace DreamGuard
             int count = classIdsFloat.shape[0];
             DreamGuardLog.Log($"[Detection] Evaluating {count} raw detections (float class IDs)");
 
-            // Scan all anchors: unique class IDs and score range — tells us if output_2 is truly all-zero.
+            // Scan all anchors: unique class IDs and score range — reuse _classBuffer.
             if (count > 0)
             {
                 float scoreMin = float.MaxValue, scoreMax = float.MinValue;
-                var uniqueClasses = new System.Collections.Generic.HashSet<int>();
+                _classBuffer.Clear();
                 for (int i = 0; i < count; i++)
                 {
-                    uniqueClasses.Add(Mathf.RoundToInt(classIdsFloat[i]));
+                    _classBuffer.Add(_labels[Mathf.Clamp(Mathf.RoundToInt(classIdsFloat[i]), 0, _labels.Length - 1)]);
                     if (scores != null && scores.shape[0] > i)
                     {
                         float s = scores[i];
@@ -599,11 +626,14 @@ namespace DreamGuard
                     }
                 }
                 DreamGuardLog.Log(
-                    $"[Detection] Scan — unique classIds({uniqueClasses.Count}): [{string.Join(",", uniqueClasses)}] " +
+                    $"[Detection] Scan — unique classes({_classBuffer.Count}) " +
                     $"scoreRange: {scoreMin:F3}–{scoreMax:F3}");
             }
 
-            var detections = new List<DetectionResult>(count);
+            float preFilterThreshold = confidenceThreshold * 0.3f;
+
+            _detectionBuffer.Clear();
+            var detections = _detectionBuffer;
             for (int i = 0; i < count; i++)
             {
                 int classId = Mathf.RoundToInt(classIdsFloat[i]);
@@ -616,6 +646,8 @@ namespace DreamGuard
                     confidence = coords[i, 4];
                 else
                     confidence = 1f;
+
+                if (confidence < preFilterThreshold) continue;
 
                 float x1 = coords.shape.rank >= 2 ? coords[i, 0] : 0f;
                 float y1 = coords.shape.rank >= 2 ? coords[i, 1] : 0f;
@@ -639,18 +671,19 @@ namespace DreamGuard
         /// </summary>
         private void DispatchDetections(List<DetectionResult> detections)
         {
-            // Log top-5 and unique class count PRE-NMS.
-            var preSorted = new List<int>(detections.Count);
-            var preClasses = new System.Collections.Generic.HashSet<string>();
-            for (int i = 0; i < detections.Count; i++) { preSorted.Add(i); preClasses.Add(detections[i].label); }
-            preSorted.Sort((a, b) => detections[b].confidence.CompareTo(detections[a].confidence));
-            var sbPre = new System.Text.StringBuilder($"[Detection] Pre-NMS  — {detections.Count} dets, {preClasses.Count} classes. Top-5: ");
-            for (int t = 0; t < Mathf.Min(5, preSorted.Count); t++)
+            // Log top-5 and unique class count PRE-NMS — reuse _sortBuffer/_classBuffer.
+            _sortBuffer.Clear();
+            _classBuffer.Clear();
+            for (int i = 0; i < detections.Count; i++) { _sortBuffer.Add(i); _classBuffer.Add(detections[i].label); }
+            _sortBuffer.Sort((a, b) => detections[b].confidence.CompareTo(detections[a].confidence));
+            _logSb.Clear();
+            _logSb.Append($"[Detection] Pre-NMS  — {detections.Count} dets, {_classBuffer.Count} classes. Top-5: ");
+            for (int t = 0; t < Mathf.Min(5, _sortBuffer.Count); t++)
             {
-                var d = detections[preSorted[t]];
-                sbPre.Append($"{d.label} {d.confidence:F2}  ");
+                var d = detections[_sortBuffer[t]];
+                _logSb.Append($"{d.label} {d.confidence:F2}  ");
             }
-            DreamGuardLog.Log(sbPre.ToString());
+            DreamGuardLog.Log(_logSb.ToString());
 
             IList<int> kept;
             if (applySoftwareNMS && detections.Count > 1)
@@ -660,21 +693,22 @@ namespace DreamGuard
             }
             else
             {
-                var all = new List<int>(detections.Count);
-                for (int i = 0; i < detections.Count; i++) all.Add(i);
-                kept = all;
+                _nmsKept.Clear();
+                for (int i = 0; i < detections.Count; i++) _nmsKept.Add(i);
+                kept = _nmsKept;
             }
 
-            // Log top-5 and unique class count POST-NMS.
-            var postClasses = new System.Collections.Generic.HashSet<string>();
-            foreach (int i in kept) postClasses.Add(detections[i].label);
-            var sbPost = new System.Text.StringBuilder($"[Detection] Post-NMS — {kept.Count} dets, {postClasses.Count} classes. Top-5: ");
+            // Log top-5 and unique class count POST-NMS — reuse _classBuffer.
+            _classBuffer.Clear();
+            foreach (int i in kept) _classBuffer.Add(detections[i].label);
+            _logSb.Clear();
+            _logSb.Append($"[Detection] Post-NMS — {kept.Count} dets, {_classBuffer.Count} classes. Top-5: ");
             for (int t = 0; t < Mathf.Min(5, kept.Count); t++)
             {
                 var d = detections[kept[t]];
-                sbPost.Append($"{d.label} {d.confidence:F2}  ");
+                _logSb.Append($"{d.label} {d.confidence:F2}  ");
             }
-            DreamGuardLog.Log(sbPost.ToString());
+            DreamGuardLog.Log(_logSb.ToString());
 
             if (debugDrawBBoxes)
                 _debugDetections.Clear();
@@ -719,32 +753,37 @@ namespace DreamGuard
         /// </summary>
         private List<int> ApplyNMS(IList<DetectionResult> detections)
         {
-            // Sort indices by confidence descending
-            var order = new List<int>(detections.Count);
-            for (int i = 0; i < detections.Count; i++) order.Add(i);
-            order.Sort((a, b) => detections[b].confidence.CompareTo(detections[a].confidence));
+            // Sort indices by confidence descending — reuse _nmsOrder/_nmsKept/_nmsSuppressed.
+            _nmsOrder.Clear();
+            for (int i = 0; i < detections.Count; i++) _nmsOrder.Add(i);
+            _nmsOrder.Sort((a, b) => detections[b].confidence.CompareTo(detections[a].confidence));
 
-            var suppressed = new bool[detections.Count];
-            var kept = new List<int>();
+            // Grow the suppressed array if needed — never shrink to avoid repeated alloc.
+            if (_nmsSuppressed.Length < detections.Count)
+                _nmsSuppressed = new bool[detections.Count * 2];
+            else
+                System.Array.Clear(_nmsSuppressed, 0, detections.Count);
 
-            for (int oi = 0; oi < order.Count; oi++)
+            _nmsKept.Clear();
+
+            for (int oi = 0; oi < _nmsOrder.Count; oi++)
             {
-                int i = order[oi];
-                if (suppressed[i]) continue;
+                int i = _nmsOrder[oi];
+                if (_nmsSuppressed[i]) continue;
 
-                kept.Add(i);
+                _nmsKept.Add(i);
 
-                for (int oj = oi + 1; oj < order.Count; oj++)
+                for (int oj = oi + 1; oj < _nmsOrder.Count; oj++)
                 {
-                    int j = order[oj];
-                    if (!suppressed[j]
+                    int j = _nmsOrder[oj];
+                    if (!_nmsSuppressed[j]
                         && detections[i].label == detections[j].label
                         && IoU(detections[i].bbox, detections[j].bbox) >= nmsIoUThreshold)
-                        suppressed[j] = true;
+                        _nmsSuppressed[j] = true;
                 }
             }
 
-            return kept;
+            return _nmsKept;
         }
 
         private static float IoU(Rect a, Rect b)

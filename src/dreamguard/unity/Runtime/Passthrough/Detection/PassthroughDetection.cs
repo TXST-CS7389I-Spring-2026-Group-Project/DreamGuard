@@ -274,6 +274,14 @@ namespace DreamGuard
             {
                 StudyLogger.LogTrigger("detection",
                     $"label={_frameFirstLabel} conf={_frameFirstConf:F2} count={count}");
+                // Reactivate the sphere if ClearBboxes() deactivated it after the previous
+                // timeout. The initial activation is handled by OnPassthroughLayerResumed;
+                // this only fires on the timeout→active transition thereafter.
+                if (_sphere != null && !_sphere.activeSelf)
+                {
+                    _sphere.SetActive(true);
+                    DreamGuardLog.Log("[DetectionBasedPassthrough] Sphere reactivated — detection resumed after timeout");
+                }
             }
 
             _bboxesActive = true;
@@ -433,7 +441,12 @@ namespace DreamGuard
                 _material.SetInteger(PropCount, 0);
             _bboxesActive = false;
             _timeSinceLastDetection = float.MaxValue;
-            DreamGuardLog.Log("[DetectionBasedPassthrough] Bboxes cleared");
+            // Deactivate the sphere so it stops rasterizing the full viewport just to
+            // discard every fragment. Without this, _DetectionCount = 0 leaves the sphere
+            // active and the shader runs on every pixel to immediately clip(-1) — wasting
+            // a full-screen GPU pass each frame until the next detection fires.
+            if (_sphere != null) _sphere.SetActive(false);
+            DreamGuardLog.Log("[DetectionBasedPassthrough] Bboxes cleared — sphere deactivated");
         }
 
         /// <summary>
