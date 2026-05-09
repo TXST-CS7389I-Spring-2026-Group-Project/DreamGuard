@@ -38,13 +38,20 @@ namespace DreamGuard.Player.UI
         private float waypointBlendRadius = 1.5f;
 
         [SerializeField]
-        [Tooltip("How quickly the arrow rotates toward its target angle (degrees/second). " +
-                 "Lower values smooth out sudden waypoint switches near wall edges.")]
-        private float arrowRotationSpeed = 360f;
+        [Tooltip("Smooth time for arrow rotation (seconds). Controls how quickly the arrow " +
+                 "catches up to the target direction — higher values feel more sluggish but " +
+                 "filter out jitter from rapid waypoint recalculations.")]
+        private float arrowSmoothTime = 0.15f;
+
+        [SerializeField]
+        [Tooltip("Maximum rotation speed cap (degrees/second). Prevents the arrow from " +
+                 "spinning too fast when the target direction changes sharply.")]
+        private float arrowMaxSpeed = 360f;
 
         private Image _arrowImage;
         private Transform _fallbackTarget;
         private float _currentAngleDeg;
+        private float _angleVelocity;
 
         private void Awake()
         {
@@ -232,10 +239,12 @@ namespace DreamGuard.Player.UI
             // Unity UI rotates CCW for positive Z values, so negate to get CW.
             float targetAngleDeg = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
 
-            // Smooth rotation to prevent hard jumps when the nearest waypoint switches
-            // near wall edges (player crosses midpoint between two nodes → path recalculates).
-            _currentAngleDeg = Mathf.MoveTowardsAngle(_currentAngleDeg, targetAngleDeg,
-                arrowRotationSpeed * Time.deltaTime);
+            // SmoothDampAngle gives natural ease-in/ease-out that filters jitter from
+            // frame-to-frame waypoint micro-shifts, while still tracking real direction
+            // changes. MoveTowardsAngle had a fixed angular velocity that made small
+            // recalculations visibly snappy.
+            _currentAngleDeg = Mathf.SmoothDampAngle(_currentAngleDeg, targetAngleDeg,
+                ref _angleVelocity, arrowSmoothTime, arrowMaxSpeed);
 
             _arrowImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -_currentAngleDeg);
         }

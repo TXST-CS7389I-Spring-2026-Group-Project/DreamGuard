@@ -42,6 +42,19 @@ namespace DreamGuard
 
         private readonly List<WaypointNode> _nodes = new();
         private readonly Dictionary<WaypointNode, List<WaypointNode>> _adjacency = new();
+        private readonly Dictionary<WaypointNode, int> _nodeIndex = new();
+
+        // Hysteresis: only switch the start node when the candidate offers meaningfully
+        // better total path cost (player→node + node→target). Prevents oscillation when
+        // the player is near the cost-optimal crossover point between two nodes.
+        private const float StartNodeSwitchThreshold = 0.5f; // world units
+        private WaypointNode _lastStartNode;
+
+        // Dijkstra result cache — recomputed only when the target node changes
+        // (i.e., when an orb is collected), not every frame.
+        private WaypointNode _cachedEndNode;
+        private Dictionary<WaypointNode, float>       _cachedDistToEnd; // node → cost to reach endNode
+        private Dictionary<WaypointNode, WaypointNode> _cachedNextHop;  // node → next hop toward endNode
 
         private void Awake()
         {
@@ -57,9 +70,10 @@ namespace DreamGuard
         {
             _nodes.Clear();
             _adjacency.Clear();
+            _nodeIndex.Clear();
             EndNode = null;
 
-            // Collect only this room's nodes (children of this GameObject)
+            // Collect only this room's nodes (children of this GameObject).
             var found = GetComponentsInChildren<WaypointNode>();
             foreach (var node in found)
             {
@@ -73,7 +87,7 @@ namespace DreamGuard
                 }
             }
 
-            // Build bidirectional adjacency
+            // Build bidirectional adjacency.
             foreach (var node in _nodes)
                 _adjacency[node] = new List<WaypointNode>();
 
@@ -94,15 +108,18 @@ namespace DreamGuard
                 }
             }
 
-            Debug.Log($"[WaypointGraph] Built graph on '{name}' — {_nodes.Count} nodes, endNode={(EndNode != null ? EndNode.name : "none")}");
+            // Stable index map for deterministic Dijkstra tie-breaking.
+            for (int i = 0; i < _nodes.Count; i++)
+                _nodeIndex[_nodes[i]] = i;
+
+            DreamGuardLog.Log($"[WaypointGraph] Built graph on '{name}' — {_nodes.Count} nodes, " +
+                              $"endNode={(EndNode != null ? EndNode.name : "none")}");
         }
 
         /// <summary>
         /// Returns the world-space position of the next waypoint node along the
         /// shortest path from <paramref name="fromPos"/> to <paramref name="targetPos"/>.
-        ///
-        /// Returns null if the graph is empty or no path exists (caller falls back to
-        /// pointing directly at the target).
+        /// Returns null if the graph is empty or no path exists.
         /// </summary>
         public Vector3? GetNextWaypointToward(Vector3 fromPos, Vector3 targetPos)
         {
@@ -115,52 +132,90 @@ namespace DreamGuard
         /// <paramref name="fromPos"/> to <paramref name="targetPos"/>.
         /// The second position falls back to <paramref name="targetPos"/> when the path
         /// is only one hop long. Both are null when no path exists.
+        ///
+        /// Start-node selection uses a best-cost heuristic (dist player→node + dist
+        /// node→target) rather than nearest-node, so the arrow always starts by pointing
+        /// in the direction that minimises total travel — even when the geometrically
+        /// nearest graph node is off to the side or behind the player.
+        /// Dijkstra is cached per target node and only recomputed when the target changes.
         /// </summary>
         public (Vector3? wp1, Vector3? wp2) GetNextTwoWaypointsToward(Vector3 fromPos, Vector3 targetPos)
         {
             if (_nodes.Count == 0) return (null, null);
 
-            WaypointNode startNode = FindNearestNode(fromPos);
-            WaypointNode endNode   = FindNearestNode(targetPos);
+            WaypointNode endNode = FindNearestNode(targetPos);
+            if (endNode == null) return (null, null);
 
-            if (startNode == null || endNode == null) return (null, null);
-            if (startNode == endNode) return (targetPos, targetPos);
+            // Recompute Dijkstra only when the target node changes (orb collected).
+            if (endNode != _cachedEndNode)
+            {
+                (_cachedDistToEnd, _cachedNextHop) = RunDijkstraFrom(endNode);
+                _cachedEndNode = endNode;
+                DreamGuardLog.Log($"[WaypointGraph] Dijkstra recomputed toward '{endNode.name}'");
+            }
 
-            var path = RunDijkstra(startNode, endNode);
-            if (path.Count < 2) return (null, null);
+            // Select the start node that minimises total cost: dist(player→node) + dist(node→endNode).
+            // This avoids the "nearest node is behind/off to the side" trap that caused wrong
+            // initial directions even when the true path is straight ahead.
+            WaypointNode bestStart = FindBestStartNode(fromPos, _cachedDistToEnd);
 
-            // path[0] = startNode, path[1] = first step, path[2] = second step (if present)
-            Vector3 wp1 = path[1].transform.position;
-            Vector3 wp2 = path.Count > 2 ? path[2].transform.position : targetPos;
+            // Apply hysteresis: only commit to the new start node if it is meaningfully cheaper.
+            bestStart = StabilizeStartNode(fromPos, bestStart, _cachedDistToEnd);
+
+            if (bestStart == null || bestStart == endNode) return (targetPos, targetPos);
+
+            // Walk precomputed next-hop pointers — no path reconstruction needed.
+            if (!_cachedNextHop.TryGetValue(bestStart, out var hop1)) return (null, null);
+
+            Vector3 wp1 = hop1.transform.position;
+            Vector3 wp2 = _cachedNextHop.TryGetValue(hop1, out var hop2)
+                ? hop2.transform.position
+                : targetPos;
             return (wp1, wp2);
         }
 
         /// <summary>
-        /// Runs Dijkstra from <paramref name="startNode"/> to <paramref name="endNode"/> and
-        /// returns the reconstructed path as an ordered node list (start → … → end).
-        /// Returns an empty list when no path exists.
+        /// Runs Dijkstra outward from <paramref name="sourceNode"/> on the undirected graph.
+        /// Returns:
+        ///   dist[X]    = shortest graph distance from X to sourceNode
+        ///   nextHop[X] = the first node to visit when traveling from X toward sourceNode
+        ///
+        /// Because the graph is undirected, running from sourceNode outward is equivalent
+        /// to computing all-pairs distances to sourceNode — a single O(V²) pass.
         /// </summary>
-        private List<WaypointNode> RunDijkstra(WaypointNode startNode, WaypointNode endNode)
+        private (Dictionary<WaypointNode, float> dist, Dictionary<WaypointNode, WaypointNode> nextHop)
+            RunDijkstraFrom(WaypointNode sourceNode)
         {
-            var dist      = new Dictionary<WaypointNode, float>(_nodes.Count);
-            var prev      = new Dictionary<WaypointNode, WaypointNode>(_nodes.Count);
-            var unvisited = new HashSet<WaypointNode>(_nodes);
+            var dist    = new Dictionary<WaypointNode, float>(_nodes.Count);
+            var nextHop = new Dictionary<WaypointNode, WaypointNode>(_nodes.Count);
+            // List preserves _nodes insertion order for deterministic tie-breaking.
+            var unvisited = new List<WaypointNode>(_nodes);
 
             foreach (var node in _nodes)
                 dist[node] = float.MaxValue;
-            dist[startNode] = 0f;
+            dist[sourceNode] = 0f;
 
             while (unvisited.Count > 0)
             {
+                // Find the unvisited node with minimum distance; break ties by node index.
                 WaypointNode current = null;
                 float minDist = float.MaxValue;
                 foreach (var node in unvisited)
                 {
-                    if (dist[node] < minDist) { minDist = dist[node]; current = node; }
+                    float d = dist[node];
+                    if (d < minDist)
+                    {
+                        minDist = d; current = node;
+                    }
+                    else if (d == minDist && current != null)
+                    {
+                        if (_nodeIndex.GetValueOrDefault(node, int.MaxValue) <
+                            _nodeIndex.GetValueOrDefault(current, int.MaxValue))
+                            current = node;
+                    }
                 }
 
-                if (current == null || current == endNode) break;
-
+                if (current == null) break;
                 unvisited.Remove(current);
 
                 if (!_adjacency.TryGetValue(current, out var neighbors)) continue;
@@ -172,28 +227,16 @@ namespace DreamGuard
                     if (alt < dist[neighbor])
                     {
                         dist[neighbor] = alt;
-                        prev[neighbor] = current;
+                        // nextHop[neighbor] = current: "from neighbor, step to current, toward sourceNode"
+                        nextHop[neighbor] = current;
                     }
                 }
             }
 
-            if (!prev.ContainsKey(endNode)) return new List<WaypointNode>();
-
-            // Reconstruct path: walk backwards from endNode, then reverse
-            var path = new List<WaypointNode>();
-            for (var step = endNode; step != null; prev.TryGetValue(step, out step))
-                path.Add(step);
-            path.Reverse();
-            return path;
+            return (dist, nextHop);
         }
 
-        // Hysteresis: once a start node is selected, don't switch to a new one unless
-        // the candidate is this much closer (world units). Prevents oscillation when the
-        // player is near the midpoint between two nodes (common near wall edges/corners).
-        private const float NearestNodeHysteresis = 0.4f;
-
-        private WaypointNode _lastStartNode;
-
+        /// <summary>Returns the geometrically nearest node to <paramref name="pos"/>.</summary>
         private WaypointNode FindNearestNode(Vector3 pos)
         {
             WaypointNode nearest = null;
@@ -204,19 +247,56 @@ namespace DreamGuard
                 float sqDist = (node.transform.position - pos).sqrMagnitude;
                 if (sqDist < nearestSqDist) { nearestSqDist = sqDist; nearest = node; }
             }
+            return nearest;
+        }
 
-            // Apply hysteresis: only switch away from the last start node if the new
-            // candidate is meaningfully closer, not just a tiny bit closer.
-            if (_lastStartNode != null && nearest != _lastStartNode)
+        /// <summary>
+        /// Returns the node that minimises total path cost: Euclidean distance from the
+        /// player to that node, plus the Dijkstra distance from that node to the target.
+        /// This correctly handles cases where the geometrically nearest node is off to the
+        /// side or behind the player, which would cause the arrow to point the wrong way.
+        /// </summary>
+        private WaypointNode FindBestStartNode(Vector3 playerPos, Dictionary<WaypointNode, float> distToEnd)
+        {
+            WaypointNode best = null;
+            float bestCost = float.MaxValue;
+            foreach (var node in _nodes)
             {
-                float lastSqDist = (_lastStartNode.transform.position - pos).sqrMagnitude;
-                float hysteresisSq = NearestNodeHysteresis * NearestNodeHysteresis;
-                if (nearestSqDist + hysteresisSq >= lastSqDist)
-                    return _lastStartNode;
+                if (node == null) continue;
+                if (!distToEnd.TryGetValue(node, out float toEnd) || toEnd == float.MaxValue)
+                    continue; // unreachable node
+                float total = Vector3.Distance(playerPos, node.transform.position) + toEnd;
+                if (total < bestCost) { bestCost = total; best = node; }
+            }
+            return best;
+        }
+
+        /// <summary>
+        /// Applies cost-based hysteresis to start node selection. Only switches away from
+        /// the current start node if the candidate offers a meaningfully lower total cost
+        /// (by at least <see cref="StartNodeSwitchThreshold"/> world units). This prevents
+        /// the selected start node from oscillating when the player is near the crossover
+        /// point between two equally-good nodes.
+        /// </summary>
+        private WaypointNode StabilizeStartNode(Vector3 playerPos, WaypointNode candidate,
+            Dictionary<WaypointNode, float> distToEnd)
+        {
+            if (_lastStartNode == null || candidate == _lastStartNode)
+            {
+                _lastStartNode = candidate;
+                return candidate;
             }
 
-            _lastStartNode = nearest;
-            return nearest;
+            float CostOf(WaypointNode n) =>
+                Vector3.Distance(playerPos, n.transform.position)
+                + (distToEnd.TryGetValue(n, out float d) ? d : float.MaxValue);
+
+            if (CostOf(candidate) + StartNodeSwitchThreshold < CostOf(_lastStartNode))
+            {
+                _lastStartNode = candidate;
+                return candidate;
+            }
+            return _lastStartNode;
         }
     }
 }
