@@ -1,0 +1,5 @@
+session,participant,condition,room_id,duration_s
+study_0,P00,baseline,room_1,61.126
+study_0,P00,baseline,room_2,53.856
+study_0,P00,baseline,room_3,68.936
+study_0,P00,baseline,room_4,65.613

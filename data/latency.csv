@@ -1,0 +1,5 @@
+session,participant,condition,room_id,latency_s,technique
+study_0,P00,baseline,room_1,0.002,default
+study_0,P00,baseline,room_2,0.002,default
+study_0,P00,baseline,room_3,0.052,default
+study_0,P00,baseline,room_4,0.004,default
