@@ -858,7 +858,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2016380633}
+  - {fileID: 0}
+  - {fileID: 783558973}
 --- !u!4 &36547263
 Transform:
   m_ObjectHideFlags: 0
@@ -868,7 +869,7 @@ Transform:
   m_GameObject: {fileID: 36547261}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 8.75}
+  m_LocalPosition: {x: -2, y: 0.5, z: 8.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -995,9 +996,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1811529976}
   - {fileID: 1648721115}
-  - {fileID: 2013090513}
+  - {fileID: 1410759438}
+  - {fileID: 837236844}
 --- !u!4 &37091240
 Transform:
   m_ObjectHideFlags: 0
@@ -1007,7 +1008,7 @@ Transform:
   m_GameObject: {fileID: 37091238}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.25, y: 0, z: 12.25}
+  m_LocalPosition: {x: 4.25, y: 0, z: 10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1397,7 +1398,8 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 540514590}
-  - {fileID: 1668071026}
+  - {fileID: 0}
+  - {fileID: 1178360852}
 --- !u!4 &72319301
 Transform:
   m_ObjectHideFlags: 0
@@ -1407,7 +1409,7 @@ Transform:
   m_GameObject: {fileID: 72319299}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16, y: 0, z: 0}
+  m_LocalPosition: {x: -16, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2040,6 +2042,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 2015747438}
+  - {fileID: 1466117428}
 --- !u!4 &98475887
 Transform:
   m_ObjectHideFlags: 0
@@ -2049,7 +2052,7 @@ Transform:
   m_GameObject: {fileID: 98475885}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0.75}
+  m_LocalPosition: {x: 2, y: 0.5, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3483,7 +3486,7 @@ Transform:
   m_GameObject: {fileID: 153676458}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 4.75}
+  m_LocalPosition: {x: -6, y: 0, z: 4.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3503,7 +3506,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2058514788}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 2130850128}
+  - {fileID: 1768126290}
 --- !u!1 &159037991
 GameObject:
   m_ObjectHideFlags: 0
@@ -4041,7 +4047,8 @@ MonoBehaviour:
   neighbors:
   - {fileID: 1313782140}
   - {fileID: 1883745729}
-  - {fileID: 876403317}
+  - {fileID: 0}
+  - {fileID: 1923469690}
 --- !u!4 &185201495
 Transform:
   m_ObjectHideFlags: 0
@@ -4051,7 +4058,7 @@ Transform:
   m_GameObject: {fileID: 185201493}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 16}
+  m_LocalPosition: {x: -4, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4145,7 +4152,7 @@ Transform:
   m_GameObject: {fileID: 187757186}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 0.75}
+  m_LocalPosition: {x: -4, y: 0, z: 2.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4166,6 +4173,56 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 153676460}
+  - {fileID: 1261356240}
+--- !u!1 &188482764
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 188482766}
+  - component: {fileID: 188482765}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &188482765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188482764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 0}
+  - {fileID: 583504370}
+  - {fileID: 493067892}
+--- !u!4 &188482766
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188482764}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8, y: 0.5, z: 10.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &201138608
 GameObject:
   m_ObjectHideFlags: 0
@@ -4620,8 +4677,9 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1989751395}
-  - {fileID: 2084254960}
-  - {fileID: 828356266}
+  - {fileID: 826109926}
+  - {fileID: 772226962}
+  - {fileID: 2082157651}
 --- !u!4 &220244281
 Transform:
   m_ObjectHideFlags: 0
@@ -4631,7 +4689,7 @@ Transform:
   m_GameObject: {fileID: 220244279}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 0, z: 20}
+  m_LocalPosition: {x: 6, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5103,53 +5161,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 230915392}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
---- !u!1 &233447028
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 233447030}
-  - component: {fileID: 233447029}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &233447029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 233447028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 583504370}
---- !u!4 &233447030
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 233447028}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 0.5, z: 12.75}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 889386411}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &235397756
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5224,6 +5235,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1000000002, guid: f05db3c73e9ea634880f19e7e026bce9, type: 3}
   m_PrefabInstance: {fileID: 235397756}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &236371285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 236371286}
+  - component: {fileID: 236371287}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &236371286
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 236371285}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 14.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &236371287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 236371285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1688717597}
+  - {fileID: 2062337966}
 --- !u!1 &236500797
 GameObject:
   m_ObjectHideFlags: 0
@@ -5558,54 +5617,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
   m_PrefabInstance: {fileID: 313563757}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &251475752
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 251475754}
-  - component: {fileID: 251475753}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &251475753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 251475752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 1178360852}
-  - {fileID: 928009896}
---- !u!4 &251475754
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 251475752}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 8}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 695381019}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &252207852
 GameObject:
   m_ObjectHideFlags: 0
@@ -5917,6 +5928,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1195166565}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &260651712
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 260651714}
+  - component: {fileID: 260651713}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &260651713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260651712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 2111158771}
+  - {fileID: 918937992}
+  - {fileID: 990036683}
+--- !u!4 &260651714
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 260651712}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.25, y: 0, z: 0.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &263044329
 GameObject:
   m_ObjectHideFlags: 0
@@ -5948,7 +6008,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2015747438}
+  - {fileID: 1967743695}
 --- !u!4 &263044331
 Transform:
   m_ObjectHideFlags: 0
@@ -5958,7 +6018,7 @@ Transform:
   m_GameObject: {fileID: 263044329}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12, y: 0.5, z: -3.25}
+  m_LocalPosition: {x: 12, y: 0.5, z: -1.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6085,8 +6145,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1252045536}
-  - {fileID: 1060002369}
+  - {fileID: 1816441053}
+  - {fileID: 1088254084}
 --- !u!4 &266674919
 Transform:
   m_ObjectHideFlags: 0
@@ -6096,7 +6156,7 @@ Transform:
   m_GameObject: {fileID: 266674917}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 12}
+  m_LocalPosition: {x: -10, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6257,6 +6317,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4327267664555898907, guid: e9457958f663a714c9b5edd1d6231c59, type: 3}
   m_PrefabInstance: {fileID: 274049305}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &275386130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 275386132}
+  - component: {fileID: 275386131}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &275386131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275386130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 2015747438}
+  - {fileID: 1967743695}
+--- !u!4 &275386132
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275386130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0.5, z: -3.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &275519565
 GameObject:
   m_ObjectHideFlags: 0
@@ -6600,8 +6708,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 540514590}
   - {fileID: 400064005}
+  - {fileID: 690983920}
 --- !u!4 &289523053
 Transform:
   m_ObjectHideFlags: 0
@@ -6611,7 +6719,56 @@ Transform:
   m_GameObject: {fileID: 289523051}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 0}
+  m_LocalPosition: {x: 4, y: 0, z: 1.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &289938328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 289938330}
+  - component: {fileID: 289938329}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &289938329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289938328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 955303217}
+  - {fileID: 1252045536}
+  - {fileID: 1816441053}
+--- !u!4 &289938330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289938328}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -16, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7838,6 +7995,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3744359192338792419, guid: 7afd892936094fc43bd71a05556c3de1, type: 3}
   m_PrefabInstance: {fileID: 337402298}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &337561071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 337561073}
+  - component: {fileID: 337561072}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &337561072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337561071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1637980748}
+  - {fileID: 428986879}
+  - {fileID: 700028346}
+--- !u!4 &337561073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337561071}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.25, y: 0, z: 14.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &342178928 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
@@ -8348,6 +8554,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1215137647}
+  - {fileID: 0}
   - {fileID: 2135171848}
 --- !u!4 &355299199
 Transform:
@@ -8358,7 +8565,7 @@ Transform:
   m_GameObject: {fileID: 355299197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 4}
+  m_LocalPosition: {x: 2, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9159,7 +9366,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 349673018}
-  - {fileID: 1215137647}
+  - {fileID: 1050145737}
 --- !u!4 &376423105
 Transform:
   m_ObjectHideFlags: 0
@@ -9169,7 +9376,7 @@ Transform:
   m_GameObject: {fileID: 376423103}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 0}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9901,6 +10108,55 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.000001, y: 4, z: 1.25939}
   m_Center: {x: 0.0000038146973, y: 2, z: 0}
+--- !u!1 &391164108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 391164110}
+  - component: {fileID: 391164109}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &391164109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391164108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 0}
+  - {fileID: 691142651}
+  - {fileID: 739724303}
+--- !u!4 &391164110
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391164108}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6, y: 0.5, z: -3.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &396281029 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
@@ -9938,7 +10194,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 289523052}
-  - {fileID: 1877323814}
+  - {fileID: 1525239215}
 --- !u!4 &400064006
 Transform:
   m_ObjectHideFlags: 0
@@ -9948,7 +10204,7 @@ Transform:
   m_GameObject: {fileID: 400064004}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 8}
+  m_LocalPosition: {x: 4, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10329,7 +10585,7 @@ Transform:
   m_GameObject: {fileID: 407136952}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 16.75}
+  m_LocalPosition: {x: -6, y: 0, z: 16.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10855,9 +11111,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 883441972}
   - {fileID: 1062102124}
-  - {fileID: 1637980748}
+  - {fileID: 700028346}
+  - {fileID: 337561072}
 --- !u!4 &428986880
 Transform:
   m_ObjectHideFlags: 0
@@ -10867,7 +11123,7 @@ Transform:
   m_GameObject: {fileID: 428986878}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.25, y: 0, z: 12.25}
+  m_LocalPosition: {x: 16.25, y: 0, z: 10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12596,8 +12852,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2111158771}
   - {fileID: 1811529976}
+  - {fileID: 918937992}
 --- !u!4 &487368857
 Transform:
   m_ObjectHideFlags: 0
@@ -12607,7 +12863,7 @@ Transform:
   m_GameObject: {fileID: 487368855}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: 0.25}
+  m_LocalPosition: {x: 0.25, y: 0, z: 2.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12861,7 +13117,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 233447029}
+  - {fileID: 0}
+  - {fileID: 188482765}
 --- !u!4 &493067893
 Transform:
   m_ObjectHideFlags: 0
@@ -12871,7 +13128,7 @@ Transform:
   m_GameObject: {fileID: 493067891}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12, y: 0.5, z: 12.75}
+  m_LocalPosition: {x: 12, y: 0.5, z: 14.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13060,8 +13317,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 973309305}
   - {fileID: 386435730}
+  - {fileID: 795946227}
 --- !u!4 &500202533
 Transform:
   m_ObjectHideFlags: 0
@@ -13071,7 +13328,7 @@ Transform:
   m_GameObject: {fileID: 500202531}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.25, y: 0, z: 20.25}
+  m_LocalPosition: {x: 8.25, y: 0, z: 18.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13400,8 +13657,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 910516122}
-  - {fileID: 1989751395}
+  - {fileID: 663453897}
+  - {fileID: 2106823068}
 --- !u!4 &512450872
 Transform:
   m_ObjectHideFlags: 0
@@ -13411,7 +13668,7 @@ Transform:
   m_GameObject: {fileID: 512450870}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 8}
+  m_LocalPosition: {x: 2, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14030,7 +14287,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 72319300}
-  - {fileID: 289523052}
+  - {fileID: 690983920}
 --- !u!4 &540514591
 Transform:
   m_ObjectHideFlags: 0
@@ -14040,7 +14297,7 @@ Transform:
   m_GameObject: {fileID: 540514589}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -14, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14690,7 +14947,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 98475886}
+  - {fileID: 1466117428}
+  - {fileID: 188482765}
 --- !u!4 &583504371
 Transform:
   m_ObjectHideFlags: 0
@@ -14700,7 +14958,7 @@ Transform:
   m_GameObject: {fileID: 583504369}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 0.5, z: 0.75}
+  m_LocalPosition: {x: 8, y: 0.5, z: 2.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15628,6 +15886,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 601311183}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
+--- !u!1 &603470246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 603470247}
+  - component: {fileID: 603470248}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &603470247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603470246}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.25, y: 0, z: 20.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &603470248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603470246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1050100570}
+  - {fileID: 2013090513}
 --- !u!1 &612143041 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
@@ -16058,54 +16364,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 629891541}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &632128312
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 632128314}
-  - component: {fileID: 632128313}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &632128313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632128312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 990036683}
-  - {fileID: 1981993840}
---- !u!4 &632128314
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 632128312}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.25, y: 0, z: 4.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 829142437}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &634421911
 GameObject:
   m_ObjectHideFlags: 0
@@ -17517,6 +17775,54 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &663453896
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 663453898}
+  - component: {fileID: 663453897}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &663453897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663453896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 910516122}
+  - {fileID: 512450871}
+--- !u!4 &663453898
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663453896}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 0, z: 8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &664942188
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17994,6 +18300,105 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 684018201}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &690983919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690983921}
+  - component: {fileID: 690983920}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &690983920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690983919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 289523052}
+  - {fileID: 540514590}
+--- !u!4 &690983921
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690983919}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &691142650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 691142652}
+  - component: {fileID: 691142651}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &691142651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691142650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 1768126290}
+  - {fileID: 391164109}
+--- !u!4 &691142652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 691142650}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8, y: 0.125, z: -1.125}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &692782299
 GameObject:
   m_ObjectHideFlags: 0
@@ -18218,10 +18623,7 @@ Transform:
   m_Children:
   - {fileID: 540514591}
   - {fileID: 72319301}
-  - {fileID: 1668071027}
-  - {fileID: 1459419009}
   - {fileID: 1178360853}
-  - {fileID: 251475754}
   - {fileID: 928009897}
   - {fileID: 1103770458}
   - {fileID: 289523053}
@@ -18240,6 +18642,16 @@ Transform:
   - {fileID: 266674919}
   - {fileID: 1060002370}
   - {fileID: 1527547214}
+  - {fileID: 690983921}
+  - {fileID: 1525239216}
+  - {fileID: 1906016019}
+  - {fileID: 2129682471}
+  - {fileID: 1884284276}
+  - {fileID: 722810113}
+  - {fileID: 998344720}
+  - {fileID: 289938330}
+  - {fileID: 1816441054}
+  - {fileID: 1088254083}
   m_Father: {fileID: 1269300149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &697898291
@@ -18332,6 +18744,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697898291}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &700028345
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 700028347}
+  - component: {fileID: 700028346}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &700028346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 700028345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 883441972}
+  - {fileID: 428986879}
+  - {fileID: 337561072}
+--- !u!4 &700028347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 700028345}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.25, y: 0, z: 12.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &700648692 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1837662158770732349, guid: 7afd892936094fc43bd71a05556c3de1, type: 3}
@@ -18966,7 +19427,7 @@ Transform:
   m_GameObject: {fileID: 712868364}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 12.75}
+  m_LocalPosition: {x: -4, y: 0, z: 14.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18986,7 +19447,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1334013109}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 1833318580}
+  - {fileID: 2062337966}
 --- !u!1001 &714333160
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19073,6 +19538,54 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.000001, y: 4, z: 1.0000002}
   m_Center: {x: 0.0000038146973, y: 2, z: 0.00000047683716}
+--- !u!1 &722810111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 722810113}
+  - component: {fileID: 722810112}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &722810112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722810111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 948941288}
+  - {fileID: 2049526348}
+--- !u!4 &722810113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722810111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &723375769
 GameObject:
   m_ObjectHideFlags: 0
@@ -19466,6 +19979,54 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &739724302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 739724304}
+  - component: {fileID: 739724303}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &739724303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739724302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 391164109}
+  - {fileID: 2015747438}
+--- !u!4 &739724304
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739724302}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 0.5, z: -3.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &751025253
 GameObject:
   m_ObjectHideFlags: 0
@@ -20090,6 +20651,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 771355453}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
+--- !u!1 &772226961
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 772226963}
+  - component: {fileID: 772226962}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &772226962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772226961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 220244280}
+  - {fileID: 828356266}
+  - {fileID: 826109926}
+--- !u!4 &772226963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772226961}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &773891790
 GameObject:
   m_ObjectHideFlags: 0
@@ -20615,7 +21225,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 799390398}
+  - {fileID: 965077767}
+  - {fileID: 36547262}
 --- !u!4 &783558974
 Transform:
   m_ObjectHideFlags: 0
@@ -20625,7 +21236,7 @@ Transform:
   m_GameObject: {fileID: 783558972}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0.5, z: 4.75}
+  m_LocalPosition: {x: 2, y: 0.5, z: 4.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20842,6 +21453,54 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
   m_PrefabInstance: {fileID: 1457397362}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &795946226
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 795946228}
+  - component: {fileID: 795946227}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &795946227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 795946226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 500202532}
+  - {fileID: 1992943514}
+--- !u!4 &795946228
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 795946226}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.25, y: 0, z: 20.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &798006781 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1190523425168923367, guid: e9457958f663a714c9b5edd1d6231c59, type: 3}
@@ -20879,6 +21538,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1927353132}
+  - {fileID: 906602962}
 --- !u!4 &799390399
 Transform:
   m_ObjectHideFlags: 0
@@ -20888,7 +21548,7 @@ Transform:
   m_GameObject: {fileID: 799390397}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0.5, z: 16.75}
+  m_LocalPosition: {x: 6, y: 0.5, z: 16.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21346,6 +22006,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 825596477}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &826109925
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 826109927}
+  - component: {fileID: 826109926}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &826109926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826109925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 220244280}
+  - {fileID: 2084254960}
+  - {fileID: 772226962}
+--- !u!4 &826109927
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826109925}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8, y: 0, z: 18}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &827351276
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21451,8 +22160,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 220244280}
-  - {fileID: 1755165562}
+  - {fileID: 772226962}
+  - {fileID: 1895241277}
 --- !u!4 &828356267
 Transform:
   m_ObjectHideFlags: 0
@@ -21462,7 +22171,7 @@ Transform:
   m_GameObject: {fileID: 828356265}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16, y: 0, z: 20}
+  m_LocalPosition: {x: 14, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21501,7 +22210,6 @@ Transform:
   - {fileID: 487368857}
   - {fileID: 2111158772}
   - {fileID: 990036684}
-  - {fileID: 632128314}
   - {fileID: 1981993841}
   - {fileID: 973309306}
   - {fileID: 500202533}
@@ -21517,6 +22225,16 @@ Transform:
   - {fileID: 2013090514}
   - {fileID: 1050100571}
   - {fileID: 871946409}
+  - {fileID: 918937993}
+  - {fileID: 260651714}
+  - {fileID: 1822040095}
+  - {fileID: 1992943515}
+  - {fileID: 795946228}
+  - {fileID: 700028347}
+  - {fileID: 337561073}
+  - {fileID: 1410759439}
+  - {fileID: 837236845}
+  - {fileID: 603470247}
   m_Father: {fileID: 2045275664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &829142438
@@ -21924,6 +22642,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1000000002, guid: f05db3c73e9ea634880f19e7e026bce9, type: 3}
   m_PrefabInstance: {fileID: 836059265}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &837236843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 837236845}
+  - component: {fileID: 837236844}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &837236844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837236843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 37091239}
+  - {fileID: 2013090513}
+  - {fileID: 1410759438}
+--- !u!4 &837236845
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837236843}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.25, y: 0, z: 14.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &838487940
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23043,53 +23810,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 872874787}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
---- !u!1 &876403316
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 876403318}
-  - component: {fileID: 876403317}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &876403317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 876403316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 1
-  neighbors:
-  - {fileID: 185201494}
---- !u!4 &876403318
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 876403316}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 24}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1195166565}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &879078793
 GameObject:
   m_ObjectHideFlags: 0
@@ -23260,7 +23980,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 2111158771}
-  - {fileID: 428986879}
+  - {fileID: 700028346}
 --- !u!4 &883441973
 Transform:
   m_ObjectHideFlags: 0
@@ -23270,7 +23990,7 @@ Transform:
   m_GameObject: {fileID: 883441971}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.25, y: 0, z: 12.25}
+  m_LocalPosition: {x: 12.25, y: 0, z: 10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23434,10 +24154,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2015747439}
-  - {fileID: 1546609823}
-  - {fileID: 2058514789}
   - {fileID: 153676459}
-  - {fileID: 1334013110}
   - {fileID: 712868365}
   - {fileID: 407136954}
   - {fileID: 1992593041}
@@ -23448,16 +24165,28 @@ Transform:
   - {fileID: 6264856}
   - {fileID: 98475887}
   - {fileID: 583504371}
-  - {fileID: 233447030}
   - {fileID: 493067893}
   - {fileID: 1815568199}
   - {fileID: 1927353133}
   - {fileID: 799390399}
   - {fileID: 783558974}
-  - {fileID: 2016380634}
   - {fileID: 36547263}
   - {fileID: 1415088163}
   - {fileID: 1669977113}
+  - {fileID: 691142652}
+  - {fileID: 2130850129}
+  - {fileID: 1833318581}
+  - {fileID: 1768126291}
+  - {fileID: 391164110}
+  - {fileID: 739724304}
+  - {fileID: 275386132}
+  - {fileID: 1466117429}
+  - {fileID: 188482766}
+  - {fileID: 906602963}
+  - {fileID: 965077766}
+  - {fileID: 1967743696}
+  - {fileID: 1261356239}
+  - {fileID: 236371286}
   m_Father: {fileID: 914624217}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &889386412
@@ -23873,6 +24602,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 896877683}
   m_Mesh: {fileID: -5326400611293709114, guid: a14c8f7c49948444d999888be655ac00, type: 3}
+--- !u!1 &906602961
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 906602963}
+  - component: {fileID: 906602962}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &906602962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906602961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 799390398}
+  - {fileID: 965077767}
+--- !u!4 &906602963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906602961}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 0.5, z: 14.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &907382826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24041,7 +24818,8 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1215137647}
-  - {fileID: 512450871}
+  - {fileID: 1050145737}
+  - {fileID: 663453897}
 --- !u!4 &910516123
 Transform:
   m_ObjectHideFlags: 0
@@ -24051,7 +24829,7 @@ Transform:
   m_GameObject: {fileID: 910516121}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 8}
+  m_LocalPosition: {x: -4, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24336,6 +25114,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 918527109}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &918937991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 918937993}
+  - component: {fileID: 918937992}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &918937992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918937991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 487368856}
+  - {fileID: 260651713}
+--- !u!4 &918937993
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918937991}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.25, y: 0, z: 0.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &924599921 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
@@ -24484,8 +25310,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 251475753}
+  - {fileID: 0}
   - {fileID: 1103770457}
+  - {fileID: 1178360852}
 --- !u!4 &928009897
 Transform:
   m_ObjectHideFlags: 0
@@ -24495,7 +25322,7 @@ Transform:
   m_GameObject: {fileID: 928009895}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 4}
+  m_LocalPosition: {x: -6, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24688,7 +25515,8 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1827916324}
-  - {fileID: 2049526348}
+  - {fileID: 1884284275}
+  - {fileID: 722810112}
 --- !u!4 &948941289
 Transform:
   m_ObjectHideFlags: 0
@@ -24698,7 +25526,7 @@ Transform:
   m_GameObject: {fileID: 948941287}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 20}
+  m_LocalPosition: {x: 4, y: 0, z: 18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24802,8 +25630,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2049526348}
-  - {fileID: 1252045536}
+  - {fileID: 998344719}
+  - {fileID: 289938329}
 --- !u!4 &955303218
 Transform:
   m_ObjectHideFlags: 0
@@ -24813,7 +25641,7 @@ Transform:
   m_GameObject: {fileID: 955303216}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16, y: 0, z: 20}
+  m_LocalPosition: {x: -16, y: 0, z: 18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24995,6 +25823,54 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 4, z: 1}
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!1 &965077765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 965077766}
+  - component: {fileID: 965077767}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &965077766
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965077765}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 0.5, z: 6.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &965077767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965077765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 783558973}
+  - {fileID: 906602962}
 --- !u!1 &965278884
 GameObject:
   m_ObjectHideFlags: 0
@@ -25396,7 +26272,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1981993840}
-  - {fileID: 500202532}
+  - {fileID: 1992943514}
 --- !u!4 &973309306
 Transform:
   m_ObjectHideFlags: 0
@@ -25406,7 +26282,7 @@ Transform:
   m_GameObject: {fileID: 973309304}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.25, y: 0, z: 20.25}
+  m_LocalPosition: {x: 20.25, y: 0, z: 18.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25511,7 +26387,10 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 2111158771}
-  - {fileID: 632128313}
+  - {fileID: 0}
+  - {fileID: 260651713}
+  - {fileID: 1981993840}
+  - {fileID: 1822040094}
 --- !u!4 &990036684
 Transform:
   m_ObjectHideFlags: 0
@@ -25521,7 +26400,7 @@ Transform:
   m_GameObject: {fileID: 990036682}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.25, y: 0, z: 0.25}
+  m_LocalPosition: {x: 14.25, y: 0, z: 0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25766,6 +26645,54 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &998344718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 998344720}
+  - component: {fileID: 998344719}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &998344719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998344718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 955303217}
+  - {fileID: 2049526348}
+--- !u!4 &998344720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998344718}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &999000001
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27235,8 +28162,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2013090513}
   - {fileID: 871946410}
+  - {fileID: 603470248}
 --- !u!4 &1050100571
 Transform:
   m_ObjectHideFlags: 0
@@ -27246,11 +28173,60 @@ Transform:
   m_GameObject: {fileID: 1050100569}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: 20.25}
+  m_LocalPosition: {x: 0.25, y: 0, z: 18.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1050145736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1050145738}
+  - component: {fileID: 1050145737}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1050145737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050145736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 376423104}
+  - {fileID: 1215137647}
+  - {fileID: 910516122}
+--- !u!4 &1050145738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1050145736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4, y: 0, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1051591927 stripped
 GameObject:
@@ -27533,8 +28509,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 266674918}
   - {fileID: 1527547215}
+  - {fileID: 1088254084}
 --- !u!4 &1060002370
 Transform:
   m_ObjectHideFlags: 0
@@ -27544,7 +28520,7 @@ Transform:
   m_GameObject: {fileID: 1060002368}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 16}
+  m_LocalPosition: {x: -10, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28620,6 +29596,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1084928751}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
+--- !u!1 &1088254082
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1088254083}
+  - component: {fileID: 1088254084}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1088254083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088254082}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8, y: 0, z: 14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1088254084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088254082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 266674918}
+  - {fileID: 1060002369}
 --- !u!1 &1094736887
 GameObject:
   m_ObjectHideFlags: 0
@@ -29789,8 +30813,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1639712994}
   - {fileID: 144954770}
+  - {fileID: 0}
+  - {fileID: 2135171848}
 --- !u!4 &1149620436
 Transform:
   m_ObjectHideFlags: 0
@@ -29800,7 +30825,7 @@ Transform:
   m_GameObject: {fileID: 1149620434}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12, y: 0, z: 4}
+  m_LocalPosition: {x: 12, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -30927,8 +31952,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1459419008}
-  - {fileID: 251475753}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 72319300}
+  - {fileID: 928009896}
 --- !u!4 &1178360853
 Transform:
   m_ObjectHideFlags: 0
@@ -30938,7 +31965,7 @@ Transform:
   m_GameObject: {fileID: 1178360851}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: 0, z: 8}
+  m_LocalPosition: {x: -10, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31362,8 +32389,6 @@ Transform:
   - {fileID: 1215137648}
   - {fileID: 355299199}
   - {fileID: 2135171849}
-  - {fileID: 1776119026}
-  - {fileID: 1639712995}
   - {fileID: 1149620436}
   - {fileID: 144954771}
   - {fileID: 910516123}
@@ -31374,12 +32399,20 @@ Transform:
   - {fileID: 828356267}
   - {fileID: 1755165563}
   - {fileID: 258982057}
-  - {fileID: 1391168810}
   - {fileID: 1313782141}
   - {fileID: 185201495}
   - {fileID: 1883745730}
   - {fileID: 1359024978}
-  - {fileID: 876403318}
+  - {fileID: 1050145738}
+  - {fileID: 663453898}
+  - {fileID: 2106823069}
+  - {fileID: 2082157652}
+  - {fileID: 826109927}
+  - {fileID: 772226963}
+  - {fileID: 1923469691}
+  - {fileID: 1450901673}
+  - {fileID: 1895241278}
+  - {fileID: 2088589031}
   m_Father: {fileID: 850088680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1196809300 stripped
@@ -32263,9 +33296,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 376423104}
   - {fileID: 355299198}
   - {fileID: 910516122}
+  - {fileID: 1050145737}
 --- !u!4 &1215137648
 Transform:
   m_ObjectHideFlags: 0
@@ -32275,7 +33308,7 @@ Transform:
   m_GameObject: {fileID: 1215137646}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 4}
+  m_LocalPosition: {x: -2, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33471,9 +34504,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 955303217}
   - {fileID: 1394509002}
-  - {fileID: 266674918}
+  - {fileID: 289938329}
+  - {fileID: 1816441053}
 --- !u!4 &1252045537
 Transform:
   m_ObjectHideFlags: 0
@@ -33483,7 +34516,7 @@ Transform:
   m_GameObject: {fileID: 1252045535}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16, y: 0, z: 12}
+  m_LocalPosition: {x: -16, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33641,6 +34674,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 1255735367}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1261356238
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1261356239}
+  - component: {fileID: 1261356240}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1261356239
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1261356238}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4, y: 0, z: 0.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1261356240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1261356238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 187757188}
 --- !u!1 &1264385893
 GameObject:
   m_ObjectHideFlags: 0
@@ -35377,8 +36457,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1391168809}
+  - {fileID: 0}
   - {fileID: 185201494}
+  - {fileID: 2082157651}
+  - {fileID: 1923469690}
 --- !u!4 &1313782141
 Transform:
   m_ObjectHideFlags: 0
@@ -35388,7 +36470,7 @@ Transform:
   m_GameObject: {fileID: 1313782139}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 16}
+  m_LocalPosition: {x: -2, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -35840,53 +36922,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1330372085}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
---- !u!1 &1334013108
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1334013110}
-  - component: {fileID: 1334013109}
-  m_Layer: 0
-  m_Name: WaypointNode (4)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1334013109
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334013108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 2058514788}
---- !u!4 &1334013110
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334013108}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 12.75}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 889386411}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1338139837
 GameObject:
   m_ObjectHideFlags: 0
@@ -37084,54 +38119,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.000001, y: 4, z: 1.0000001}
   m_Center: {x: 0, y: 2, z: 0.00000023841858}
---- !u!1 &1391168808
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1391168810}
-  - component: {fileID: 1391168809}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1391168809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1391168808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 1989751395}
-  - {fileID: 1313782140}
---- !u!4 &1391168810
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1391168808}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 20}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1195166565}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1392503129
 GameObject:
   m_ObjectHideFlags: 0
@@ -37594,6 +38581,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1409203471}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &1410759437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1410759439}
+  - component: {fileID: 1410759438}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1410759438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410759437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1811529976}
+  - {fileID: 37091239}
+  - {fileID: 837236844}
+--- !u!4 &1410759439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410759437}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.25, y: 0, z: 12.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1415088162
 GameObject:
   m_ObjectHideFlags: 0
@@ -38170,6 +39206,53 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1447776842}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &1450901672
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1450901673}
+  - component: {fileID: 1450901674}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1450901673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450901672}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4, y: 0, z: 22}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1450901674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450901672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 1
+  neighbors:
+  - {fileID: 1923469690}
 --- !u!1 &1453509592
 GameObject:
   m_ObjectHideFlags: 0
@@ -38653,54 +39736,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.000002, y: 4, z: 1.0000005}
   m_Center: {x: -0.00000047683716, y: 2, z: 0}
---- !u!1 &1459419007
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1459419009}
-  - component: {fileID: 1459419008}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1459419008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1459419007}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 1668071026}
-  - {fileID: 1178360852}
---- !u!4 &1459419009
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1459419007}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: 0, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 695381019}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1465909291
 GameObject:
   m_ObjectHideFlags: 0
@@ -38813,6 +39848,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465909291}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
+--- !u!1 &1466117427
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1466117429}
+  - component: {fileID: 1466117428}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1466117428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466117427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 583504370}
+  - {fileID: 98475886}
+--- !u!4 &1466117429
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466117427}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6, y: 0.5, z: 0.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1468862337
 GameObject:
   m_ObjectHideFlags: 0
@@ -40309,6 +41392,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1523482362}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &1525239214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1525239216}
+  - component: {fileID: 1525239215}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1525239215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525239214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 400064005}
+  - {fileID: 1906016018}
+--- !u!4 &1525239216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525239214}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1525746581
 GameObject:
   m_ObjectHideFlags: 0
@@ -41039,53 +42170,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 4, z: 0.99999994}
   m_Center: {x: 0, y: 2, z: -0.0000009536743}
---- !u!1 &1546609821
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1546609823}
-  - component: {fileID: 1546609822}
-  m_Layer: 0
-  m_Name: WaypointNode (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1546609822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1546609821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 0}
---- !u!4 &1546609823
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1546609821}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8, y: 0.5, z: -3.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 889386411}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1548573986
 GameObject:
   m_ObjectHideFlags: 0
@@ -43154,8 +44238,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 428986879}
   - {fileID: 1011054321}
+  - {fileID: 337561072}
 --- !u!4 &1637980749
 Transform:
   m_ObjectHideFlags: 0
@@ -43165,59 +44249,11 @@ Transform:
   m_GameObject: {fileID: 1637980747}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.25, y: 0, z: 16.25}
+  m_LocalPosition: {x: 14.25, y: 0, z: 16.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 829142437}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1639712993
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1639712995}
-  - component: {fileID: 1639712994}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1639712994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639712993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 1776119025}
-  - {fileID: 1149620435}
---- !u!4 &1639712995
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639712993}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 0, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1195166565}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1640792081 stripped
 GameObject:
@@ -43760,54 +44796,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1658278067}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
---- !u!1 &1668071025
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1668071027}
-  - component: {fileID: 1668071026}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1668071026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668071025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 72319300}
-  - {fileID: 1459419008}
---- !u!4 &1668071027
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668071025}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -16, y: 0, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 695381019}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1669977112
 GameObject:
   m_ObjectHideFlags: 0
@@ -44277,7 +45265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 2062337966}
+  - {fileID: 236371287}
 --- !u!1 &1689178059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1190523425168923367, guid: e9457958f663a714c9b5edd1d6231c59, type: 3}
@@ -44833,7 +45821,7 @@ Transform:
   m_GameObject: {fileID: 1709339087}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: 0, z: 24}
+  m_LocalPosition: {x: -12, y: 0, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44870,8 +45858,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1827916324}
   - {fileID: 1506548495}
+  - {fileID: 1884284275}
 --- !u!4 &1716898713
 Transform:
   m_ObjectHideFlags: 0
@@ -44881,7 +45869,7 @@ Transform:
   m_GameObject: {fileID: 1716898711}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 12}
+  m_LocalPosition: {x: 2, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45773,8 +46761,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 828356266}
   - {fileID: 258982056}
+  - {fileID: 2088589032}
 --- !u!4 &1755165563
 Transform:
   m_ObjectHideFlags: 0
@@ -45784,7 +46772,7 @@ Transform:
   m_GameObject: {fileID: 1755165561}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16, y: 0, z: 0}
+  m_LocalPosition: {x: 14, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -46009,6 +46997,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 1767868061}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1768126289
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1768126291}
+  - component: {fileID: 1768126290}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1768126290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768126289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 691142651}
+  - {fileID: 0}
+  - {fileID: 153676460}
+--- !u!4 &1768126291
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768126289}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8, y: 0.0625, z: 2.8125}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1771130173
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46271,54 +47308,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.000001, y: 4, z: 1.0000001}
   m_Center: {x: -0.0000038146973, y: 2, z: 0.0000009536743}
---- !u!1 &1776119024
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1776119026}
-  - component: {fileID: 1776119025}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1776119025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1776119024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 2135171848}
-  - {fileID: 1639712994}
---- !u!4 &1776119026
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1776119024}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1195166565}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1777675534
 GameObject:
   m_ObjectHideFlags: 0
@@ -47278,7 +48267,7 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 487368856}
-  - {fileID: 37091239}
+  - {fileID: 1410759438}
 --- !u!4 &1811529977
 Transform:
   m_ObjectHideFlags: 0
@@ -47288,7 +48277,7 @@ Transform:
   m_GameObject: {fileID: 1811529975}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: 12.25}
+  m_LocalPosition: {x: 0.25, y: 0, z: 10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47483,11 +48472,60 @@ Transform:
   m_GameObject: {fileID: 1815568197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12, y: 0.5, z: 16.75}
+  m_LocalPosition: {x: 10, y: 0.5, z: 16.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1816441052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1816441054}
+  - component: {fileID: 1816441053}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1816441053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816441052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 266674918}
+  - {fileID: 1252045536}
+  - {fileID: 289938329}
+--- !u!4 &1816441054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816441052}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14, y: 0, z: 12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1819945259 stripped
 GameObject:
@@ -47515,6 +48553,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.000001, y: 4, z: 1.0000002}
   m_Center: {x: -0.0000038146973, y: 2, z: -0.0000023841858}
+--- !u!1 &1822040093
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1822040095}
+  - component: {fileID: 1822040094}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1822040094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1822040093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 990036683}
+--- !u!4 &1822040095
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1822040093}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.25, y: 0, z: 0.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1826448741
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -47621,8 +48706,8 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 1929782198}
-  - {fileID: 1716898712}
   - {fileID: 948941288}
+  - {fileID: 1884284275}
 --- !u!4 &1827916325
 Transform:
   m_ObjectHideFlags: 0
@@ -47632,11 +48717,61 @@ Transform:
   m_GameObject: {fileID: 1827916323}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 16}
+  m_LocalPosition: {x: 2, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1833318579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1833318581}
+  - component: {fileID: 1833318580}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1833318580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833318579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 2130850128}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 712868366}
+--- !u!4 &1833318581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833318579}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8, y: 0, z: 10.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1837234210
 GameObject:
@@ -48369,8 +49504,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 400064005}
-  - {fileID: 1929782198}
+  - {fileID: 1906016018}
+  - {fileID: 2129682470}
 --- !u!4 &1877323815
 Transform:
   m_ObjectHideFlags: 0
@@ -48380,7 +49515,7 @@ Transform:
   m_GameObject: {fileID: 1877323813}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 8}
+  m_LocalPosition: {x: -4, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -48454,11 +49589,60 @@ Transform:
   m_GameObject: {fileID: 1883745728}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 12}
+  m_LocalPosition: {x: -2, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1884284274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1884284276}
+  - component: {fileID: 1884284275}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1884284275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884284274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1827916324}
+  - {fileID: 1716898712}
+  - {fileID: 948941288}
+--- !u!4 &1884284276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884284274}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 0, z: 14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1887878935 stripped
 GameObject:
@@ -48695,6 +49879,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 1890697357}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1895241276
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1895241278}
+  - component: {fileID: 1895241277}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1895241277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895241276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 828356266}
+  - {fileID: 2088589032}
+--- !u!4 &1895241278
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895241276}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16, y: 0, z: 18}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1905398945
 GameObject:
   m_ObjectHideFlags: 0
@@ -48807,6 +50039,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905398945}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
+--- !u!1 &1906016017
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1906016019}
+  - component: {fileID: 1906016018}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1906016018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906016017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1877323814}
+  - {fileID: 1525239215}
+--- !u!4 &1906016019
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906016017}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 0, z: 8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1915170971
 GameObject:
   m_ObjectHideFlags: 0
@@ -48934,6 +50214,55 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &1923469689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1923469691}
+  - component: {fileID: 1923469690}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1923469690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923469689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1313782140}
+  - {fileID: 1450901674}
+  - {fileID: 185201494}
+--- !u!4 &1923469691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923469689}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4, y: 0, z: 18}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1924330728 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6841762012002091828, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
@@ -49038,8 +50367,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1877323814}
   - {fileID: 1827916324}
+  - {fileID: 2129682470}
 --- !u!4 &1929782199
 Transform:
   m_ObjectHideFlags: 0
@@ -49049,7 +50378,7 @@ Transform:
   m_GameObject: {fileID: 1929782197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4, y: 0, z: 16}
+  m_LocalPosition: {x: -2, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50057,6 +51386,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1965560045}
   m_Mesh: {fileID: 4807522850406795232, guid: b745d0a99e0144b07b5aa1b58b7cd9eb, type: 3}
+--- !u!1 &1967743694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1967743696}
+  - component: {fileID: 1967743695}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1967743695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967743694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 263044330}
+  - {fileID: 275386131}
+--- !u!4 &1967743696
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967743694}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 0.5, z: -3.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1968076579 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1837662158770732349, guid: 7afd892936094fc43bd71a05556c3de1, type: 3}
@@ -50417,8 +51794,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 632128313}
   - {fileID: 973309305}
+  - {fileID: 0}
+  - {fileID: 990036683}
 --- !u!4 &1981993841
 Transform:
   m_ObjectHideFlags: 0
@@ -50428,7 +51806,7 @@ Transform:
   m_GameObject: {fileID: 1981993839}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.25, y: 0, z: 4.25}
+  m_LocalPosition: {x: 20.25, y: 0, z: 6.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50532,9 +51910,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 512450871}
   - {fileID: 220244280}
-  - {fileID: 1391168809}
+  - {fileID: 2106823068}
+  - {fileID: 2082157651}
 --- !u!4 &1989751396
 Transform:
   m_ObjectHideFlags: 0
@@ -50544,7 +51922,7 @@ Transform:
   m_GameObject: {fileID: 1989751394}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 20}
+  m_LocalPosition: {x: 4, y: 0, z: 18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50687,6 +52065,54 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 407136953}
+--- !u!1 &1992943513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1992943515}
+  - component: {fileID: 1992943514}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1992943514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992943513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 973309305}
+  - {fileID: 795946227}
+--- !u!4 &1992943515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992943513}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.25, y: 0, z: 20.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 829142437}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1996707303
 GameObject:
   m_ObjectHideFlags: 0
@@ -51187,8 +52613,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 37091239}
-  - {fileID: 1050100570}
+  - {fileID: 837236844}
+  - {fileID: 603470248}
 --- !u!4 &2013090514
 Transform:
   m_ObjectHideFlags: 0
@@ -51198,7 +52624,7 @@ Transform:
   m_GameObject: {fileID: 2013090512}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.25, y: 0, z: 20.25}
+  m_LocalPosition: {x: 4.25, y: 0, z: 18.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51235,7 +52661,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 1546609822}
+  - {fileID: 0}
+  - {fileID: 739724303}
+  - {fileID: 275386131}
 --- !u!4 &2015747439
 Transform:
   m_ObjectHideFlags: 0
@@ -51245,54 +52673,7 @@ Transform:
   m_GameObject: {fileID: 2015747437}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -3.25}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 889386411}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2016380632
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2016380634}
-  - component: {fileID: 2016380633}
-  m_Layer: 0
-  m_Name: WaypointNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2016380633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2016380632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 783558973}
---- !u!4 &2016380634
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2016380632}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 4.75}
+  m_LocalPosition: {x: 0, y: 0.5, z: -1.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51969,9 +53350,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 948941288}
   - {fileID: 1709339088}
-  - {fileID: 955303217}
+  - {fileID: 722810112}
+  - {fileID: 998344719}
 --- !u!4 &2049526349
 Transform:
   m_ObjectHideFlags: 0
@@ -52381,53 +53762,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 2055475526}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2058514787
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2058514789}
-  - component: {fileID: 2058514788}
-  m_Layer: 0
-  m_Name: WaypointNode (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2058514788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2058514787}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
-  isEnd: 0
-  neighbors:
-  - {fileID: 1546609822}
---- !u!4 &2058514789
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2058514787}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8, y: 0, z: 4.75}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 889386411}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2062034225 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1837662158770732349, guid: 7afd892936094fc43bd71a05556c3de1, type: 3}
@@ -52486,6 +53820,8 @@ MonoBehaviour:
   isEnd: 0
   neighbors:
   - {fileID: 407136953}
+  - {fileID: 712868366}
+  - {fileID: 236371287}
 --- !u!4 &2062337967
 Transform:
   m_ObjectHideFlags: 0
@@ -52495,7 +53831,7 @@ Transform:
   m_GameObject: {fileID: 2062337965}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 16.75}
+  m_LocalPosition: {x: -2, y: 0, z: 16.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52979,6 +54315,56 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2077274713}
   m_Mesh: {fileID: -784463062101431799, guid: 27fadc332f57842dea3b0415d7cddd66, type: 3}
+--- !u!1 &2082157650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2082157652}
+  - component: {fileID: 2082157651}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2082157651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082157650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1989751395}
+  - {fileID: 0}
+  - {fileID: 1313782140}
+  - {fileID: 220244280}
+--- !u!4 &2082157652
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082157650}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2084199186 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 728892340475834995, guid: 50db6ab05f3725e48b0a2bdd314d5c96, type: 3}
@@ -53036,7 +54422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 220244280}
+  - {fileID: 826109926}
 --- !u!4 &2084254961
 Transform:
   m_ObjectHideFlags: 0
@@ -53078,6 +54464,102 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 4, z: 0.99999994}
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!1 &2088589030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2088589031}
+  - component: {fileID: 2088589032}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2088589031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088589030}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16, y: 0, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2088589032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088589030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1755165562}
+  - {fileID: 1895241277}
+--- !u!1 &2106823067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2106823069}
+  - component: {fileID: 2106823068}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2106823068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106823067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 512450871}
+  - {fileID: 1989751395}
+--- !u!4 &2106823069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106823067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 0, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195166565}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2108210396
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53195,9 +54677,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
-  - {fileID: 487368856}
   - {fileID: 990036683}
   - {fileID: 883441972}
+  - {fileID: 260651713}
 --- !u!4 &2111158772
 Transform:
   m_ObjectHideFlags: 0
@@ -53207,7 +54689,7 @@ Transform:
   m_GameObject: {fileID: 2111158770}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.25, y: 0, z: 0.25}
+  m_LocalPosition: {x: 12.25, y: 0, z: 2.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -53769,6 +55251,104 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4249407284351539674, guid: 00a9ecffad5f5594c84f834944629720, type: 3}
   m_PrefabInstance: {fileID: 2126749536}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2129682469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2129682471}
+  - component: {fileID: 2129682470}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2129682470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129682469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 1877323814}
+  - {fileID: 1929782198}
+--- !u!4 &2129682471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129682469}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4, y: 0, z: 14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695381019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2130850127
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2130850129}
+  - component: {fileID: 2130850128}
+  m_Layer: 0
+  m_Name: WaypointNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2130850128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2130850127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd27d10a3b0a0b4b94847fd2f081bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
+  isEnd: 0
+  neighbors:
+  - {fileID: 0}
+  - {fileID: 1833318580}
+  - {fileID: 0}
+  - {fileID: 153676460}
+--- !u!4 &2130850129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2130850127}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8, y: 0, z: 6.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 889386411}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2130948505
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53886,8 +55466,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: DreamGuard.Navigation::DreamGuard.WaypointNode
   isEnd: 0
   neighbors:
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 355299198}
-  - {fileID: 1776119025}
+  - {fileID: 0}
+  - {fileID: 1149620435}
 --- !u!4 &2135171849
 Transform:
   m_ObjectHideFlags: 0
@@ -53897,7 +55480,7 @@ Transform:
   m_GameObject: {fileID: 2135171847}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 0}
+  m_LocalPosition: {x: 6, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

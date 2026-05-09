@@ -32,6 +32,11 @@ namespace DreamGuard.Player.UI
                  "Assign the center eye anchor. Falls back to Camera.main if null.")]
         private Camera playerCamera;
 
+        [SerializeField]
+        [Tooltip("Distance from the next waypoint at which the arrow begins blending " +
+                 "toward the waypoint after it, smoothing 90-degree bends.")]
+        private float waypointBlendRadius = 1.5f;
+
         private Image _arrowImage;
         private Transform _fallbackTarget;
 
@@ -164,18 +169,28 @@ namespace DreamGuard.Player.UI
         }
 
         /// <summary>
-        /// Returns the next waypoint position along the shortest graph path to
-        /// <paramref name="targetWorldPos"/>, or the target itself when no
-        /// <see cref="WaypointGraph"/> is present in the scene.
+        /// Returns a world-space look-at position for the arrow, following the waypoint
+        /// graph toward <paramref name="targetWorldPos"/>. When the player is within
+        /// <see cref="waypointBlendRadius"/> of the next waypoint, the position is
+        /// blended toward the waypoint after it so the arrow anticipates the upcoming
+        /// turn rather than snapping at the last moment.
         /// </summary>
         private Vector3 Navigate(Vector3 targetWorldPos)
         {
             if (WaypointGraph.Instance != null)
             {
-                Vector3? next = WaypointGraph.Instance.GetNextWaypointToward(
+                var (wp1, wp2) = WaypointGraph.Instance.GetNextTwoWaypointsToward(
                     playerCamera.transform.position, targetWorldPos);
-                if (next.HasValue)
-                    return next.Value;
+                if (wp1.HasValue)
+                {
+                    if (wp2.HasValue && waypointBlendRadius > 0f)
+                    {
+                        float dist = Vector3.Distance(playerCamera.transform.position, wp1.Value);
+                        float t = Mathf.Clamp01(1f - dist / waypointBlendRadius);
+                        return Vector3.Lerp(wp1.Value, wp2.Value, t);
+                    }
+                    return wp1.Value;
+                }
             }
             return targetWorldPos;
         }

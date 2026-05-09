@@ -106,17 +106,42 @@ namespace DreamGuard
         /// </summary>
         public Vector3? GetNextWaypointToward(Vector3 fromPos, Vector3 targetPos)
         {
-            if (_nodes.Count == 0) return null;
+            var (wp1, _) = GetNextTwoWaypointsToward(fromPos, targetPos);
+            return wp1;
+        }
+
+        /// <summary>
+        /// Returns the first and second waypoint positions along the shortest path from
+        /// <paramref name="fromPos"/> to <paramref name="targetPos"/>.
+        /// The second position falls back to <paramref name="targetPos"/> when the path
+        /// is only one hop long. Both are null when no path exists.
+        /// </summary>
+        public (Vector3? wp1, Vector3? wp2) GetNextTwoWaypointsToward(Vector3 fromPos, Vector3 targetPos)
+        {
+            if (_nodes.Count == 0) return (null, null);
 
             WaypointNode startNode = FindNearestNode(fromPos);
             WaypointNode endNode   = FindNearestNode(targetPos);
 
-            if (startNode == null || endNode == null) return null;
+            if (startNode == null || endNode == null) return (null, null);
+            if (startNode == endNode) return (targetPos, targetPos);
 
-            // Already at the same node — point directly
-            if (startNode == endNode) return targetPos;
+            var path = RunDijkstra(startNode, endNode);
+            if (path.Count < 2) return (null, null);
 
-            // Dijkstra (O(n²) — fine for small maze graphs)
+            // path[0] = startNode, path[1] = first step, path[2] = second step (if present)
+            Vector3 wp1 = path[1].transform.position;
+            Vector3 wp2 = path.Count > 2 ? path[2].transform.position : targetPos;
+            return (wp1, wp2);
+        }
+
+        /// <summary>
+        /// Runs Dijkstra from <paramref name="startNode"/> to <paramref name="endNode"/> and
+        /// returns the reconstructed path as an ordered node list (start → … → end).
+        /// Returns an empty list when no path exists.
+        /// </summary>
+        private List<WaypointNode> RunDijkstra(WaypointNode startNode, WaypointNode endNode)
+        {
             var dist      = new Dictionary<WaypointNode, float>(_nodes.Count);
             var prev      = new Dictionary<WaypointNode, WaypointNode>(_nodes.Count);
             var unvisited = new HashSet<WaypointNode>(_nodes);
@@ -152,19 +177,14 @@ namespace DreamGuard
                 }
             }
 
-            if (!prev.ContainsKey(endNode)) return null;
+            if (!prev.ContainsKey(endNode)) return new List<WaypointNode>();
 
-            // Walk back from endNode to find the first step out of startNode
-            var step = endNode;
-            WaypointNode firstStep = endNode;
-            while (prev.TryGetValue(step, out var parent))
-            {
-                if (parent == startNode) { firstStep = step; break; }
-                firstStep = step;
-                step = parent;
-            }
-
-            return firstStep.transform.position;
+            // Reconstruct path: walk backwards from endNode, then reverse
+            var path = new List<WaypointNode>();
+            for (var step = endNode; step != null; prev.TryGetValue(step, out step))
+                path.Add(step);
+            path.Reverse();
+            return path;
         }
 
         private WaypointNode FindNearestNode(Vector3 pos)
