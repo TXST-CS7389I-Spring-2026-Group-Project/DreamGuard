@@ -14,5 +14,5 @@ dependencies = [
 ]
 
 [tool.uv]
-# Run the notebook:  uv run jupyter lab
-# Run a script:      uv run summary.py ../data
+# Run the notebook:  uv run jupyter lab notebooks/
+# Run a script:      uv run src/analysis/summary.py data/
