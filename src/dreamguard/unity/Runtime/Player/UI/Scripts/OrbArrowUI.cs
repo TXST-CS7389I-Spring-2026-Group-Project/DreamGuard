@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DreamGuard.Orb;
@@ -21,6 +22,12 @@ namespace DreamGuard.Player.UI
     /// next room's OrbManager activates (RoomExperiment calls SetFallbackTarget(null)).
     ///
     /// The arrow hides automatically when no orbs remain and no fallback target is set.
+    ///
+    /// Navigation uses <see cref="WaypointGraph"/> to route around walls. A full path is
+    /// planned once per target (when the orb changes or the room changes) and followed in
+    /// order — the arrow advances to the next waypoint only when the player reaches the
+    /// current one. This avoids per-frame nearest-node re-queries that cause oscillation
+    /// at T-intersections and corridor midpoints.
     /// </summary>
     [RequireComponent(typeof(Image))]
     public class OrbArrowUI : MonoBehaviour
@@ -31,6 +38,16 @@ namespace DreamGuard.Player.UI
         [Tooltip("Camera used to project orb direction into view space. " +
                  "Assign the center eye anchor. Falls back to Camera.main if null.")]
         private Camera playerCamera;
+
+        [SerializeField]
+        [Tooltip("The player advances to the next waypoint in the planned path when " +
+                 "they come within this distance (metres) of the current waypoint.")]
+        private float waypointAdvanceRadius = 1.0f;
+        public float WaypointAdvanceRadius => waypointAdvanceRadius;
+
+#if UNITY_EDITOR
+        private void OnValidate() => WaypointGraph.GizmoAdvanceRadius = waypointAdvanceRadius;
+#endif
 
         [SerializeField]
         [Tooltip("Distance from the next waypoint at which the arrow begins blending " +
@@ -52,6 +69,13 @@ namespace DreamGuard.Player.UI
         private Transform _fallbackTarget;
         private float _currentAngleDeg;
         private float _angleVelocity;
+
+        // Path-following state. The path is planned once per target (orb or fallback) and
+        // followed in order. Re-planned when the target Transform or active WaypointGraph changes.
+        private Transform _lastNavTarget;
+        private WaypointGraph _lastNavGraph;
+        private readonly List<Vector3> _navPath = new();
+        private int _navPathIndex;
 
         private void Awake()
         {
@@ -164,7 +188,7 @@ namespace DreamGuard.Player.UI
                     if (next != null)
                     {
                         SetVisible(true);
-                        PointToward(Navigate(next.position));
+                        PointToward(Navigate(next));
                         return;
                     }
                 }
@@ -174,7 +198,7 @@ namespace DreamGuard.Player.UI
             if (_fallbackTarget != null)
             {
                 SetVisible(true);
-                PointToward(Navigate(_fallbackTarget.position));
+                PointToward(Navigate(_fallbackTarget));
                 return;
             }
 
@@ -182,37 +206,59 @@ namespace DreamGuard.Player.UI
         }
 
         /// <summary>
-        /// Returns a world-space look-at position for the arrow, following the waypoint
-        /// graph toward <paramref name="targetWorldPos"/>. When the player is within
-        /// <see cref="waypointBlendRadius"/> of the next waypoint, the position is
-        /// blended toward the waypoint after it so the arrow anticipates the upcoming
-        /// turn rather than snapping at the last moment.
+        /// Returns a world-space position for the arrow to point toward, following the
+        /// pre-planned waypoint path toward <paramref name="target"/>.
+        ///
+        /// The path is planned once when the target changes and followed in order —
+        /// the arrow advances to the next waypoint only when the player reaches the
+        /// current one (<see cref="waypointAdvanceRadius"/>). When approaching a waypoint,
+        /// the arrow blends toward the one after it (<see cref="waypointBlendRadius"/>),
+        /// smoothing sharp turns.
         /// </summary>
-        private Vector3 Navigate(Vector3 targetWorldPos)
+        private Vector3 Navigate(Transform target)
         {
-            if (WaypointGraph.Instance != null)
+            if (WaypointGraph.Instance == null) return target.position;
+
+            // Replan when the target orb or the active graph changes (room transition).
+            if (target != _lastNavTarget || WaypointGraph.Instance != _lastNavGraph)
             {
-                var (wp1, wp2) = WaypointGraph.Instance.GetNextTwoWaypointsToward(
-                    playerCamera.transform.position, targetWorldPos);
-                if (wp1.HasValue)
-                {
-                    if (wp2.HasValue && waypointBlendRadius > 0f)
-                    {
-                        float dist = Vector3.Distance(playerCamera.transform.position, wp1.Value);
-                        float t = Mathf.Clamp01(1f - dist / waypointBlendRadius);
-                        return Vector3.Lerp(wp1.Value, wp2.Value, t);
-                    }
-                    return wp1.Value;
-                }
+                _lastNavTarget = target;
+                _lastNavGraph  = WaypointGraph.Instance;
+                _navPath.Clear();
+                _navPath.AddRange(WaypointGraph.Instance.GetPath(
+                    playerCamera.transform.position, target.position));
+                _navPathIndex = 0;
+                DreamGuardLog.Log($"[OrbArrowUI] Path planned toward '{target.name}' — {_navPath.Count} waypoint(s)");
             }
-            return targetWorldPos;
+
+            if (_navPath.Count == 0) return target.position;
+
+            // Advance through waypoints as the player reaches them.
+            while (_navPathIndex < _navPath.Count - 1 &&
+                   Vector3.Distance(playerCamera.transform.position, _navPath[_navPathIndex]) < waypointAdvanceRadius)
+            {
+                _navPathIndex++;
+            }
+
+            Vector3 wp1 = _navPath[_navPathIndex];
+
+            // Blend toward the following waypoint when approaching the current one,
+            // so the arrow anticipates upcoming turns rather than snapping at the last moment.
+            if (waypointBlendRadius > 0f && _navPathIndex + 1 < _navPath.Count)
+            {
+                float dist = Vector3.Distance(playerCamera.transform.position, wp1);
+                float t = Mathf.Clamp01(1f - dist / waypointBlendRadius);
+                return Vector3.Lerp(wp1, _navPath[_navPathIndex + 1], t);
+            }
+
+            return wp1;
         }
 
         /// <summary>
         /// Returns the transform of the first remaining orb when sorted by name,
         /// so the arrow guides the player through orbs in scene order (orb_1 → orb_2 → …).
         /// </summary>
-        private static Transform FindNext(System.Collections.Generic.IReadOnlyList<DreamGuardOrb> orbs)
+        private static Transform FindNext(IReadOnlyList<DreamGuardOrb> orbs)
         {
             Transform next = null;
             foreach (var orb in orbs)
@@ -240,9 +286,7 @@ namespace DreamGuard.Player.UI
             float targetAngleDeg = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
 
             // SmoothDampAngle gives natural ease-in/ease-out that filters jitter from
-            // frame-to-frame waypoint micro-shifts, while still tracking real direction
-            // changes. MoveTowardsAngle had a fixed angular velocity that made small
-            // recalculations visibly snappy.
+            // frame-to-frame waypoint micro-shifts, while still tracking real direction changes.
             _currentAngleDeg = Mathf.SmoothDampAngle(_currentAngleDeg, targetAngleDeg,
                 ref _angleVelocity, arrowSmoothTime, arrowMaxSpeed);
 

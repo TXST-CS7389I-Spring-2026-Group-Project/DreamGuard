@@ -38,6 +38,12 @@ namespace DreamGuard
                 : new Color(1f, 0.85f, 0f, 0.9f);
             Gizmos.DrawSphere(transform.position, isEnd ? 0.18f : 0.12f);
 
+            // Waypoint advance radius — mirrors OrbArrowUI.waypointAdvanceRadius via
+            // WaypointGraph.GizmoAdvanceRadius (set by OrbArrowUI.OnValidate) to avoid
+            // a circular assembly reference.
+            Gizmos.color = new Color(1f, 1f, 1f, 0.08f);
+            Gizmos.DrawWireSphere(transform.position, WaypointGraph.GizmoAdvanceRadius);
+
             // Lines to neighbors
             Gizmos.color = new Color(1f, 0.85f, 0f, 0.5f);
             if (neighbors == null) return;

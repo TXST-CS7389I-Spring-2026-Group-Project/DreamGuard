@@ -368,6 +368,14 @@ PrefabInstance:
       propertyPath: requestPassthroughCameraAccessPermissionOnStartup
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7303951495243648047, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: waypointBlendRadius
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7303951495243648047, guid: a98d39c08e8c44750bae5161b0499a68, type: 3}
+      propertyPath: waypointAdvanceRadius
+      value: 2.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
