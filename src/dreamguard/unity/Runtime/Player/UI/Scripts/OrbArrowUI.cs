@@ -37,8 +37,14 @@ namespace DreamGuard.Player.UI
                  "toward the waypoint after it, smoothing 90-degree bends.")]
         private float waypointBlendRadius = 1.5f;
 
+        [SerializeField]
+        [Tooltip("How quickly the arrow rotates toward its target angle (degrees/second). " +
+                 "Lower values smooth out sudden waypoint switches near wall edges.")]
+        private float arrowRotationSpeed = 360f;
+
         private Image _arrowImage;
         private Transform _fallbackTarget;
+        private float _currentAngleDeg;
 
         private void Awake()
         {
@@ -224,8 +230,14 @@ namespace DreamGuard.Player.UI
             // Atan2(x, z): angle from the forward axis, increasing clockwise.
             // Arrow points UP when target is ahead, RIGHT when right, DOWN when behind, LEFT when left.
             // Unity UI rotates CCW for positive Z values, so negate to get CW.
-            float angleDeg = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
-            _arrowImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -angleDeg);
+            float targetAngleDeg = Mathf.Atan2(localDir.x, localDir.z) * Mathf.Rad2Deg;
+
+            // Smooth rotation to prevent hard jumps when the nearest waypoint switches
+            // near wall edges (player crosses midpoint between two nodes → path recalculates).
+            _currentAngleDeg = Mathf.MoveTowardsAngle(_currentAngleDeg, targetAngleDeg,
+                arrowRotationSpeed * Time.deltaTime);
+
+            _arrowImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -_currentAngleDeg);
         }
 
         private void SetVisible(bool visible)

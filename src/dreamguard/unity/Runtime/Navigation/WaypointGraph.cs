@@ -187,6 +187,13 @@ namespace DreamGuard
             return path;
         }
 
+        // Hysteresis: once a start node is selected, don't switch to a new one unless
+        // the candidate is this much closer (world units). Prevents oscillation when the
+        // player is near the midpoint between two nodes (common near wall edges/corners).
+        private const float NearestNodeHysteresis = 0.4f;
+
+        private WaypointNode _lastStartNode;
+
         private WaypointNode FindNearestNode(Vector3 pos)
         {
             WaypointNode nearest = null;
@@ -197,6 +204,18 @@ namespace DreamGuard
                 float sqDist = (node.transform.position - pos).sqrMagnitude;
                 if (sqDist < nearestSqDist) { nearestSqDist = sqDist; nearest = node; }
             }
+
+            // Apply hysteresis: only switch away from the last start node if the new
+            // candidate is meaningfully closer, not just a tiny bit closer.
+            if (_lastStartNode != null && nearest != _lastStartNode)
+            {
+                float lastSqDist = (_lastStartNode.transform.position - pos).sqrMagnitude;
+                float hysteresisSq = NearestNodeHysteresis * NearestNodeHysteresis;
+                if (nearestSqDist + hysteresisSq >= lastSqDist)
+                    return _lastStartNode;
+            }
+
+            _lastStartNode = nearest;
             return nearest;
         }
     }
