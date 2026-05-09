@@ -289,9 +289,18 @@ namespace DreamGuard
 
             // Apply position and Y-rotation only — never pitch or roll the player.
             transform.position = spawn.transform.position;
+
+            // The rig's world yaw and the HMD's local yaw combine to give the camera's
+            // world yaw.  Subtract the HMD's current local yaw so that wherever the
+            // player is physically facing, the camera ends up pointing in the spawn's
+            // forward direction.
+            var cam = Camera.main;
+            float hmdLocalYaw = cam != null ? cam.transform.localEulerAngles.y : 0f;
             var euler = transform.eulerAngles;
-            euler.y = spawn.transform.eulerAngles.y;
+            euler.y = spawn.transform.eulerAngles.y - hmdLocalYaw;
             transform.eulerAngles = euler;
+            DreamGuardLog.Log($"[DreamGuardPlayer] Spawned at '{spawn.name}'  " +
+                $"spawnY={spawn.transform.eulerAngles.y:F1}  hmdLocalY={hmdLocalYaw:F1}  rigY={euler.y:F1}");
         }
 
         /// <summary>
