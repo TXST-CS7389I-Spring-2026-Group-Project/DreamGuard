@@ -526,67 +526,262 @@ responses will be analysed using thematic analysis.
 
 
 %% ─────────────────────────────────────────────────────────────
-\section{Preliminary Results}
+\section{Results}
 \label{sec:results}
 %% ─────────────────────────────────────────────────────────────
 
-\textbf{Data collection is ongoing.} The following results are from a
-single pilot session (P00) conducted by a team member to validate the
-study apparatus. No inferential analysis is performed on a single
-observation; these data confirm that the logging and analysis pipeline
-is operational and characterise the system's objective behaviour.
+\textbf{Data collection is ongoing.} Sections~\ref{sec:objective}
+and~\ref{sec:subjective} present the planned analysis structure; cells
+marked \textbf{[TODO]} will be populated once sufficient participants
+have completed the study. Section~\ref{sec:pilot} reports pilot session
+(P00) data that validate the logging pipeline and confirm all four
+conditions are deployable.
 
-\subsection{Session Overview}
+%% ─────────────────────────────────────────────────────────────
+\subsection{Participants}
+%% ─────────────────────────────────────────────────────────────
 
-The pilot participant completed all four rooms in 4.6 minutes, collecting
-all 16 orbs and generating 5 trigger events. No intrusion marks and no
-false positives were logged.
+% TODO: Replace the paragraph below with the actual demographics table
+% once N >= 6 participants have completed the study.
+\textbf{[TODO]} Report final $N$. Summarise age (mean $\pm$ SD), gender
+distribution, VR frequency (histogram or counts), prior Meta Quest use
+(yes/no counts), prior VR hazard experience, and self-reported
+interruption sensitivity (G0, median/IQR). Note any participants
+excluded and the reason.
 
-\subsection{Trigger Latency}
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Objective Measures}
+\label{sec:objective}
+%% ─────────────────────────────────────────────────────────────
+
+\subsubsection{Trigger Latency}
+
+Trigger latency is defined as
+$\Delta t = t_{\textsc{trigger}} - t_{\textsc{room\_halfway}}$,
+i.e.\ the elapsed time between second-orb collection and the first
+passthrough activation event logged by \texttt{StudyLogger}.
+Room~1 latency reflects the Guardian's boundary-proximity trigger;
+rooms~2--4 use the orb-collection trigger.
+
+Table~\ref{tab:latency} reports latency for the pilot session (P00).
+All four conditions achieve sub-100\,ms response. The slightly elevated
+latency in Room~3 (52\,ms) is consistent with the YOLO worker requiring
+at least one inference frame before the first detection fires.
 
 \begin{table}[h]
 \centering
-\caption{Trigger latency for the pilot session (P00). Latency is
-  $t_{\textsc{trigger}} - t_{\textsc{room\_halfway}}$. Room~1 latency
-  reflects the Guardian's boundary-proximity trigger; rooms~2--4 use
-  the orb-collection trigger.}
+\caption{Trigger latency — pilot session (P00) and full-study summary
+  (mean $\pm$ SD). \textbf{[TODO]} Populate the full-study columns once
+  data collection is complete.}
 \label{tab:latency}
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}llll@{}}
 \toprule
-\textbf{Room} & \textbf{Technique} & \textbf{Latency (s)} \\
+\textbf{Room} & \textbf{Technique} & \textbf{P00 (s)} & \textbf{Full study mean $\pm$ SD (s)} \\
 \midrule
-1 & Guardian Grid  & 0.002 \\
-2 & Window         & 0.002 \\
-3 & Window + Det.  & 0.052 \\
-4 & Depth Bubble   & 0.004 \\
+1 & Guardian Grid  & 0.002 & \textbf{[TODO]} \\
+2 & Window         & 0.002 & \textbf{[TODO]} \\
+3 & Window + Det.  & 0.052 & \textbf{[TODO]} \\
+4 & Depth Bubble   & 0.004 & \textbf{[TODO]} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:latency} shows sub-100\,ms latency for all techniques.
-The slightly higher latency in Room~3 (Window + Detection) is consistent
-with the Detection system requiring at least one inference frame to
-fire the first \textsc{trigger} event after technique activation. Rooms~1,
-2, and~4 trigger within 4\,ms, reflecting near-instantaneous response.
+% TODO: Once N >= 6, apply a Friedman or repeated-measures test across
+% conditions to assess whether trigger latency differs systematically.
+% Report χ²(3), p, and effect size. If Detection latency is a consistent
+% outlier, note implications for real-time hazard response.
+\textbf{[TODO]} With full data: report Friedman $\chi^2(3)$, $p$, and
+whether Room~3 latency is a consistent outlier across participants.
+
+\subsubsection{Room Completion Time}
+
+% TODO: Extract per-room durations from rooms.csv (room_enter to
+% room_complete timestamps). Report means and SD per condition.
+% Apply Friedman test; if significant, report Wilcoxon pairwise
+% comparisons (Bonferroni-corrected). Reference Figure~\ref{fig:roomdurations}.
+\textbf{[TODO]} Report mean $\pm$ SD room completion time per condition.
+Apply Friedman test across conditions; follow up with Wilcoxon
+signed-rank pairwise comparisons if significant ($\alpha = 0.05$,
+Bonferroni-corrected). Note whether passthrough activation (20-second
+window triggered by the second orb) is associated with slowing in
+any condition. See Figure~\ref{fig:roomdurations}.
 
 
-\subsection{Subjective Responses (Pilot)}
+%% ─────────────────────────────────────────────────────────────
+\subsection{Subjective Measures}
+\label{sec:subjective}
+%% ─────────────────────────────────────────────────────────────
 
-The pilot participant reported: safety awareness (A1) of 5 for Window
-and 6 for Depth Bubble; presence (A3) of 4 (Window), 4 (Detection), and
+For each Likert item, Table~\ref{tab:likert} will report median and
+interquartile range per condition. With $N \geq 6$ complete responses,
+Friedman's test (across the four conditions) will assess whether the
+item differs by technique, followed by Wilcoxon signed-rank pairwise
+comparisons with Bonferroni correction ($\alpha = 0.05$). Guardian Grid
+(Room~1) Likert items were marked optional; participants who did not
+observe the Guardian are excluded from that condition's analysis.
+
+\begin{table*}[t]
+\centering
+\caption{Per-condition Likert responses: median [IQR]. Asterisks denote
+  Friedman significance (* $p < .05$, ** $p < .01$). Post-hoc pairwise
+  differences are reported in the text. \textbf{[TODO]} Populate with
+  full-study data.}
+\label{tab:likert}
+\renewcommand{\arraystretch}{1.2}
+\small
+\begin{tabular}{@{} l c c c c c @{}}
+\toprule
+\textbf{Item} &
+  \textbf{Guardian Grid} &
+  \textbf{Window} &
+  \textbf{Window + Det.} &
+  \textbf{Depth Bubble} &
+  \textbf{Friedman} \\
+\midrule
+A1 — Safety awareness     & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+A3 — Presence             & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+A4 — Disruption           & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+A5 — Trust                & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+A8b — Novelty             & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Safety Awareness (A1).}
+% TODO: For each significant Friedman result, report χ²(3), p, W
+% (Kendall's concordance), then list significant pairwise comparisons
+% with Z and Bonferroni-adjusted p. Interpret directionally:
+% does object-aware triggering (Detection, Depth Bubble) yield higher
+% safety awareness than boundary-aware (Guardian) or direction-aware (Window)?
+\textbf{[TODO]} Report Friedman result for A1; interpret whether
+object-aware conditions (Detection, Depth Bubble) score higher on
+safety awareness than the Guardian Grid baseline.
+
+\paragraph{Presence (A3).}
+\textbf{[TODO]} Report Friedman result for A3; examine whether the
+always-on Window (continuous forward passthrough) disrupts presence
+more than reactive conditions (Detection, Depth Bubble).
+
+\paragraph{Disruption (A4).}
+\textbf{[TODO]} Report Friedman result for A4; note whether reactive
+triggers (Detection: spatially localised; Depth Bubble: depth-contiguous
+reveal) score differently from the persistent Window.
+
+\paragraph{Trust (A5).}
+\textbf{[TODO]} Report Friedman result for A5; examine whether
+systems whose trigger logic is more transparent (Depth Bubble: any
+close geometry; Detection: named object) score higher on trust than
+the boundary-proximity-only Guardian Grid.
+
+\paragraph{Novelty (A8b).}
+\textbf{[TODO]} Report Friedman result for A8b; note expected ceiling
+effect for Depth Bubble (first depth-driven consumer technique) and
+floor for Guardian Grid (familiar to experienced VR users).
+
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Comparative Rankings}
+%% ─────────────────────────────────────────────────────────────
+
+Participants rank the four systems on perceived safety (B1), immersion
+disruption (B2), and trust (B3). Table~\ref{tab:rankings} will report
+mean rank per condition per dimension (1 = best). Kendall's $W$
+quantifies within-sample agreement.
+
+\begin{table}[h]
+\centering
+\caption{Mean forced rank per condition (1\,=\,best). Kendall's $W$
+  assesses within-sample agreement. \textbf{[TODO]} Populate with
+  full-study data.}
+\label{tab:rankings}
+\renewcommand{\arraystretch}{1.2}
+\small
+\begin{tabular}{@{} l c c c @{}}
+\toprule
+\textbf{Condition} &
+  \textbf{B1 Safety} &
+  \textbf{B2 Disruption} &
+  \textbf{B3 Trust} \\
+\midrule
+Guardian Grid      & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+Window             & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+Window + Detection & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+Depth Bubble       & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+\midrule
+Kendall's $W$      & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% TODO: Report χ² and p for each Kendall's W. If W is significant,
+% discuss which conditions cluster together. Compare ranking order
+% to Likert direction for convergent validity.
+\textbf{[TODO]} Report Kendall's $W$, $\chi^2$, and $p$ per ranking
+dimension. Compare ranking order to the Likert direction (convergent
+validity check).
+
+\subsubsection{Overall Preference (B4)}
+
+% TODO: Report frequency counts (and percentage) of first-choice
+% preference for each condition. Note any "None" selections.
+\textbf{[TODO]} Report frequency and percentage of participants
+selecting each condition as their preferred everyday-use system (B4).
+Note whether preference aligns with safety or trust rankings.
+
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Qualitative Findings}
+%% ─────────────────────────────────────────────────────────────
+
+Open-response items (A9, one per room) and the post-session verbal
+interview (C1--C3, C5) are analysed using thematic analysis
+\cite{braun2006thematic}: familiarisation, open coding, theme
+development, and review. Two coders independently code a random
+20\% subset; Cohen's $\kappa$ is computed to establish inter-rater
+reliability.
+
+% TODO: After data collection, conduct thematic analysis.
+% Expected themes based on design space hypotheses:
+%   T1 — Trigger comprehension: did participants understand *why*
+%        passthrough appeared (relevant to C3)?
+%   T2 — Spatial predictability: did the location/extent of the
+%        reveal feel expected or surprising (relevant to B6, A9)?
+%   T3 — Presence–safety trade-off: did participants articulate a
+%        tension between immersion and awareness (relevant to C1, C5)?
+%   T4 — Familiarity/novelty: reactions to encountering novel
+%        techniques for the first time (A8b, A9, C1)?
+% Report themes with supporting quotes; note any disconfirming evidence.
+\textbf{[TODO]} Report themes from A9 and C1--C3, C5 with
+representative quotes. Apply inter-rater reliability ($\kappa$).
+
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Pilot Session (P00)}
+\label{sec:pilot}
+%% ─────────────────────────────────────────────────────────────
+
+A single pilot session was conducted by a team member to validate the
+study apparatus and logging pipeline. No inferential claims are drawn
+from one observation.
+
+The pilot participant completed all four rooms in 4.6 minutes,
+collecting all 16 orbs and generating 5 trigger events. No intrusion
+marks and no false positives were logged. Trigger latencies (see
+Table~\ref{tab:latency}) were sub-100\,ms for all conditions.
+
+The pilot participant reported: safety awareness (A1) of 5 (Window)
+and 6 (Depth Bubble); presence (A3) of 4 (Window), 4 (Detection), and
 6 (Depth Bubble); disruption (A4) of 5 (Window), 5 (Detection), and 4
 (Depth Bubble); trust (A5) of 4 (Window), 5 (Detection), and 6 (Depth
 Bubble). Guardian Grid items were marked optional and not completed.
-The participant ranked the Guardian Grid first (most safe) and the
-Window last; ranked the Depth Bubble first for least immersion
-disruption; and ranked the Guardian Grid first for trust. Preferred
-system for everyday use: Guardian Grid.
-
-The participant noted the Depth Bubble as particularly novel and
+The participant ranked the Guardian Grid 1st for safety and trust, and
+the Depth Bubble 1st for least immersion disruption. Preferred everyday
+system: Guardian Grid. The Depth Bubble was noted as the most novel and
 surprising: ``The depth bubble because it was new to me and cool to see!''
 
-These single-participant observations are not generalisable. They
-suggest the instrumentation is collecting data as intended.
+These observations confirm that all four conditions are deployable and
+that the logging and questionnaire pipelines function as intended.
 
 
 %% ─────────────────────────────────────────────────────────────
