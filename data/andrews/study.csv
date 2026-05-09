@@ -1,0 +1,29 @@
+timestamp_iso,event_type,condition,participant_id,detail
+2026-05-08T19:36:18.879,SESSION_START,baseline,P00,unity=6000.4.5f1 device=Oculus Quest 3
+2026-05-08T19:36:19.249,ROOM_ENTER,baseline,P00,room_id=room_1
+2026-05-08T19:36:19.249,CONDITION_BLOCK_START,baseline,P00,room_id=room_1 condition=default
+2026-05-08T19:36:40.955,ROOM_HALFWAY,baseline,P00,room_id=room_1 orbs_collected=2 total_orbs=4
+2026-05-08T19:36:40.957,TRIGGER,baseline,P00,technique=default room_id=room_1
+2026-05-08T19:37:20.375,ROOM_COMPLETE,baseline,P00,room_id=room_1
+2026-05-08T19:37:27.377,ROOM_ENTER,baseline,P00,room_id=room_2
+2026-05-08T19:37:27.377,CONDITION_BLOCK_START,baseline,P00,room_id=room_2 condition=default
+2026-05-08T19:38:03.735,ROOM_HALFWAY,baseline,P00,room_id=room_2 orbs_collected=2 total_orbs=4
+2026-05-08T19:38:03.737,TRIGGER,baseline,P00,technique=default room_id=room_2
+2026-05-08T19:38:21.234,ROOM_COMPLETE,baseline,P00,room_id=room_2
+2026-05-08T19:38:28.418,ROOM_ENTER,baseline,P00,room_id=room_3
+2026-05-08T19:38:28.418,CONDITION_BLOCK_START,baseline,P00,room_id=room_3 condition=default
+2026-05-08T19:39:00.193,ROOM_HALFWAY,baseline,P00,room_id=room_3 orbs_collected=2 total_orbs=4
+2026-05-08T19:39:00.245,TRIGGER,baseline,P00,technique=default room_id=room_3
+2026-05-08T19:39:03.980,TRIGGER,baseline,P00,technique=detection label=tvmonitor conf=0.84 count=4
+2026-05-08T19:39:37.356,ROOM_COMPLETE,baseline,P00,room_id=room_3
+2026-05-08T19:39:45.768,ROOM_ENTER,baseline,P00,room_id=room_4
+2026-05-08T19:39:45.768,CONDITION_BLOCK_START,baseline,P00,room_id=room_4 condition=default
+2026-05-08T19:39:54.248,TECHNIQUE_CHANGE,baseline,P00,technique=Off
+2026-05-08T19:39:57.429,TECHNIQUE_CHANGE,baseline,P00,technique=Window Passthrough
+2026-05-08T19:39:58.716,TECHNIQUE_CHANGE,baseline,P00,technique=Off
+2026-05-08T19:40:22.896,ROOM_HALFWAY,baseline,P00,room_id=room_4 orbs_collected=2 total_orbs=4
+2026-05-08T19:40:22.899,SPHERE_ENABLED,baseline,P00,radius=50
+2026-05-08T19:40:22.900,TRIGGER,baseline,P00,technique=default room_id=room_4
+2026-05-08T19:40:26.922,SPHERE_DISABLED,baseline,P00,
+2026-05-08T19:40:51.381,ROOM_COMPLETE,baseline,P00,room_id=room_4
+2026-05-08T19:40:54.753,SESSION_END,baseline,P00,
