@@ -1,0 +1,21 @@
+condition,item,n,mean,std
+Guardian Grid,Hazard Awareness,1,6.0,
+Guardian Grid,Immersion,1,6.0,
+Guardian Grid,Disruption,1,2.0,
+Guardian Grid,Trust,1,7.0,
+Guardian Grid,Unfamiliarity,1,7.0,
+Windowed,Hazard Awareness,4,5.5,1.91
+Windowed,Immersion,4,3.5,1.73
+Windowed,Disruption,4,4.75,2.63
+Windowed,Trust,4,5.5,1.73
+Windowed,Unfamiliarity,4,3.25,1.71
+Windowed + Detection,Hazard Awareness,4,5.0,2.45
+Windowed + Detection,Immersion,4,3.5,2.08
+Windowed + Detection,Disruption,4,5.25,2.36
+Windowed + Detection,Trust,4,5.0,2.16
+Windowed + Detection,Unfamiliarity,4,4.25,1.71
+Depth Bubble,Hazard Awareness,4,5.25,1.5
+Depth Bubble,Immersion,4,6.0,0.82
+Depth Bubble,Disruption,4,3.0,1.83
+Depth Bubble,Trust,4,6.5,0.58
+Depth Bubble,Unfamiliarity,4,5.0,2.45

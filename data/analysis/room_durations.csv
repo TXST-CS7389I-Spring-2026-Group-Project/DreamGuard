@@ -1,5 +1,17 @@
-session,participant,condition,room_id,duration_s
-study_0,P00,baseline,room_1,61.126
-study_0,P00,baseline,room_2,53.856
-study_0,P00,baseline,room_3,68.936
-study_0,P00,baseline,room_4,65.613
+session,participant,room_id,technique,duration_s
+study_0,P00,room_1,Guardian Grid,46.955
+study_0,P00,room_2,Window,43.476
+study_0,P00,room_3,Window + Detection,50.096
+study_0,P00,room_4,Depth Bubble,53.868
+study_1,P00,room_1,Guardian Grid,77.058
+study_1,P00,room_2,Window,69.993
+study_1,P00,room_3,Window + Detection,72.769
+study_1,P00,room_4,Depth Bubble,66.35
+study_2,P00,room_1,Guardian Grid,62.801
+study_2,P00,room_2,Window,85.484
+study_2,P00,room_3,Window + Detection,69.897
+study_2,P00,room_4,Depth Bubble,54.915
+study_3,P00,room_1,Guardian Grid,101.799
+study_3,P00,room_2,Window,63.585
+study_3,P00,room_3,Window + Detection,74.084
+study_3,P00,room_4,Depth Bubble,59.885

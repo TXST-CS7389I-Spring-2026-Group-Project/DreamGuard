@@ -1,2 +1,5 @@
-session,participant,condition,duration_min,rooms_complete,orbs_collected,triggers,intrusions,false_positives,pos_samples
-study_0,P00,baseline,4.6,4,16,5,0,0,12411
+session,participant,duration_min,rooms_complete,orbs_collected,triggers,intrusions,false_positives,pos_samples
+study_0,P00,3.6,4,16,5,0,0,13024
+study_1,P00,5.8,4,16,5,0,0,16427
+study_2,P00,5.6,4,16,5,0,0,22622
+study_3,P00,5.7,4,16,5,0,0,19613

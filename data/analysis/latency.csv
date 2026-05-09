@@ -1,5 +1,17 @@
-session,participant,condition,room_id,latency_s,technique
-study_0,P00,baseline,room_1,0.002,default
-study_0,P00,baseline,room_2,0.002,default
-study_0,P00,baseline,room_3,0.052,default
-study_0,P00,baseline,room_4,0.004,default
+session,participant,room_id,technique,latency_s,trigger_technique
+study_0,P00,room_1,Guardian Grid,0.002,default
+study_0,P00,room_2,Window,0.003,default
+study_0,P00,room_3,Window + Detection,0.025,default
+study_0,P00,room_4,Depth Bubble,0.003,default
+study_1,P00,room_1,Guardian Grid,0.002,default
+study_1,P00,room_2,Window,0.002,default
+study_1,P00,room_3,Window + Detection,0.027,default
+study_1,P00,room_4,Depth Bubble,0.005,default
+study_2,P00,room_1,Guardian Grid,0.001,default
+study_2,P00,room_2,Window,0.003,default
+study_2,P00,room_3,Window + Detection,0.033,default
+study_2,P00,room_4,Depth Bubble,0.005,default
+study_3,P00,room_1,Guardian Grid,0.002,default
+study_3,P00,room_2,Window,0.002,default
+study_3,P00,room_3,Window + Detection,0.025,default
+study_3,P00,room_4,Depth Bubble,0.003,default

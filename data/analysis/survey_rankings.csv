@@ -1,0 +1,13 @@
+dimension,condition,n,mean_rank,std
+safety,Meta Guardian Grid,2,2.5,0.71
+safety,Window,3,2.67,1.15
+safety,Window + Detection,3,2.67,0.58
+safety,Depth Bubble,2,2.0,1.41
+disruption,Meta Guardian Grid,1,2.0,
+disruption,Window,3,3.33,0.58
+disruption,Window + Detection,2,3.0,0.0
+disruption,Depth Bubble,4,1.75,0.5
+trust,Meta Guardian Grid,2,2.0,1.41
+trust,Window,3,2.67,0.58
+trust,Window + Detection,3,2.67,1.15
+trust,Depth Bubble,2,2.5,0.71
