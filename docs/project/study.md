@@ -20,7 +20,9 @@ Passthrough technique implementations: `src/dreamguard/unity/Runtime/Passthrough
 
 ## Study Design
 
-4 maze rooms, each with 4 collectible orbs. Collecting the 2nd orb activates the room's passthrough technique for 15 seconds before deactivating. An arrow UI on the bottom of the screen guides the player to the next orb; a counter displays orbs collected and remaining. The player is blocked from entering the next room until all 4 orbs are collected.
+4 maze rooms, each with 4 collectible orbs. Collecting the 2nd orb activates the room's passthrough technique for 20 seconds before deactivating. An arrow UI on the bottom of the screen guides the player to the next orb; a counter displays orbs collected and remaining. The player is blocked from entering the next room until all 4 orbs are collected.
+
+**Note on Window condition:** The Window passthrough (Room 2) is always-on for the full 20-second window — a forward-facing passthrough rectangle is continuously visible in the center of the screen. Rooms 3 and 4 use reactive sub-triggers (YOLO detection; depth threshold) within the 20-second window to determine when to show passthrough.
 
 Data collection: `docs/LOGGING.md`
 
@@ -42,10 +44,12 @@ Passthrough technique — 4 levels, within-subjects, fixed order (not counterbal
 - Safety awareness (A1), system confidence (A2) — perceived protection
 - Presence (A3), disruption (A4) — immersion cost
 - Trust (A5), false alarm perception (A6) — reliability
+- Comprehension of trigger (A7) — perceived transparency; expected to differ between boundary-aware (Guardian) and object-aware (Detection, Depth) systems
+- Perceived timing (A8) — subjective counterpart to objective activation latency; correlate with `TRIGGER.ts − ROOM_HALFWAY.ts`
 - Forced rankings (B1–B3) — comparative preference
 - Overall preference (B4) — stated adoption intent
 - Activation latency — `TRIGGER.ts − ROOM_HALFWAY.ts` (objective, from logs)
-- Qualitative (A7, B5–B7, C1–C5)
+- Qualitative (A9, B5–B7, C1–C5)
 
 ## Confounds (critical — no counterbalancing)
 
@@ -64,9 +68,9 @@ Passthrough technique — 4 levels, within-subjects, fixed order (not counterbal
 
 ## Nuisance Variables (not controlled, should be measured/reported)
 
-- Prior VR experience (collected in demographics)
-- Prior Meta Quest experience
-- Individual sensitivity to presence disruption
+- Prior VR experience (collected in demographics, Q3)
+- Prior Meta Quest experience (Q4)
+- Individual sensitivity to distraction/interruption (collected in demographics, D6) — Likert item: "I am generally sensitive to interruptions when I am focused on a task"; use to check whether high-sensitivity participants consistently inflate A4 (disruption) across all rooms
 
 ---
 
