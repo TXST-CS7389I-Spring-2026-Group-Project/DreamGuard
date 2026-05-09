@@ -22929,7 +22929,7 @@ MonoBehaviour:
   nextRoomTarget: {fileID: 2045275664}
   waypointGraph: {fileID: 1195166564}
   passthroughType: 3
-  passthroughDuration: 15
+  passthroughDuration: 20
 --- !u!1 &850752274
 GameObject:
   m_ObjectHideFlags: 0
@@ -24895,7 +24895,7 @@ MonoBehaviour:
   nextRoomTarget: {fileID: 1269300149}
   waypointGraph: {fileID: 889386412}
   passthroughType: 6
-  passthroughDuration: 15
+  passthroughDuration: 20
 --- !u!1 &916081379
 GameObject:
   m_ObjectHideFlags: 0
@@ -35056,7 +35056,7 @@ MonoBehaviour:
   nextRoomTarget: {fileID: 850088680}
   waypointGraph: {fileID: 695381018}
   passthroughType: 1
-  passthroughDuration: 15
+  passthroughDuration: 20
 --- !u!1001 &1276420447
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53228,7 +53228,7 @@ MonoBehaviour:
   nextRoomTarget: {fileID: 0}
   waypointGraph: {fileID: 829142438}
   passthroughType: 2
-  passthroughDuration: 15
+  passthroughDuration: 20
 --- !u!1 &2048817935
 GameObject:
   m_ObjectHideFlags: 0
