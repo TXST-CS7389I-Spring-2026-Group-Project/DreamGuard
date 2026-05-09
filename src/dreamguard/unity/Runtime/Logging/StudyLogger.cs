@@ -32,6 +32,7 @@ namespace DreamGuard
         private static StreamWriter _headsetCsv;
         private static StreamWriter _collectionCsv;
         private static StreamWriter _roomsCsv;
+        private static StreamWriter _performanceCsv;
 
         private static string _participantId;
         private static string _condition;
@@ -93,6 +94,11 @@ namespace DreamGuard
                 _headsetCsv     = OpenTrackingCsv(sessionDir, "headset.csv",      "timestamp_iso,pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_w");
                 _collectionCsv  = OpenTrackingCsv(sessionDir, "collection.csv",   "timestamp_iso,orb_id");
                 _roomsCsv       = OpenTrackingCsv(sessionDir, "rooms.csv",         "timestamp_iso,event,room_id");
+
+                string perfDir = Path.Combine(sessionDir, "performance");
+                Directory.CreateDirectory(perfDir);
+                _performanceCsv = OpenTrackingCsv(perfDir, "performance.csv",
+                    "timestamp_iso,frame_time_ms,fps,allocated_memory_mb,reserved_memory_mb,mono_used_mb");
 
                 _lastPlayerPos = NaNVec3;
                 _lastRCtrlPos  = NaNVec3; _lastRCtrlRot = NaNQuat;
@@ -265,6 +271,23 @@ namespace DreamGuard
             _headsetCsv?.WriteLine($"{Ts()},{pos.x:F4},{pos.y:F4},{pos.z:F4},{rot.x:F4},{rot.y:F4},{rot.z:F4},{rot.w:F4}");
         }
 
+        /// <summary>
+        /// Logs a performance sample to performance/performance.csv.
+        /// Call from a MonoBehaviour at a fixed interval (e.g. every 0.5 s).
+        /// frameTimeMs  — Time.deltaTime * 1000
+        /// fps          — 1f / Time.deltaTime
+        /// allocatedMb  — Profiler.GetTotalAllocatedMemoryLong() / 1 MB
+        /// reservedMb   — Profiler.GetTotalReservedMemoryLong()  / 1 MB
+        /// monoUsedMb   — Profiler.GetMonoUsedSizeLong()         / 1 MB
+        /// </summary>
+        public static void LogPerformance(float frameTimeMs, float fps,
+                                          float allocatedMb, float reservedMb, float monoUsedMb)
+        {
+            if (!_active) return;
+            _performanceCsv?.WriteLine(
+                $"{Ts()},{frameTimeMs:F2},{fps:F1},{allocatedMb:F2},{reservedMb:F2},{monoUsedMb:F2}");
+        }
+
         /// <summary>Writes SESSION_END and closes the CSV file.</summary>
         public static void EndSession()
         {
@@ -280,7 +303,8 @@ namespace DreamGuard
             try { _headsetCsv?.Close(); }     catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close headset.csv failed: {e.Message}"); }
             try { _collectionCsv?.Close(); }  catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close collection.csv failed: {e.Message}"); }
             try { _roomsCsv?.Close(); }       catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close rooms.csv failed: {e.Message}"); }
-            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = _collectionCsv = _roomsCsv = null;
+            try { _performanceCsv?.Close(); } catch (Exception e) { DreamGuardLog.LogError($"[StudyLogger] Close performance.csv failed: {e.Message}"); }
+            _csv = _positionCsv = _rControllerCsv = _lControllerCsv = _headsetCsv = _collectionCsv = _roomsCsv = _performanceCsv = null;
 
             DreamGuardLog.Log("[StudyLogger] Session ended.");
         }

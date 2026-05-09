@@ -81,6 +81,20 @@ Left controller pose. Columns: `timestamp_iso, pos_x, pos_y, pos_z, rot_x, rot_y
 
 Written by `LogLeftController(pos, rot)` (per-frame, delta-filtered).
 
+### `performance/performance.csv`
+
+Device performance samples. Columns: `timestamp_iso, frame_time_ms, fps, allocated_memory_mb, reserved_memory_mb, mono_used_mb`
+
+Written by `PerformanceLogger` MonoBehaviour via `StudyLogger.LogPerformance(...)` at a configurable interval (default 0.5 s).
+
+| Column | Description |
+|---|---|
+| `frame_time_ms` | `Time.deltaTime × 1000` — combined CPU+GPU frame cost |
+| `fps` | `1 / Time.deltaTime` |
+| `allocated_memory_mb` | `Profiler.GetTotalAllocatedMemoryLong()` in MB |
+| `reserved_memory_mb` | `Profiler.GetTotalReservedMemoryLong()` in MB |
+| `mono_used_mb` | `Profiler.GetMonoUsedSizeLong()` in MB (managed heap) |
+
 ---
 
 ## Key timestamps for analysis
