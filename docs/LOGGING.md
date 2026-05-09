@@ -81,7 +81,7 @@ Left controller pose. Columns: `timestamp_iso, pos_x, pos_y, pos_z, rot_x, rot_y
 
 Written by `LogLeftController(pos, rot)` (per-frame, delta-filtered).
 
-### `performance/performance.csv`
+### `performance.csv`
 
 Device performance samples. Columns: `timestamp_iso, frame_time_ms, fps, allocated_memory_mb, reserved_memory_mb, mono_used_mb`
 

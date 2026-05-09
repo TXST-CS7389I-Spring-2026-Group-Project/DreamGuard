@@ -95,9 +95,7 @@ namespace DreamGuard
                 _collectionCsv  = OpenTrackingCsv(sessionDir, "collection.csv",   "timestamp_iso,orb_id");
                 _roomsCsv       = OpenTrackingCsv(sessionDir, "rooms.csv",         "timestamp_iso,event,room_id");
 
-                string perfDir = Path.Combine(sessionDir, "performance");
-                Directory.CreateDirectory(perfDir);
-                _performanceCsv = OpenTrackingCsv(perfDir, "performance.csv",
+                _performanceCsv = OpenTrackingCsv(sessionDir, "performance.csv",
                     "timestamp_iso,frame_time_ms,fps,allocated_memory_mb,reserved_memory_mb,mono_used_mb");
 
                 _lastPlayerPos = NaNVec3;
