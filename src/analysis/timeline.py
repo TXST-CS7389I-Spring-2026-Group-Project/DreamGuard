@@ -20,6 +20,26 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import pandas as pd
 
+plt.rcParams.update({
+    'axes.facecolor':    '#D8D8D8',
+    'figure.facecolor':  '#E4E4E4',
+    'font.size':         14,
+    'font.weight':       'bold',
+    'axes.titlesize':    16,
+    'axes.titleweight':  'bold',
+    'axes.labelsize':    14,
+    'axes.labelweight':  'bold',
+    'xtick.labelsize':   12,
+    'ytick.labelsize':   12,
+    'legend.fontsize':   12,
+    'lines.linewidth':   2.5,
+    'axes.linewidth':    1.5,
+    'patch.linewidth':   1.5,
+    'grid.linewidth':    1.2,
+    'xtick.major.width': 1.5,
+    'ytick.major.width': 1.5,
+})
+
 
 # ── colour / marker config ────────────────────────────────────────────────────
 
@@ -131,7 +151,7 @@ def plot_timeline(session_dirs: list[Path], out_path: Path):
         labels.append(session_label(sd, study))
 
     ax.set_yticks(ys)
-    ax.set_yticklabels(labels, fontsize=8)
+    ax.set_yticklabels(labels)
     ax.set_xlabel("Time since SESSION_START (s)")
     ax.set_title("DreamGuard — Event Timeline")
     ax.set_ylim(0, n + 1)
@@ -139,7 +159,8 @@ def plot_timeline(session_dirs: list[Path], out_path: Path):
 
     if legend_handles:
         ax.legend(handles=list(legend_handles.values()),
-                  loc="lower right", fontsize=7, ncol=3, framealpha=0.9)
+                  loc="upper left", bbox_to_anchor=(1.01, 1),
+                  borderaxespad=0, ncol=1, framealpha=0.9)
 
     plt.tight_layout()
     plt.savefig(out_path, dpi=150, bbox_inches="tight")
